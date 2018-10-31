@@ -1,0 +1,7 @@
+revision 1.0 2018-10-06
+
+initial release
+
+revision 1.1 2018-10-29
+
+* SD Flush moved to A12 from A11 to resolve EXTI line interrupts (was sharing the same line with B11)

@@ -2310,7 +2310,6 @@ DIN A4, landscape with location and doc. field</description>
 <part name="U$26" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$27" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$28" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
-<part name="U$30" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$31" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$32" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$33" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
@@ -2328,6 +2327,8 @@ DIN A4, landscape with location and doc. field</description>
 <part name="SD_BUSY" library="led" library_urn="urn:adsk.eagle:library:1111974" deviceset="LED_RED" device="" package3d_urn="urn:adsk.eagle:package:1111983/4"/>
 <part name="DGND56" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="DGND" device=""/>
 <part name="R27" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="15k"/>
+<part name="U$14" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
+<part name="U$29" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -2811,13 +2812,14 @@ AN2606 STM32 microcontroller system memory boot mode
 <instance part="U$26" gate="G$1" x="73.66" y="76.2" rot="R180"/>
 <instance part="U$27" gate="G$1" x="73.66" y="73.66" rot="R180"/>
 <instance part="U$28" gate="G$1" x="73.66" y="38.1" rot="R180"/>
-<instance part="U$30" gate="G$1" x="73.66" y="27.94" rot="R180"/>
 <instance part="U$31" gate="G$1" x="33.02" y="38.1"/>
 <instance part="U$32" gate="G$1" x="33.02" y="40.64"/>
 <instance part="U$33" gate="G$1" x="33.02" y="35.56"/>
 <instance part="U$34" gate="G$1" x="33.02" y="33.02"/>
 <instance part="U$35" gate="G$1" x="33.02" y="30.48"/>
 <instance part="U$36" gate="G$1" x="33.02" y="22.86"/>
+<instance part="U$14" gate="G$1" x="73.66" y="30.48" rot="R180"/>
+<instance part="U$29" gate="G$1" x="129.54" y="165.1"/>
 </instances>
 <busses>
 </busses>
@@ -3411,28 +3413,28 @@ AN2606 STM32 microcontroller system memory boot mode
 <label x="129.54" y="78.74" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="RM_ENC_OUT_A" class="0">
+<net name="RM_ENC_A" class="0">
 <segment>
 <pinref part="IC1" gate="_D" pin="81-PD12"/>
 <wire x1="127" y1="104.14" x2="152.4" y2="104.14" width="0.1524" layer="91"/>
 <label x="129.54" y="104.14" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="RM_ENC_OUT_B" class="0">
+<net name="RM_ENC_B" class="0">
 <segment>
 <pinref part="IC1" gate="_B" pin="75-PB14"/>
 <wire x1="30.48" y1="55.88" x2="53.34" y2="55.88" width="0.1524" layer="91"/>
 <label x="33.02" y="55.88" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="RM_PWM_IN1" class="0">
+<net name="RM_PWM_1" class="0">
 <segment>
 <pinref part="IC1" gate="_B" pin="48-PB2"/>
 <wire x1="30.48" y1="25.4" x2="53.34" y2="25.4" width="0.1524" layer="91"/>
 <label x="33.02" y="25.4" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="RM_PWM_IN2" class="0">
+<net name="RM_PWM_2" class="0">
 <segment>
 <pinref part="IC1" gate="_D" pin="82-PD13"/>
 <wire x1="152.4" y1="106.68" x2="127" y2="106.68" width="0.1524" layer="91"/>
@@ -3737,12 +3739,6 @@ AN2606 STM32 microcontroller system memory boot mode
 <pinref part="U$28" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="N$46" class="0">
-<segment>
-<pinref part="IC1" gate="_A" pin="104-PA12"/>
-<pinref part="U$30" gate="G$1" pin="1"/>
-</segment>
-</net>
 <net name="N$47" class="0">
 <segment>
 <pinref part="IC1" gate="_B" pin="137-PB7"/>
@@ -3779,18 +3775,30 @@ AN2606 STM32 microcontroller system memory boot mode
 <pinref part="U$36" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="SD_FLUSH" class="0">
-<segment>
-<pinref part="IC1" gate="_A" pin="103-PA11"/>
-<wire x1="76.2" y1="30.48" x2="55.88" y2="30.48" width="0.1524" layer="91"/>
-<label x="58.42" y="30.48" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="SD_BUSY" class="0">
 <segment>
 <pinref part="IC1" gate="_D" pin="118-PD4"/>
 <wire x1="127" y1="83.82" x2="152.4" y2="83.82" width="0.1524" layer="91"/>
 <label x="129.54" y="83.82" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="SD_FLUSH" class="0">
+<segment>
+<pinref part="IC1" gate="_A" pin="104-PA12"/>
+<wire x1="76.2" y1="27.94" x2="55.88" y2="27.94" width="0.1524" layer="91"/>
+<label x="58.42" y="27.94" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$30" class="0">
+<segment>
+<pinref part="IC1" gate="_A" pin="103-PA11"/>
+<pinref part="U$14" gate="G$1" pin="1"/>
+</segment>
+</net>
+<net name="N$45" class="0">
+<segment>
+<pinref part="IC1" gate="_G" pin="132-PG15"/>
+<pinref part="U$29" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
@@ -4151,21 +4159,21 @@ Magnetic Encoder Pair Kit for Micro Metal Gearmotors</text>
 <wire x1="160.02" y1="124.46" x2="160.02" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="RM_ENC_OUT_B" class="0">
+<net name="RM_ENC_B" class="0">
 <segment>
 <pinref part="RIGHT_MOTOR_ENCODER" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="160.02" x2="76.2" y2="160.02" width="0.1524" layer="91"/>
 <label x="53.34" y="160.02" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="RM_ENC_OUT_A" class="0">
+<net name="RM_ENC_A" class="0">
 <segment>
 <pinref part="RIGHT_MOTOR_ENCODER" gate="G$1" pin="3"/>
 <wire x1="45.72" y1="162.56" x2="76.2" y2="162.56" width="0.1524" layer="91"/>
 <label x="53.34" y="162.56" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="LM_ENC_OUT_A" class="0">
+<net name="LM_ENC_A" class="0">
 <segment>
 <pinref part="LEFT_MOTOR_ENCODER" gate="G$1" pin="3"/>
 <wire x1="45.72" y1="129.54" x2="71.12" y2="129.54" width="0.1524" layer="91"/>
@@ -4177,7 +4185,7 @@ Magnetic Encoder Pair Kit for Micro Metal Gearmotors</text>
 <label x="205.74" y="134.62" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="LM_ENC_OUT_B" class="0">
+<net name="LM_ENC_B" class="0">
 <segment>
 <pinref part="LEFT_MOTOR_ENCODER" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="127" x2="71.12" y2="127" width="0.1524" layer="91"/>
@@ -4189,7 +4197,7 @@ Magnetic Encoder Pair Kit for Micro Metal Gearmotors</text>
 <label x="205.74" y="149.86" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="LM_PWM_IN1" class="0">
+<net name="LM_PWM_1" class="0">
 <segment>
 <pinref part="IC1" gate="_E" pin="141-PE0"/>
 <wire x1="228.6" y1="157.48" x2="203.2" y2="157.48" width="0.1524" layer="91"/>
@@ -4201,7 +4209,7 @@ Magnetic Encoder Pair Kit for Micro Metal Gearmotors</text>
 <label x="50.8" y="33.02" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="LM_PWM_IN2" class="0">
+<net name="LM_PWM_2" class="0">
 <segment>
 <pinref part="IC1" gate="_E" pin="142-PE1"/>
 <wire x1="228.6" y1="154.94" x2="203.2" y2="154.94" width="0.1524" layer="91"/>
@@ -4615,14 +4623,14 @@ Magnetic Encoder Pair Kit for Micro Metal Gearmotors</text>
 <pinref part="U$10" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="RM_PWM_IN2" class="0">
+<net name="RM_PWM_2" class="0">
 <segment>
 <pinref part="RIGHT_MOTOR_CONTROL" gate="G$1" pin="3"/>
 <wire x1="45.72" y1="81.28" x2="68.58" y2="81.28" width="0.1524" layer="91"/>
 <label x="50.8" y="81.28" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="RM_PWM_IN1" class="0">
+<net name="RM_PWM_1" class="0">
 <segment>
 <pinref part="RIGHT_MOTOR_CONTROL" gate="G$1" pin="4"/>
 <wire x1="45.72" y1="83.82" x2="68.58" y2="83.82" width="0.1524" layer="91"/>
