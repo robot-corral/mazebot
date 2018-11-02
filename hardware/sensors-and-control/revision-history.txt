@@ -5,3 +5,10 @@ initial release
 revision 1.1 2018-10-29
 
 * SD Flush moved to A12 from A11 to resolve EXTI line interrupts (was sharing the same line with B11)
+
+revision 2.0 -- WORK IN PROGRESS --
+
+* LPUART1 is used instead of USART1 for ST-Link (PA9/PA10 are now free, PG7, PG8 are used for LPUART)
+* LED outputs pins were changed from (PG3, PG4, PG5, PG6, PG7, PG8) to (PD14, PD15, PG2, PG3, PG4, PC6) respectively
+* sensors connector is straight one (not 90 degree) and is now mounted on the bottom of the board facing down
+* board is made slightly more compact (sensors connector was moved closer to MCU)
