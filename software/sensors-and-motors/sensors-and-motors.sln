@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-driver", "lib-driver\lib-driver.vcxproj", "{DBEBA908-C4B2-43FB-833B-AA39C9F860BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-driver-stm32l496ze", "lib-driver-stm32l496ze\lib-driver-stm32l496ze.vcxproj", "{388F4433-00A8-4F05-9375-18A1CE980FBE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-robot", "main-robot\main-robot.vcxproj", "{2C740AC9-C988-4102-AF56-78DA516B963B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils", "lib-utils\lib-utils.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-utils", "test-utils\test-utils.vcxproj", "{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32", "lib-stm32\lib-stm32.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-test", "lib-test\lib-test.vcxproj", "{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|VisualGDB = Debug|VisualGDB
+		Release|VisualGDB = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBEBA908-C4B2-43FB-833B-AA39C9F860BE}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{DBEBA908-C4B2-43FB-833B-AA39C9F860BE}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{DBEBA908-C4B2-43FB-833B-AA39C9F860BE}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{DBEBA908-C4B2-43FB-833B-AA39C9F860BE}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{388F4433-00A8-4F05-9375-18A1CE980FBE}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{388F4433-00A8-4F05-9375-18A1CE980FBE}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{388F4433-00A8-4F05-9375-18A1CE980FBE}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{388F4433-00A8-4F05-9375-18A1CE980FBE}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{2C740AC9-C988-4102-AF56-78DA516B963B}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{2C740AC9-C988-4102-AF56-78DA516B963B}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{2C740AC9-C988-4102-AF56-78DA516B963B}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{2C740AC9-C988-4102-AF56-78DA516B963B}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Release|VisualGDB.Build.0 = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18A350A4-BD9F-4C3A-BC5C-DC16215F8410}
+	EndGlobalSection
+EndGlobal

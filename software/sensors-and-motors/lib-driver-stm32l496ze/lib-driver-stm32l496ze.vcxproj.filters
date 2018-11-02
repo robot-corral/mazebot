@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{21dc5a2e-275f-49e1-957c-9000d77690d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{e030aa08-03f5-432c-9811-ca9b4ad5a088}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib-driver-stm32l496ze-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="lib-driver-stm32l496ze-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\gpio.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\system_clock.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\timers.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\global_data.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor_impl.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exti.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\usart.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\driver.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system_clock.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gpio.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timers.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\status.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor_impl.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\global_data.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\exti.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\usart.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

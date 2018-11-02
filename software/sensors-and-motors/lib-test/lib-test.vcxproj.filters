@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{006a85f4-3865-452a-9714-b4c8950c0ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc">
+      <UniqueIdentifier>{4c1d5603-e1cd-4d15-ac0f-e14b7cd5ca5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{23c18ea3-601e-4ec8-831f-0bddf8b357ce}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib-test-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="lib-test-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\assert.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\test.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\global_data.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\output.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\assert.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\global_data.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\output.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
