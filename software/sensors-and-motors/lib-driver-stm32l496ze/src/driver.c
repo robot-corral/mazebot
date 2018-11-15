@@ -2,6 +2,7 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+#include "spi.h"
 #include "exti.h"
 #include "gpio.h"
 #include "motor.h"
@@ -20,6 +21,7 @@ void initializeDriver()
     initializeTimers();
     initializeMotor();
     initializeUsart();
+    initializeSpi();
 }
 
 void initializeDebugDriver(bool enable)

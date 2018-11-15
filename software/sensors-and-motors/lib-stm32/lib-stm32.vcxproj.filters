@@ -65,6 +65,12 @@
     <ClInclude Include="stm32\stm32l4xx_ll_lpuart.h">
       <Filter>stm32</Filter>
     </ClInclude>
+    <ClInclude Include="stm32\stm32l4xx_ll_spi.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="stm32\stm32l4xx_ll_dma.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\startup_stm32l496xx.s">
@@ -73,8 +79,8 @@
     <ClCompile Include="src\system_stm32l4xx.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="stm32\stm32l4xx_ll_utils.c">
-      <Filter>stm32</Filter>
+    <ClCompile Include="src\stm32l4xx_ll_utils.c">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

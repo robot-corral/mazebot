@@ -2331,10 +2331,10 @@ DIN A4, landscape with location and doc. field</description>
 <part name="R27" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="15k"/>
 <part name="U$14" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$29" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
-<part name="U$30" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$37" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$17" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$18" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
+<part name="U$19" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -2822,10 +2822,10 @@ AN2606 STM32 microcontroller system memory boot mode
 <instance part="U$36" gate="G$1" x="33.02" y="22.86"/>
 <instance part="U$14" gate="G$1" x="73.66" y="30.48" rot="R180"/>
 <instance part="U$29" gate="G$1" x="129.54" y="165.1"/>
-<instance part="U$30" gate="G$1" x="73.66" y="35.56" rot="R180"/>
 <instance part="U$37" gate="G$1" x="73.66" y="33.02" rot="R180"/>
 <instance part="U$17" gate="G$1" x="129.54" y="142.24"/>
 <instance part="U$18" gate="G$1" x="129.54" y="139.7"/>
+<instance part="U$19" gate="G$1" x="73.66" y="27.94" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -3734,13 +3734,6 @@ AN2606 STM32 microcontroller system memory boot mode
 <label x="129.54" y="83.82" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="SD_FLUSH" class="0">
-<segment>
-<pinref part="IC1" gate="_A" pin="104-PA12"/>
-<wire x1="76.2" y1="27.94" x2="55.88" y2="27.94" width="0.1524" layer="91"/>
-<label x="58.42" y="27.94" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="N$30" class="0">
 <segment>
 <pinref part="IC1" gate="_A" pin="103-PA11"/>
@@ -3751,12 +3744,6 @@ AN2606 STM32 microcontroller system memory boot mode
 <segment>
 <pinref part="IC1" gate="_G" pin="132-PG15"/>
 <pinref part="U$29" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="N$46" class="0">
-<segment>
-<pinref part="IC1" gate="_A" pin="101-PA9"/>
-<pinref part="U$30" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$54" class="0">
@@ -3817,6 +3804,19 @@ AN2606 STM32 microcontroller system memory boot mode
 <pinref part="IC1" gate="_C" pin="96-PC6"/>
 <wire x1="76.2" y1="96.52" x2="55.88" y2="96.52" width="0.1524" layer="91"/>
 <label x="58.42" y="96.52" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="SD_FLUSH" class="0">
+<segment>
+<pinref part="IC1" gate="_A" pin="101-PA9"/>
+<wire x1="76.2" y1="35.56" x2="55.88" y2="35.56" width="0.1524" layer="91"/>
+<label x="58.42" y="35.56" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$35" class="0">
+<segment>
+<pinref part="IC1" gate="_A" pin="104-PA12"/>
+<pinref part="U$19" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>

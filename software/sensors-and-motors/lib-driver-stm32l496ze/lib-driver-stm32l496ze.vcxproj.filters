@@ -41,6 +41,9 @@
     <ClInclude Include="src\usart.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\spi.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\driver.c">
@@ -68,6 +71,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\usart.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spi.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

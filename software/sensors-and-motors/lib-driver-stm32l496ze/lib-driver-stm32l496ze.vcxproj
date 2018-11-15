@@ -61,6 +61,7 @@
     <ClCompile Include="src\global_data.c" />
     <ClCompile Include="src\gpio.c" />
     <ClCompile Include="src\motor_impl.c" />
+    <ClCompile Include="src\spi.c" />
     <ClCompile Include="src\status.c" />
     <ClCompile Include="src\system_clock.c" />
     <ClCompile Include="src\timers.c" />
@@ -79,6 +80,7 @@
     <ClInclude Include="src\global_data.h" />
     <ClInclude Include="src\gpio.h" />
     <ClInclude Include="src\motor_impl.h" />
+    <ClInclude Include="src\spi.h" />
     <ClInclude Include="src\system_clock.h" />
     <ClInclude Include="src\timers.h" />
     <ClInclude Include="src\usart.h" />

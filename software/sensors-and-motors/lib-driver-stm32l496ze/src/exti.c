@@ -10,11 +10,22 @@
 
 void initializeExti()
 {
+    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE12);
+    LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_12);
+    LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_12);
+
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE11);
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_11);
     LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_11);
+
     NVIC_EnableIRQ(EXTI15_10_IRQn); 
     NVIC_SetPriority(EXTI15_10_IRQn, 0);
+
+    LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTE, LL_SYSCFG_EXTI_LINE6);
+    LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_6);
+    LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_6);
+    NVIC_EnableIRQ(EXTI9_5_IRQn); 
+    NVIC_SetPriority(EXTI9_5_IRQn, 2);
 
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTF, LL_SYSCFG_EXTI_LINE0);
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_0);
@@ -32,11 +43,25 @@ void EXTI0_IRQHandler()
     }
 }
 
+void EXTI9_5_IRQHandler()
+{
+    if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_6) != RESET)
+    {
+        LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
+        // startPause();
+    }
+}
+
 void EXTI15_10_IRQHandler()
 {
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_11) != RESET)
     {
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
         // setCriticalError(ERROR_MOTOR_OVERCURRENT);
+    }
+    if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET)
+    {
+        LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
+        // flushSd();
     }
 }

@@ -16,7 +16,6 @@ static void initializeSdPins();
 static void initializeI2CPins();
 static void initializeSpiPins();
 static void initializeExtiPins();
-static void initializeInputPins();
 static void initializeTimerPins();
 static void initializeUsartPins();
 static void initializeAnalogPins();
@@ -37,7 +36,6 @@ void initializeGpio()
     enableVddIo2();
 
     initializeOutputPins();
-    initializeInputPins();
     initializeExtiPins();
     initializeTimerPins();
     initializeUsartPins();
@@ -175,17 +173,12 @@ void initializeOutputPins()
     LL_GPIO_SetPinSpeed(GPIOG, LL_GPIO_PIN_1, LL_GPIO_SPEED_FREQ_VERY_HIGH);
 }
 
-void initializeInputPins()
-{
-#ifdef REVISION_1_0
-    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_11, LL_GPIO_MODE_INPUT);
-
-    LL_GPIO_SetPinMode(GPIOE, LL_GPIO_PIN_6, LL_GPIO_MODE_INPUT);
-#endif
-}
-
 void initializeExtiPins()
 {
+    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_12, LL_GPIO_MODE_INPUT);
+
+    LL_GPIO_SetPinMode(GPIOE, LL_GPIO_PIN_6, LL_GPIO_MODE_INPUT);
+
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_11, LL_GPIO_MODE_INPUT);
 
     LL_GPIO_SetPinMode(GPIOF, LL_GPIO_PIN_0, LL_GPIO_MODE_INPUT);
@@ -204,7 +197,7 @@ void initializeAnalogPins()
     LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_6, LL_GPIO_MODE_ANALOG);
     LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_7, LL_GPIO_MODE_ANALOG);
     LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_8, LL_GPIO_MODE_ANALOG);
-    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_12, LL_GPIO_MODE_ANALOG);
+    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_11, LL_GPIO_MODE_ANALOG);
 
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_0, LL_GPIO_MODE_ANALOG);
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_1, LL_GPIO_MODE_ANALOG);
