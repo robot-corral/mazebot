@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "line_sensor.h"
+
 /*******************************************************************************
  * system_clock                                                                *
  *******************************************************************************/
@@ -41,5 +43,11 @@ typedef struct
 
 #define IMU_SPI_TX_BUFFER_LENGTH 11
 
-volatile ImuRawSensorData_t g_imuRxBuffer;
-volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
+extern volatile ImuRawSensorData_t g_imuRxBuffer;
+extern volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
+
+/*******************************************************************************
+ * line_sensor_r1                                                              *
+ *******************************************************************************/
+
+extern volatile uint16_t g_lineSensorValues[LINE_SENSOR_COUNT];

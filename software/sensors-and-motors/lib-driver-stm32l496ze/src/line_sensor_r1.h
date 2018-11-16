@@ -2,12 +2,8 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-#include "driver.h"
+#pragma once
 
-int main()
-{
-    initializeDriver();
-    initializeDebugDriver(true);
+void initializeLineSensorR1();
 
-    for (;;) ;
-}
+void startQueryingLineSensorR1();

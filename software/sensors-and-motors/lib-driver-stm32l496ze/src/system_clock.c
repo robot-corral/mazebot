@@ -58,8 +58,6 @@ void initializeSystemClock()
 
     LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 
-    LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSOURCE_SYSCLK);
-
     initializeClockTimer();
 }
 

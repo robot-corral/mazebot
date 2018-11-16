@@ -130,7 +130,7 @@ void DMA2_Channel1_IRQHandler(void)
         LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
         LL_GPIO_SetOutputPin(GPIOG, LL_GPIO_PIN_12);
     }
-    else if (LL_DMA_IsActiveFlag_TE1(DMA2))
+    if (LL_DMA_IsActiveFlag_TE1(DMA2))
     {
         LL_DMA_ClearFlag_GI1(DMA2);
         setCriticalError(ERROR_DMA);
@@ -144,7 +144,7 @@ void DMA2_Channel2_IRQHandler(void)
         LL_DMA_ClearFlag_GI2(DMA2);
         LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_2);
     }
-    else if (LL_DMA_IsActiveFlag_TE2(DMA2))
+    if (LL_DMA_IsActiveFlag_TE2(DMA2))
     {
         LL_DMA_ClearFlag_GI2(DMA2);
         setCriticalError(ERROR_DMA);

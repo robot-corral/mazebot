@@ -9,6 +9,7 @@
 #include "timers.h"
 #include "system_clock.h"
 #include "imu_lsm6ds3h.h"
+#include "line_sensor_r1.h"
 #include "motor_controller.h"
 #include "motor_controller_mc33926.h"
 
@@ -22,6 +23,7 @@ void initializeDriver()
     initializeTimers();
     initializeMotorControllerMc33926();
     initializeUsart();
+    initializeLineSensorR1();
     initializeSpi();
     initializeImuLsm6ds3h();
 }

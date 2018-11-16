@@ -44,6 +44,9 @@
     <ClInclude Include="inc\clock.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="inc\line_sensor.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\clock.c">

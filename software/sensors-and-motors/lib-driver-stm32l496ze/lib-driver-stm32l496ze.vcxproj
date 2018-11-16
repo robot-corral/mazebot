@@ -56,6 +56,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\line_sensor_r1.c" />
     <ClCompile Include="src\driver.c" />
     <ClCompile Include="src\exti.c" />
     <ClCompile Include="src\global_data.c" />
@@ -77,6 +78,7 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\line_sensor_r1.h" />
     <ClInclude Include="src\exti.h" />
     <ClInclude Include="src\global_data.h" />
     <ClInclude Include="src\gpio.h" />

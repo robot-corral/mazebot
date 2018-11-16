@@ -58,6 +58,7 @@
     <ClInclude Include="inc\debug.h" />
     <ClInclude Include="inc\driver.h" />
     <ClInclude Include="inc\imu.h" />
+    <ClInclude Include="inc\line_sensor.h" />
     <ClInclude Include="inc\motor_controller.h" />
     <ClInclude Include="inc\parameters.h" />
     <ClInclude Include="inc\status.h" />

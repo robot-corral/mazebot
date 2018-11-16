@@ -47,6 +47,9 @@
     <ClInclude Include="src\imu_lsm6ds3h.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\line_sensor_r1.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\driver.c">
@@ -80,6 +83,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\imu_lsm6ds3h.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\line_sensor_r1.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

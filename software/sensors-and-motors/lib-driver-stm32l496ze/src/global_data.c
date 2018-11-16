@@ -28,3 +28,9 @@ uint32_t g_rightMotorEncoderTicks;
 
 volatile ImuRawSensorData_t g_imuRxBuffer;
 volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
+
+/*******************************************************************************
+ * line_sensor_r1                                                              *
+ *******************************************************************************/
+
+volatile uint16_t g_lineSensorValues[LINE_SENSOR_COUNT];
