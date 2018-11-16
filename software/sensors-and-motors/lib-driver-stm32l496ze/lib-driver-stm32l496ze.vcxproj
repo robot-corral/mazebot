@@ -67,6 +67,7 @@
     <ClCompile Include="src\status.c" />
     <ClCompile Include="src\system_clock.c" />
     <ClCompile Include="src\timers.c" />
+    <ClCompile Include="src\timing.c" />
     <ClCompile Include="src\usart.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

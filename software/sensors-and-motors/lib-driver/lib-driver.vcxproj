@@ -63,6 +63,7 @@
     <ClInclude Include="inc\parameters.h" />
     <ClInclude Include="inc\status.h" />
     <ClInclude Include="inc\tasks.h" />
+    <ClInclude Include="inc\timing.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

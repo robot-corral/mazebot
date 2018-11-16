@@ -34,3 +34,10 @@ volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
  *******************************************************************************/
 
 volatile uint16_t g_lineSensorValues[LINE_SENSOR_COUNT];
+
+/*******************************************************************************
+ * spi                                                                         *
+ *******************************************************************************/
+
+uint32_t g_spiDisablePin;
+GPIO_TypeDef* g_spiDisableGpio;

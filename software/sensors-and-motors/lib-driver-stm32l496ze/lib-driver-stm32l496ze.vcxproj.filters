@@ -88,5 +88,8 @@
     <ClCompile Include="src\line_sensor_r1.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\timing.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

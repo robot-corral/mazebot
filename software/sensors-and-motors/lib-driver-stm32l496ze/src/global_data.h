@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "stm32/stm32l4xx_ll_gpio.h"
+
 #include "line_sensor.h"
 
 /*******************************************************************************
@@ -51,3 +53,10 @@ extern volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
  *******************************************************************************/
 
 extern volatile uint16_t g_lineSensorValues[LINE_SENSOR_COUNT];
+
+/*******************************************************************************
+ * spi                                                                         *
+ *******************************************************************************/
+
+extern uint32_t g_spiDisablePin;
+extern GPIO_TypeDef* g_spiDisableGpio;

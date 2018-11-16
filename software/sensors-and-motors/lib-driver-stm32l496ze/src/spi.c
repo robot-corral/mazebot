@@ -4,6 +4,8 @@
 #include "stm32/stm32l4xx_ll_gpio.h"
 
 #include "status.h"
+#include "timing.h"
+#include "global_data.h"
 
 #include "spi.h"
 
@@ -106,6 +108,11 @@ void setSpiBuffers(volatile void* pRxBuffer, volatile void* pTxBuffer)
 
 void startTransmitReceiveSpi(uint32_t bufferLength, GPIO_TypeDef* pGpio, uint32_t pinMask)
 {
+    setOutput0High();
+
+    g_spiDisableGpio = pGpio;
+    g_spiDisablePin = pinMask;
+
     flushSpi();
 
     LL_GPIO_ResetOutputPin(pGpio, pinMask);
@@ -124,16 +131,17 @@ bool isSpiBusy()
 
 void DMA2_Channel1_IRQHandler(void)
 {
-    if (LL_DMA_IsActiveFlag_TC1(DMA2))
-    {
-        LL_DMA_ClearFlag_GI1(DMA2);
-        LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
-        LL_GPIO_SetOutputPin(GPIOG, LL_GPIO_PIN_12);
-    }
     if (LL_DMA_IsActiveFlag_TE1(DMA2))
     {
         LL_DMA_ClearFlag_GI1(DMA2);
         setCriticalError(ERROR_DMA);
+    }
+    if (LL_DMA_IsActiveFlag_TC1(DMA2))
+    {
+        LL_DMA_ClearFlag_GI1(DMA2);
+        LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
+        LL_GPIO_SetOutputPin(g_spiDisableGpio, g_spiDisablePin);
+        setOutput0Low();
     }
 }
 

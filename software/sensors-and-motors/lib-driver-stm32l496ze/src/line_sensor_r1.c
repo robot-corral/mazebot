@@ -8,6 +8,7 @@
 #include "stm32/stm32l4xx_ll_rcc.h"
 
 #include "status.h"
+#include "timing.h"
 #include "global_data.h"
 #include "line_sensor.h"
 
@@ -23,6 +24,8 @@ static void initializeAdc3();
 static void initializeAdc3Dma();
 
 static void activateAdc();
+
+static void transferComplete();
 
 void initializeLineSensorR1()
 {
@@ -95,6 +98,7 @@ void initializeAdc1Dma()
 
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, 8);
 
+    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_1);
 
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
@@ -149,6 +153,7 @@ void initializeAdc2Dma()
 
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, 7);
 
+    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
 
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
@@ -205,6 +210,7 @@ void initializeAdc3Dma()
 
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, 8);
 
+    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_3);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
 
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
@@ -256,10 +262,20 @@ void activateAdc()
 
 uint32_t startQueryingLineSensor()
 {
+    setOutput1High();
     LL_ADC_REG_StartConversion(ADC1);
-    LL_ADC_REG_StartConversion(ADC2);
     LL_ADC_REG_StartConversion(ADC3);
-    return 1600; // TODO calculate or meazure actual value
+    // ADC2 is last as it has 7 sensors to query not 8
+    LL_ADC_REG_StartConversion(ADC2);
+    return 153847; // 1 / 6.5 usec
+}
+
+void transferComplete()
+{
+    if (LL_ADC_REG_IsConversionOngoing(ADC1) == 0 && LL_ADC_REG_IsConversionOngoing(ADC2) == 0 && LL_ADC_REG_IsConversionOngoing(ADC3) == 0)
+    {
+        setOutput1Low();
+    }
 }
 
 void DMA1_Channel1_IRQHandler(void)
@@ -268,6 +284,11 @@ void DMA1_Channel1_IRQHandler(void)
     {
         LL_DMA_ClearFlag_TE1(DMA1);
         setCriticalError(ERROR_DMA);
+    }
+    if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
+    {
+        LL_DMA_ClearFlag_TC1(DMA1);
+        transferComplete();
     }
 }
 
@@ -278,6 +299,11 @@ void DMA1_Channel2_IRQHandler(void)
         LL_DMA_ClearFlag_TE2(DMA1);
         setCriticalError(ERROR_DMA);
     }
+    if (LL_DMA_IsActiveFlag_TC2(DMA1) == 1)
+    {
+        LL_DMA_ClearFlag_TC2(DMA1);
+        transferComplete();
+    }
 }
 
 void DMA1_Channel3_IRQHandler(void)
@@ -286,5 +312,10 @@ void DMA1_Channel3_IRQHandler(void)
     {
         LL_DMA_ClearFlag_TE3(DMA1);
         setCriticalError(ERROR_DMA);
+    }
+    if (LL_DMA_IsActiveFlag_TC3(DMA1) == 1)
+    {
+        LL_DMA_ClearFlag_TC3(DMA1);
+        transferComplete();
     }
 }
