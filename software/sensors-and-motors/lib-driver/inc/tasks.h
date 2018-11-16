@@ -2,14 +2,13 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-#include "tasks.h"
-#include "driver.h"
+#pragma once
 
-int main()
-{
-    initializeDriver();
-    initializeDebugDriver(true);
-    startTaskScheduler();
+#include <stdint.h>
 
-    for (;;) ;
-}
+void startTaskScheduler();
+
+/*
+ * returns - frequency (Hz) of how often this task should be called from now on
+ */
+uint32_t __attribute__((weak)) asyncTaskCallback();

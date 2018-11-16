@@ -5,5 +5,3 @@
 #pragma once
 
 void initializeImuLsm6ds3h();
-
-void startQueryingImuLsm6ds3h();

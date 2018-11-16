@@ -5,5 +5,3 @@
 #pragma once
 
 void initializeLineSensorR1();
-
-void startQueryingLineSensorR1();

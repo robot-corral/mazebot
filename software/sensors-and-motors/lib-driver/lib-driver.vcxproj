@@ -62,6 +62,7 @@
     <ClInclude Include="inc\motor_controller.h" />
     <ClInclude Include="inc\parameters.h" />
     <ClInclude Include="inc\status.h" />
+    <ClInclude Include="inc\tasks.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -73,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\clock.c" />
+    <ClCompile Include="src\tasks.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib-utils\lib-utils.vcxproj">

@@ -3,13 +3,8 @@
  *******************************************************************************/
 
 #include "tasks.h"
-#include "driver.h"
 
-int main()
+uint32_t __attribute__((weak)) asyncTaskCallback()
 {
-    initializeDriver();
-    initializeDebugDriver(true);
-    startTaskScheduler();
-
-    for (;;) ;
+    return 1;
 }

@@ -47,9 +47,15 @@
     <ClInclude Include="inc\line_sensor.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="inc\tasks.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\clock.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tasks.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

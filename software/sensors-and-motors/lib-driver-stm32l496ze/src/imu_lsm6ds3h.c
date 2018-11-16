@@ -35,25 +35,26 @@ void initializeImuLsm6ds3h()
     // wait for imu gyroscope to start
     uint32_t imuGyroscopeBootStartTime = getCurrentTimeInMicroseconds();
     while (getDifferenceWithCurrentTime(imuGyroscopeBootStartTime) < 80 * 1000) ;
+
+    g_imuTxBuffer[0] = 0b10011110;  // STATUS_REG(1Eh): address
+    g_imuTxBuffer[1] = 0b00000000;  // STATUS_REG(1Eh): read placeholder
+    g_imuTxBuffer[2] = 0b00000000;  // OUT_TEMP_L(20h): read placeholder
+    g_imuTxBuffer[3] = 0b00000000;  // OUT_TEMP_h(21h): read placeholder
+    g_imuTxBuffer[4] = 0b00000000;  // OUTX_L_G  (22h): read placeholder
+    g_imuTxBuffer[5] = 0b00000000;  // OUTX_H_G  (23h): read placeholder
+    g_imuTxBuffer[6] = 0b00000000;  // OUTY_L_G  (24h): read placeholder
+    g_imuTxBuffer[7] = 0b00000000;  // OUTY_H_G  (25h): read placeholder
+    g_imuTxBuffer[8] = 0b00000000;  // OUTZ_L_G  (26h): read placeholder
+    g_imuTxBuffer[9] = 0b00000000;  // OUTZ_H_G  (27h): read placeholder
 }
 
-void startQueryingImuLsm6ds3h()
+uint32_t startQueryingImu()
 {
-    g_imuTxBuffer[0] = 0b10011110; // STATUS_REG(1Eh): address
-    g_imuTxBuffer[1] = 0b00000000; // STATUS_REG(1Eh): read placeholder
-    g_imuTxBuffer[2] = 0b00000000; // OUT_TEMP_L(20h): read placeholder
-    g_imuTxBuffer[3] = 0b00000000; // OUT_TEMP_h(21h): read placeholder
-    g_imuTxBuffer[4] = 0b00000000; // OUTX_L_G  (22h): read placeholder
-    g_imuTxBuffer[5] = 0b00000000; // OUTX_H_G  (23h): read placeholder
-    g_imuTxBuffer[6] = 0b00000000; // OUTY_L_G  (24h): read placeholder
-    g_imuTxBuffer[7] = 0b00000000; // OUTY_H_G  (25h): read placeholder
-    g_imuTxBuffer[8] = 0b00000000; // OUTZ_L_G  (26h): read placeholder
-    g_imuTxBuffer[9] = 0b00000000; // OUTZ_H_G  (27h): read placeholder
-
     startTransmitReceiveSpi(10, SPI_DEVICE_IMU);
+    return 1600; // TODO calculate or meazure actual value
 }
 
-float getImuYawAngleRadians()
+float getImuYawAngleDeltaRadians()
 {
     // normalized_value = read_value * 17.50f / 1000.0f * 2.0f * pi / 180.0f
     // yaw_angle_radians = normalized_value * time_delta_since_last_read

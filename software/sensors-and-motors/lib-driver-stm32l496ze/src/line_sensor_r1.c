@@ -254,11 +254,12 @@ void activateAdc()
     while (LL_ADC_IsActiveFlag_ADRDY(ADC3) == 0) ;
 }
 
-void startQueryingLineSensorR1()
+uint32_t startQueryingLineSensor()
 {
     LL_ADC_REG_StartConversion(ADC1);
     LL_ADC_REG_StartConversion(ADC2);
     LL_ADC_REG_StartConversion(ADC3);
+    return 1600; // TODO calculate or meazure actual value
 }
 
 void DMA1_Channel1_IRQHandler(void)
