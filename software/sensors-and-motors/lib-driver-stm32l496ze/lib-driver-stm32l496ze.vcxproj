@@ -60,7 +60,8 @@
     <ClCompile Include="src\exti.c" />
     <ClCompile Include="src\global_data.c" />
     <ClCompile Include="src\gpio.c" />
-    <ClCompile Include="src\motor_impl.c" />
+    <ClCompile Include="src\imu_lsm6ds3h.c" />
+    <ClCompile Include="src\motor_controller_mc33926.c" />
     <ClCompile Include="src\spi.c" />
     <ClCompile Include="src\status.c" />
     <ClCompile Include="src\system_clock.c" />
@@ -79,7 +80,8 @@
     <ClInclude Include="src\exti.h" />
     <ClInclude Include="src\global_data.h" />
     <ClInclude Include="src\gpio.h" />
-    <ClInclude Include="src\motor_impl.h" />
+    <ClInclude Include="src\imu_lsm6ds3h.h" />
+    <ClInclude Include="src\motor_controller_mc33926.h" />
     <ClInclude Include="src\spi.h" />
     <ClInclude Include="src\system_clock.h" />
     <ClInclude Include="src\timers.h" />

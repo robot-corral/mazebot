@@ -44,18 +44,21 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)\inc;$(SolutionDir)\lib-utils\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)\inc;$(SolutionDir)\lib-utils\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\clock.h" />
     <ClInclude Include="inc\debug.h" />
     <ClInclude Include="inc\driver.h" />
     <ClInclude Include="inc\imu.h" />
-    <ClInclude Include="inc\motor.h" />
+    <ClInclude Include="inc\motor_controller.h" />
     <ClInclude Include="inc\parameters.h" />
     <ClInclude Include="inc\status.h" />
   </ItemGroup>
@@ -68,6 +71,11 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\dummy.c" />
+    <ClCompile Include="src\clock.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib-utils\lib-utils.vcxproj">
+      <Project>{aa910249-4820-4f9b-b6bb-f2859e96845a}</Project>
+    </ProjectReference>
   </ItemGroup>
 </Project>

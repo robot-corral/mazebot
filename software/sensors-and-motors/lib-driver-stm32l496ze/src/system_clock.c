@@ -2,14 +2,18 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+#include "stm32/stm32l4xx_ll_bus.h"
 #include "stm32/stm32l4xx_ll_pwr.h"
 #include "stm32/stm32l4xx_ll_rcc.h"
+#include "stm32/stm32l4xx_ll_tim.h"
 #include "stm32/stm32l4xx_ll_utils.h"
 #include "stm32/stm32l4xx_ll_system.h"
 
 #include "global_data.h"
 
 #include "system_clock.h"
+
+static void initializeClockTimer();
 
 void initializeSystemClock()
 {
@@ -55,4 +59,20 @@ void initializeSystemClock()
     LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 
     LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSOURCE_SYSCLK);
+
+    initializeClockTimer();
+}
+
+void initializeClockTimer()
+{
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5);
+    LL_TIM_SetPrescaler(TIM5, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
+    LL_TIM_SetAutoReload(TIM5, 0xFFFFFFFF);  // reload 32 bit value (TIM5 is 32 bit)
+    LL_TIM_EnableCounter(TIM5);
+    LL_TIM_GenerateEvent_UPDATE(TIM5);
+}
+
+uint32_t getCurrentTimeInMicroseconds()
+{
+    return LL_TIM_GetCounter(TIM5);
 }

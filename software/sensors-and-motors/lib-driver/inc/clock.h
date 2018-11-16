@@ -4,4 +4,8 @@
 
 #pragma once
 
-void initializeMotor();
+#include <stdint.h>
+
+uint32_t getCurrentTimeInMicroseconds();
+
+uint32_t getDifferenceWithCurrentTime(uint32_t startTime);

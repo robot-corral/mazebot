@@ -29,9 +29,6 @@
     <ClInclude Include="inc\status.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="inc\motor.h">
-      <Filter>inc</Filter>
-    </ClInclude>
     <ClInclude Include="inc\parameters.h">
       <Filter>inc</Filter>
     </ClInclude>
@@ -41,9 +38,15 @@
     <ClInclude Include="inc\imu.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="inc\motor_controller.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\clock.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\dummy.c">
+    <ClCompile Include="src\clock.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

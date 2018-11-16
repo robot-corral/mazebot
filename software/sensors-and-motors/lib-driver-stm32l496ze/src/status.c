@@ -15,6 +15,7 @@ void setCriticalError(Error_t error)
     switch (error)
     {
         case ERROR_MOTOR: LL_GPIO_SetOutputPin(LED_ERROR_0_GPIO, LED_ERROR_0_PIN); break;
+        case ERROR_DMA:   LL_GPIO_SetOutputPin(LED_ERROR_1_GPIO, LED_ERROR_1_PIN); break;
     }
 
     for (;;) ;

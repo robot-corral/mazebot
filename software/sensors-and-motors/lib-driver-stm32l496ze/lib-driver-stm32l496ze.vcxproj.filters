@@ -32,9 +32,6 @@
     <ClInclude Include="src\global_data.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\motor_impl.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\exti.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -42,6 +39,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\spi.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\motor_controller_mc33926.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imu_lsm6ds3h.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -61,9 +64,6 @@
     <ClCompile Include="src\status.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\motor_impl.c">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
@@ -74,6 +74,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\spi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\motor_controller_mc33926.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imu_lsm6ds3h.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

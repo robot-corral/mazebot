@@ -4,4 +4,6 @@
 
 #pragma once
 
-void startQueryingImuData();
+#include <stdbool.h>
+
+float getImuYawAngleRadians();

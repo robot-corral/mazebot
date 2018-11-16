@@ -12,9 +12,10 @@
 #include "global_data.h"
 #include "rolling_values.h"
 
-#include "motor.h"
+#include "motor_controller.h"
+#include "motor_controller_mc33926.h"
 
-void initializeMotor()
+void initializeMotorControllerMc33926()
 {
     g_leftMotorPreviousEncoderTicksA = 0;
     g_leftMotorPreviousEncoderTicksB = 0;
@@ -36,13 +37,13 @@ void setLeftMotorPower(int16_t power)
 {
     if (power > 0)
     {
-        LL_TIM_OC_SetCompareCH1(TIM16, power);
-        LL_TIM_OC_SetCompareCH1(TIM17, 0);
+        LL_TIM_OC_SetCompareCH1(TIM16, 0);
+        LL_TIM_OC_SetCompareCH1(TIM17, power);
     }
     else if (power < 0)
     {
-        LL_TIM_OC_SetCompareCH1(TIM16, 0);
-        LL_TIM_OC_SetCompareCH1(TIM17, -power);
+        LL_TIM_OC_SetCompareCH1(TIM16, -power);
+        LL_TIM_OC_SetCompareCH1(TIM17, 0);
     }
     else
     {
@@ -80,16 +81,16 @@ void setRightMotorPower(int16_t power)
     if (power > 0)
     {
         while (!LL_LPTIM_IsActiveFlag_CMPOK(LPTIM1)) ;
-        LL_LPTIM_SetCompare(LPTIM1, MAX_MOTOR_POWER);
+        LL_LPTIM_SetCompare(LPTIM1, MAX_MOTOR_POWER - power);
         while (!LL_LPTIM_IsActiveFlag_CMPOK(LPTIM2)) ;
-        LL_LPTIM_SetCompare(LPTIM2, MAX_MOTOR_POWER - power);
+        LL_LPTIM_SetCompare(LPTIM2, MAX_MOTOR_POWER);
     }
     else if (power < 0)
     {
         while (!LL_LPTIM_IsActiveFlag_CMPOK(LPTIM1)) ;
-        LL_LPTIM_SetCompare(LPTIM1, MAX_MOTOR_POWER + power);
+        LL_LPTIM_SetCompare(LPTIM1, MAX_MOTOR_POWER);
         while (!LL_LPTIM_IsActiveFlag_CMPOK(LPTIM2)) ;
-        LL_LPTIM_SetCompare(LPTIM2, MAX_MOTOR_POWER);
+        LL_LPTIM_SetCompare(LPTIM2, MAX_MOTOR_POWER + power);
     }
     else
     {
