@@ -11,7 +11,7 @@ void startQueryingImu();
 /*
  * Calling this method while data querying is in progress will result in undefined behavior
  *
- * returns - yaw angle delta in radians since last query. It can be 0 if device didn't get new data.
+ * returns - yaw angle delta in radians / second since last query. It can be 0 if device didn't get new data.
  *           Querying it multiple times between calls to startQueryingImu() will return the same value.
  */
-float getImuYawAngleDeltaRadians();
+float getImuYawAngleDeltaRadiansPerSecond();

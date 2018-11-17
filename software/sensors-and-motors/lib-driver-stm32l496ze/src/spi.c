@@ -66,10 +66,10 @@ void initializeSpi3Dma()
 
     // common
 
-    NVIC_SetPriority(DMA2_Channel1_IRQn, 1);
+    NVIC_SetPriority(DMA2_Channel1_IRQn, 2);
     NVIC_EnableIRQ(DMA2_Channel1_IRQn);
 
-    NVIC_SetPriority(DMA2_Channel2_IRQn, 1);
+    NVIC_SetPriority(DMA2_Channel2_IRQn, 2);
     NVIC_EnableIRQ(DMA2_Channel2_IRQn);
 
     LL_DMA_EnableIT_TC(DMA2, LL_DMA_CHANNEL_1);
@@ -140,7 +140,7 @@ void DMA2_Channel1_IRQHandler(void)
     {
         LL_DMA_ClearFlag_GI1(DMA2);
         LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
-        LL_GPIO_SetOutputPin(g_spiDisableGpio, g_spiDisablePin);
+        LL_GPIO_SetOutputPin((GPIO_TypeDef*) g_spiDisableGpio, g_spiDisablePin);
         setOutput0Low();
     }
 }

@@ -13,3 +13,9 @@ revision 2.0 -- WORK IN PROGRESS --
 * LED outputs pins were changed from (PG3, PG4, PG5, PG6, PG7, PG8) to (PD14, PD15, PG2, PG3, PG4, PC6) respectively
 * sensors connector is straight one (not 90 degree) and is now mounted on the bottom of the board facing down
 * board is made slightly more compact (sensors connector was moved closer to MCU)
+
+TODO:
+
+* add 3.3V voltage regulator (need to calculate 3.3V current consumption when everything is on)
+* move SD Flush to A8 as it doesn't have many other functions and A9 is USART1_TX
+* move to custom motor driver

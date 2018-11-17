@@ -2,9 +2,6 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-#include "robot.h"
+#include "global_data.h"
 
-int main()
-{
-    robotMainLoop();
-}
+volatile bool g_taskQuerySensors;

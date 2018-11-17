@@ -2,17 +2,26 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+#include <math.h>
+
 #include "stm32/stm32l4xx_ll_adc.h"
 #include "stm32/stm32l4xx_ll_bus.h"
 #include "stm32/stm32l4xx_ll_dma.h"
 #include "stm32/stm32l4xx_ll_rcc.h"
 
+#include "../global_defs.h"
+
+#include "clock.h"
 #include "status.h"
 #include "timing.h"
+#include "buttons.h"
+#include "math_utils.h"
 #include "global_data.h"
 #include "line_sensor.h"
 
 #include "line_sensor_r1.h"
+
+#define MIN_SAFETY_FACTOR 2.5f
 
 static void initializeAdc1();
 static void initializeAdc1Dma();
@@ -27,8 +36,12 @@ static void activateAdc();
 
 static void transferComplete();
 
+static bool isLineSensorBusy();
+
 void initializeLineSensorR1()
 {
+    g_lineDisplacementFromCenterlineInMeters = 0.0f;
+
     LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSOURCE_SYSCLK);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
@@ -75,7 +88,7 @@ void initializeAdc1()
 
 void initializeAdc1Dma()
 {
-    NVIC_SetPriority(DMA1_Channel1_IRQn, 1);
+    NVIC_SetPriority(DMA1_Channel1_IRQn, 2);
     NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1,
@@ -130,7 +143,7 @@ void initializeAdc2()
 
 void initializeAdc2Dma()
 {
-    NVIC_SetPriority(DMA1_Channel2_IRQn, 1);
+    NVIC_SetPriority(DMA1_Channel2_IRQn, 2);
     NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1,
@@ -187,7 +200,7 @@ void initializeAdc3()
 
 void initializeAdc3Dma()
 {
-    NVIC_SetPriority(DMA1_Channel3_IRQn, 1);
+    NVIC_SetPriority(DMA1_Channel3_IRQn, 2);
     NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1,
@@ -269,10 +282,142 @@ void startQueryingLineSensor()
     LL_ADC_REG_StartConversion(ADC2);
 }
 
+void calibrateLineSensor()
+{
+#ifndef USE_HARDCODED_CALIBRATION_VALUES
+    for (;;)
+    {
+        for (uint32_t i = 0; i < LINE_SENSOR_COUNT; ++i)
+        {
+            g_lineSensorMinValues[i] = 0;
+            g_lineSensorMaxValues[i] = INFINITY;
+        }
+
+        setCalibrationStatus(CS_CALIBRATING_WHITE);
+
+        waitForStartPauseButtonPress();
+
+        uint32_t startTime = getCurrentTimeInMicroseconds();
+
+        do
+        {
+            startQueryingLineSensor();
+            while (isLineSensorBusy()) ;
+            for (uint32_t i = 0; i < LINE_SENSOR_COUNT; ++i)
+            {
+                g_lineSensorMinValues[i] = MAX(g_lineSensorMinValues[i], g_lineSensorValues[i]);
+            }
+        } while (getDifferenceWithCurrentTime(startTime) < 2000000 /* 2 seconds */);
+
+        setCalibrationStatus(CS_CALIBRATING_BLACK);
+
+        waitForStartPauseButtonPress();
+
+        startTime = getCurrentTimeInMicroseconds();
+
+        do
+        {
+            startQueryingLineSensor();
+            while (isLineSensorBusy()) ;
+            for (uint32_t i = 0; i < LINE_SENSOR_COUNT; ++i)
+            {
+                g_lineSensorMaxValues[i] = MIN(g_lineSensorMaxValues[i], g_lineSensorValues[i]);
+            }
+        } while (getDifferenceWithCurrentTime(startTime) < 2000000 /* 2 seconds */);
+
+        bool isValid = true;
+
+        for (uint32_t i = 0; i < LINE_SENSOR_COUNT; ++i)
+        {
+            if (g_lineSensorMaxValues[i] < MIN_SAFETY_FACTOR * g_lineSensorMinValues[i])
+            {
+                isValid = false;
+            }
+        }
+
+        if (isValid)
+        {
+            break;
+        }
+    }
+
+    setCalibrationStatus(CS_OFF);
+#else
+    g_lineSensorMinValues[ 0] = 273.0f;
+    g_lineSensorMinValues[ 1] = 273.0f;
+    g_lineSensorMinValues[ 2] = 273.0f;
+    g_lineSensorMinValues[ 3] = 273.0f;
+    g_lineSensorMinValues[ 4] = 273.0f;
+    g_lineSensorMinValues[ 5] = 273.0f;
+    g_lineSensorMinValues[ 6] = 273.0f;
+    g_lineSensorMinValues[ 7] = 273.0f;
+    g_lineSensorMinValues[ 8] = 273.0f;
+    g_lineSensorMinValues[ 9] = 273.0f;
+    g_lineSensorMinValues[10] = 273.0f;
+    g_lineSensorMinValues[11] = 273.0f;
+    g_lineSensorMinValues[12] = 273.0f;
+    g_lineSensorMinValues[13] = 273.0f;
+    g_lineSensorMinValues[14] = 273.0f;
+    g_lineSensorMinValues[15] = 273.0f;
+    g_lineSensorMinValues[16] = 273.0f;
+    g_lineSensorMinValues[17] = 273.0f;
+    g_lineSensorMinValues[18] = 273.0f;
+    g_lineSensorMinValues[19] = 273.0f;
+    g_lineSensorMinValues[20] = 273.0f;
+    g_lineSensorMinValues[21] = 273.0f;
+    g_lineSensorMinValues[22] = 273.0f;
+    g_lineSensorMinValues[23] = 273.0f;
+
+    // edge values are less lit so they don't get oversaturated and their value is a bit higher
+    g_lineSensorMaxValues[ 0] = 2700.0f;
+    g_lineSensorMaxValues[ 1] = 2300.0f;
+    g_lineSensorMaxValues[ 2] = 2300.0f;
+    g_lineSensorMaxValues[ 3] = 2300.0f;
+    g_lineSensorMaxValues[ 4] = 2300.0f;
+    g_lineSensorMaxValues[ 5] = 2300.0f;
+    g_lineSensorMaxValues[ 6] = 2300.0f;
+    g_lineSensorMaxValues[ 7] = 2300.0f;
+    g_lineSensorMaxValues[ 8] = 2300.0f;
+    g_lineSensorMaxValues[ 9] = 2300.0f;
+    g_lineSensorMaxValues[10] = 2300.0f;
+    g_lineSensorMaxValues[11] = 2300.0f;
+    g_lineSensorMaxValues[12] = 2300.0f;
+    g_lineSensorMaxValues[13] = 2300.0f;
+    g_lineSensorMaxValues[14] = 2300.0f;
+    g_lineSensorMaxValues[15] = 2300.0f;
+    g_lineSensorMaxValues[16] = 2300.0f;
+    g_lineSensorMaxValues[17] = 2300.0f;
+    g_lineSensorMaxValues[18] = 2300.0f;
+    g_lineSensorMaxValues[19] = 2300.0f;
+    g_lineSensorMaxValues[20] = 2300.0f;
+    g_lineSensorMaxValues[21] = 2300.0f;
+    g_lineSensorMaxValues[22] = 2300.0f;
+    g_lineSensorMaxValues[23] = 2700.0f;
+#endif
+}
+
+void calculateLineDisplacementFromCenterlineInMeters()
+{
+    // TODO
+}
+
+float getLineDisplacementFromCenterlineInMeters()
+{
+    return g_lineDisplacementFromCenterlineInMeters;
+}
+
+bool isLineSensorBusy()
+{
+    return LL_ADC_REG_IsConversionOngoing(ADC1) != 0 ||
+           LL_ADC_REG_IsConversionOngoing(ADC2) != 0 ||
+           LL_ADC_REG_IsConversionOngoing(ADC3) != 0;
+}
+
 void transferComplete()
 {
-    if (LL_ADC_REG_IsConversionOngoing(ADC1) == 0 && LL_ADC_REG_IsConversionOngoing(ADC2) == 0 && LL_ADC_REG_IsConversionOngoing(ADC3) == 0)
+    if (!isLineSensorBusy())
     {
+        calculateLineDisplacementFromCenterlineInMeters();
         setOutput1Low();
     }
 }

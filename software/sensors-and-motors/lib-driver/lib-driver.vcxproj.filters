@@ -53,6 +53,9 @@
     <ClInclude Include="inc\timing.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="inc\buttons.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\clock.c">

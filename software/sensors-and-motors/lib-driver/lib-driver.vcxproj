@@ -54,6 +54,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\buttons.h" />
     <ClInclude Include="inc\clock.h" />
     <ClInclude Include="inc\debug.h" />
     <ClInclude Include="inc\driver.h" />

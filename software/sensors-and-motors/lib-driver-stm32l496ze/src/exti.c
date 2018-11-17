@@ -7,9 +7,13 @@
 
 #include "exti.h"
 #include "status.h"
+#include "global_data.h"
 
 void initializeExti()
 {
+    g_flushSdButtonPressed = false;
+    g_startPauseButtonPressed = false;
+
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE12);
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_12);
     LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_12);
@@ -25,13 +29,27 @@ void initializeExti()
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_6);
     LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_6);
     NVIC_EnableIRQ(EXTI9_5_IRQn); 
-    NVIC_SetPriority(EXTI9_5_IRQn, 2);
+    NVIC_SetPriority(EXTI9_5_IRQn, 1);
 
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTF, LL_SYSCFG_EXTI_LINE0);
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_0);
     LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_0);
     NVIC_EnableIRQ(EXTI0_IRQn); 
     NVIC_SetPriority(EXTI0_IRQn, 0);
+}
+
+void waitForFlushSdButtonPress()
+{
+    g_flushSdButtonPressed = false;
+    while (!g_startPauseButtonPressed) ;
+    g_flushSdButtonPressed = false;
+}
+
+void waitForStartPauseButtonPress()
+{
+    g_startPauseButtonPressed = false;
+    while (!g_startPauseButtonPressed) ;
+    g_startPauseButtonPressed = false;
 }
 
 void EXTI0_IRQHandler()
@@ -48,7 +66,7 @@ void EXTI9_5_IRQHandler()
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_6) != RESET)
     {
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
-        // startPause();
+        g_startPauseButtonPressed = true;
     }
 }
 
@@ -62,6 +80,6 @@ void EXTI15_10_IRQHandler()
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_12) != RESET)
     {
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
-        // flushSd();
+        g_flushSdButtonPressed = true;
     }
 }

@@ -4,4 +4,6 @@
 
 #pragma once
 
+#define LINE_SENSOR_COUNT 23
+
 void initializeLineSensorR1();

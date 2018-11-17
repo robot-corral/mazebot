@@ -20,3 +20,56 @@ void setCriticalError(Error_t error)
 
     for (;;) ;
 }
+
+void setCalibrationStatus(CalibrationStatus_t calibrationStatus)
+{
+    switch (calibrationStatus)
+    {
+        case CS_OFF:
+        {
+            LL_GPIO_ResetOutputPin(LED_CALIBRATING_GPIO, LED_CALIBRATING_PIN);
+            LL_GPIO_ResetOutputPin(LED_RUNNING_GPIO, LED_RUNNING_PIN);
+            LL_GPIO_ResetOutputPin(LED_PAUSED_GPIO, LED_PAUSED_PIN);
+            break;
+        }
+        case CS_CALIBRATING_WHITE:
+        {
+            LL_GPIO_SetOutputPin(LED_CALIBRATING_GPIO, LED_CALIBRATING_PIN);
+            LL_GPIO_SetOutputPin(LED_RUNNING_GPIO, LED_RUNNING_PIN);
+            LL_GPIO_ResetOutputPin(LED_PAUSED_GPIO, LED_PAUSED_PIN);
+            break;
+        }
+        case CS_CALIBRATING_BLACK:
+        {
+            LL_GPIO_SetOutputPin(LED_CALIBRATING_GPIO, LED_CALIBRATING_PIN);
+            LL_GPIO_ResetOutputPin(LED_RUNNING_GPIO, LED_RUNNING_PIN);
+            LL_GPIO_SetOutputPin(LED_PAUSED_GPIO, LED_PAUSED_PIN);
+            break;
+        }
+    }
+}
+
+void setRunningStatus(RunningStatus_t runningStatus)
+{
+    switch (runningStatus)
+    {
+        case RS_OFF:
+        {
+            LL_GPIO_ResetOutputPin(LED_RUNNING_GPIO, LED_RUNNING_PIN);
+            LL_GPIO_ResetOutputPin(LED_PAUSED_GPIO, LED_PAUSED_PIN);
+            break;
+        }
+        case RS_PAUSED:
+        {
+            LL_GPIO_ResetOutputPin(LED_RUNNING_GPIO, LED_RUNNING_PIN);
+            LL_GPIO_SetOutputPin(LED_PAUSED_GPIO, LED_PAUSED_PIN);
+            break;
+        }
+        case RS_RUNNING:
+        {
+            LL_GPIO_SetOutputPin(LED_RUNNING_GPIO, LED_RUNNING_PIN);
+            LL_GPIO_ResetOutputPin(LED_PAUSED_GPIO, LED_PAUSED_PIN);
+            break;
+        }
+    }
+}

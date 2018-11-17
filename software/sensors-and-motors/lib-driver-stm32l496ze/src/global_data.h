@@ -9,25 +9,25 @@
 
 #include "stm32/stm32l4xx_ll_gpio.h"
 
-#include "line_sensor.h"
+#include "line_sensor_r1.h"
 
 /*******************************************************************************
  * system_clock                                                                *
  *******************************************************************************/
 
-extern bool g_isSystemClockInitialized;
+extern volatile bool g_isSystemClockInitialized;
 
 /*******************************************************************************
  * motor_controller_mc33926                                                    *
  *******************************************************************************/
 
-extern uint16_t g_leftMotorPreviousEncoderTicksA;
-extern uint16_t g_leftMotorPreviousEncoderTicksB;
-extern uint32_t g_leftMotorEncoderTicks;
+extern volatile uint16_t g_leftMotorPreviousEncoderTicksA;
+extern volatile uint16_t g_leftMotorPreviousEncoderTicksB;
+extern volatile uint32_t g_leftMotorEncoderTicks;
 
-extern uint16_t g_rightMotorPreviousEncoderTicksA;
-extern uint16_t g_rightMotorPreviousEncoderTicksB;
-extern uint32_t g_rightMotorEncoderTicks;
+extern volatile uint16_t g_rightMotorPreviousEncoderTicksA;
+extern volatile uint16_t g_rightMotorPreviousEncoderTicksB;
+extern volatile uint32_t g_rightMotorEncoderTicks;
 
 /*******************************************************************************
  * imu_lsm6ds3h                                                                *
@@ -52,11 +52,21 @@ extern volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
  * line_sensor_r1                                                              *
  *******************************************************************************/
 
+extern volatile float g_lineDisplacementFromCenterlineInMeters;
 extern volatile uint16_t g_lineSensorValues[LINE_SENSOR_COUNT];
+extern volatile float g_lineSensorMinValues[LINE_SENSOR_COUNT];
+extern volatile float g_lineSensorMaxValues[LINE_SENSOR_COUNT];
 
 /*******************************************************************************
  * spi                                                                         *
  *******************************************************************************/
 
-extern uint32_t g_spiDisablePin;
-extern GPIO_TypeDef* g_spiDisableGpio;
+extern volatile uint32_t g_spiDisablePin;
+extern volatile GPIO_TypeDef* g_spiDisableGpio;
+
+/*******************************************************************************
+ * exti                                                                        *
+ *******************************************************************************/
+
+extern volatile bool g_flushSdButtonPressed;
+extern volatile bool g_startPauseButtonPressed;

@@ -5,9 +5,14 @@
 #include "imu.h"
 #include "spi.h"
 #include "clock.h"
+#include "math_utils.h"
 #include "global_data.h"
 
 #include "imu_lsm6ds3h.h"
+
+// 17.50f is from "LSM6DS3H Datasheet" / "Table 3. Mechanical characteristics"
+// G_So - Angular rate sensitivity for 500 dps (see CTRL2_G dps configuration value in initializeImuLsm6ds3h)
+#define INTERNAL_TO_RADIANS_PER_SECOND (17.50f / 1000.0f * (FLOAT_DEGREES_TO_RADIANS))
 
 void initializeImuLsm6ds3h()
 {
@@ -36,6 +41,8 @@ void initializeImuLsm6ds3h()
     uint32_t imuGyroscopeBootStartTime = getCurrentTimeInMicroseconds();
     while (getDifferenceWithCurrentTime(imuGyroscopeBootStartTime) < 80 * 1000) ;
 
+    // prefil query parameters for RX
+
     g_imuTxBuffer[0] = 0b10011110; // STATUS_REG(1Eh): address
     g_imuTxBuffer[1] = 0b00000000; // STATUS_REG(1Eh): read placeholder
     g_imuTxBuffer[2] = 0b00000000; // OUT_TEMP_L(20h): read placeholder
@@ -53,9 +60,7 @@ void startQueryingImu()
     startTransmitReceiveSpi(10, SPI_DEVICE_IMU);
 }
 
-float getImuYawAngleDeltaRadians()
+float getImuYawAngleDeltaRadiansPerSecond()
 {
-    // normalized_value = read_value * 17.50f / 1000.0f * 2.0f * pi / 180.0f
-    // yaw_angle_radians = normalized_value * time_delta_since_last_read
-    return 0.0f;
+    return ((float) g_imuRxBuffer.gyro_yaw) * INTERNAL_TO_RADIANS_PER_SECOND;
 }

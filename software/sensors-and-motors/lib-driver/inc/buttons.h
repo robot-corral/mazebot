@@ -4,13 +4,6 @@
 
 #pragma once
 
-#include <stdbool.h>
+void waitForFlushSdButtonPress();
 
-void calibrateLineSensor();
-
-void startQueryingLineSensor();
-
-/*
- * Calling this method while data querying is in progress will result in undefined behavior
- */
-float getLineDisplacementFromCenterlineInMeters();
+void waitForStartPauseButtonPress();

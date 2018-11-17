@@ -1,0 +1,5 @@
+TODO
+
+* check if 5V is needed and if so add 5V voltage regulator
+* add 6V 3.2A or 2 6V 1.6A (up/down?) voltage regulator for motors (potentially reuse pololu ones)
+* add motor derivers (STSPIN250 seems like a good fit though it seems 5V is needed)

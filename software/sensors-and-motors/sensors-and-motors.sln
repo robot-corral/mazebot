@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32", "lib-stm32\lib-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-test", "lib-test\lib-test.vcxproj", "{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-robot", "lib-robot\lib-robot.vcxproj", "{BD706E3D-9B25-4B82-B1A1-E9391F2CA4EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|VisualGDB = Debug|VisualGDB
@@ -51,6 +53,10 @@ Global
 		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
 		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
 		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{BD706E3D-9B25-4B82-B1A1-E9391F2CA4EF}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{BD706E3D-9B25-4B82-B1A1-E9391F2CA4EF}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{BD706E3D-9B25-4B82-B1A1-E9391F2CA4EF}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{BD706E3D-9B25-4B82-B1A1-E9391F2CA4EF}.Release|VisualGDB.Build.0 = Release|VisualGDB
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
