@@ -260,14 +260,13 @@ void activateAdc()
     while (LL_ADC_IsActiveFlag_ADRDY(ADC3) == 0) ;
 }
 
-uint32_t startQueryingLineSensor()
+void startQueryingLineSensor()
 {
     setOutput1High();
     LL_ADC_REG_StartConversion(ADC1);
     LL_ADC_REG_StartConversion(ADC3);
     // ADC2 is last as it has 7 sensors to query not 8
     LL_ADC_REG_StartConversion(ADC2);
-    return 153847; // 1 / 6.5 usec
 }
 
 void transferComplete()

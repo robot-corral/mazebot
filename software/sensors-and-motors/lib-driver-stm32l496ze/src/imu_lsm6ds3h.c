@@ -48,10 +48,9 @@ void initializeImuLsm6ds3h()
     g_imuTxBuffer[9] = 0b00000000; // OUTZ_H_G  (27h): read placeholder
 }
 
-uint32_t startQueryingImu()
+void startQueryingImu()
 {
     startTransmitReceiveSpi(10, SPI_DEVICE_IMU);
-    return 40000; // 1 / 25 usec
 }
 
 float getImuYawAngleDeltaRadians()

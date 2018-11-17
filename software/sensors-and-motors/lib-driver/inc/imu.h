@@ -6,10 +6,7 @@
 
 #include <stdint.h>
 
-/*
- * returns - frequency (Hz) which is a reciprocal of time (sec) required to complete querying line sensor
- */
-uint32_t startQueryingImu();
+void startQueryingImu();
 
 /*
  * Calling this method while data querying is in progress will result in undefined behavior
