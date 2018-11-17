@@ -70,9 +70,4 @@
     <ClCompile Include="src\global_data.c" />
     <ClCompile Include="src\output.c" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lib-stm32\lib-stm32.vcxproj">
-      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

@@ -42,13 +42,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>D:\projects.gh\robot-corral\mazebot\software\sensors-and-motors\lib-utils\inc;D:\projects.gh\robot-corral\mazebot\software\sensors-and-motors\lib-test\inc;D:\projects.gh\robot-corral\mazebot\software\sensors-and-motors\lib-driver\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lib-utils\inc;$(SolutionDir)\lib-test\inc;$(SolutionDir)\lib-driver\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>D:\projects.gh\robot-corral\mazebot\software\sensors-and-motors\lib-utils\inc;D:\projects.gh\robot-corral\mazebot\software\sensors-and-motors\lib-test\inc;D:\projects.gh\robot-corral\mazebot\software\sensors-and-motors\lib-driver\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lib-utils\inc;$(SolutionDir)\lib-test\inc;$(SolutionDir)\lib-driver\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
