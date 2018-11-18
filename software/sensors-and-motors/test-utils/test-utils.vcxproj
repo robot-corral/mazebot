@@ -67,7 +67,7 @@
     <ProjectReference Include="..\lib-driver-stm32l496ze\lib-driver-stm32l496ze.vcxproj">
       <Project>{388f4433-00a8-4f05-9375-18a1ce980fbe}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\lib-stm32\lib-stm32.vcxproj">
+    <ProjectReference Include="..\lib-stm32l4\lib-stm32l4.vcxproj">
       <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
     </ProjectReference>
     <ProjectReference Include="..\lib-test\lib-test.vcxproj">

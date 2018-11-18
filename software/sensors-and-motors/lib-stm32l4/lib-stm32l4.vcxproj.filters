@@ -12,10 +12,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lib-stm32-Debug.vgdbsettings">
+    <None Include="lib-stm32l4-Debug.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
-    <None Include="lib-stm32-Release.vgdbsettings">
+    <None Include="lib-stm32l4-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
     <None Include="stm32.xml">

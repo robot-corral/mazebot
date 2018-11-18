@@ -72,7 +72,7 @@
     <ProjectReference Include="..\lib-robot\lib-robot.vcxproj">
       <Project>{bd706e3d-9b25-4b82-b1a1-e9391f2ca4ef}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\lib-stm32\lib-stm32.vcxproj">
+    <ProjectReference Include="..\lib-stm32l4\lib-stm32l4.vcxproj">
       <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
     </ProjectReference>
     <ProjectReference Include="..\lib-utils\lib-utils.vcxproj">
