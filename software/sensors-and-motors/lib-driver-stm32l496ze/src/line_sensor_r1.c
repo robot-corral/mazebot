@@ -290,7 +290,7 @@ void calibrateLineSensor()
         for (uint32_t i = 0; i < LINE_SENSOR_COUNT; ++i)
         {
             g_lineSensorMinValues[i] = 0;
-            g_lineSensorMaxValues[i] = INFINITY;
+            g_lineSensorMaxValues[i] = 0xFFFF;
         }
 
         setCalibrationStatus(CS_CALIBRATING_WHITE);

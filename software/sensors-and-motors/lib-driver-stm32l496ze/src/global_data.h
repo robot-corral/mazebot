@@ -54,8 +54,8 @@ extern volatile uint8_t g_imuTxBuffer[IMU_SPI_TX_BUFFER_LENGTH];
 
 extern volatile float g_lineDisplacementFromCenterlineInMeters;
 extern volatile uint16_t g_lineSensorValues[LINE_SENSOR_COUNT];
-extern volatile float g_lineSensorMinValues[LINE_SENSOR_COUNT];
-extern volatile float g_lineSensorMaxValues[LINE_SENSOR_COUNT];
+extern volatile uint16_t g_lineSensorMinValues[LINE_SENSOR_COUNT];
+extern volatile uint16_t g_lineSensorMaxValues[LINE_SENSOR_COUNT];
 
 /*******************************************************************************
  * spi                                                                         *
