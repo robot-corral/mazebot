@@ -44,14 +44,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\lib-driver\inc;$(SolutionDir)\lib-utils\inc;$(SolutionDir)\lib-stm32l4\src;$(SolutionDir)\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lib-driver\inc;$(SolutionDir)\lib-utils\inc;$(SolutionDir)\..\common\lib-stm32l4\src;$(SolutionDir)\..\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>USE_FULL_LL_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\lib-driver\inc;$(SolutionDir)\lib-utils\inc;$(SolutionDir)\lib-stm32l4\src;$(SolutionDir)\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lib-driver\inc;$(SolutionDir)\lib-utils\inc;$(SolutionDir)\..\common\lib-stm32l4\src;$(SolutionDir)\..\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>USE_FULL_LL_DRIVER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
