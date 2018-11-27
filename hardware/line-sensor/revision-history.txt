@@ -1,0 +1,9 @@
+revision 1.0 2018-10-02
+
+* initial version
+
+revision 2.0 2018-11-26
+
+* sensors rotated by 21.8037 degrees to align emitter and sensor to make sensing curve a bit more symmetric
+* connector moved backwards
+* 90 degree connector is replaced with straight up connector (this will allow brining down of battery and lowring of CG)

@@ -19,3 +19,4 @@ TODO:
 * add 3.3V voltage regulator (need to calculate 3.3V current consumption when everything is on)
 * move SD Flush to A8 as it doesn't have many other functions and A9 is USART1_TX
 * move to custom motor driver
+* need to add CleanStart / Resume selector (clean start will remove previosuly collected data, like map, calibration, etc., resume won't perform calibration and will load map so robot can decide if it needs to go straight to the end or continue exploring)
