@@ -11,6 +11,11 @@ function min_max_data = compute_normalization_parameters(original_data_set_file_
     for i = 1 : length(original_data_set_file_names)
         original_data = csvread(original_data_set_file_names(i));
         original_data = original_data(:, 2 : end);
+        [~, first_row_max_index] = max(original_data(:, 1));
+        [~, last_row_max_index] = max(original_data(:, end));
+        if first_row_max_index > last_row_max_index
+            original_data = flipud(original_data);
+        end
         [black_data, white_data] = split_to_black_and_white(original_data);
         min_values = max(white_data);
         max_values = max(black_data);

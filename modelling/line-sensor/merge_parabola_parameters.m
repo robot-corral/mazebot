@@ -22,7 +22,7 @@ function result_parabola_parameters = merge_parabola_parameters(multiple_parabol
     mean_y_intercept = mean(y_intercept);
     % y_peak is the same and is determined by the sensor physical location
     mean_y_peak = y_peak(1, :, :);
-    mean_f_peak = mean(f_peak);
+    mean_f_peak = max(f_peak);
 
     mean_denominator = (mean_y_intercept - mean_y_peak) .^ 2;
     mean_a = - mean_f_peak ./ mean_denominator;
