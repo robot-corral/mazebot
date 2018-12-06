@@ -13,6 +13,8 @@ revision 2.0 -- WORK IN PROGRESS --
 * LED outputs pins were changed from (PG3, PG4, PG5, PG6, PG7, PG8) to (PD14, PD15, PG2, PG3, PG4, PC6) respectively
 * sensors connector is straight one (not 90 degree) and is now mounted on the bottom of the board facing down
 * board is made slightly more compact (sensors connector was moved closer to MCU)
+* added SD card detection PIN (D1)
+* added pullup resistors for SD's D0-D3 and CMD lines (47k)
 
 TODO:
 

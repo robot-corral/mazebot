@@ -2086,26 +2086,27 @@ DIN A4, landscape with location and doc. field</description>
 </package3d>
 </packages3d>
 <symbols>
-<symbol name="SD_8+1" urn="urn:adsk.eagle:symbol:5737472/1" library_version="3">
-<pin name="DAT2" x="-5.08" y="20.32" visible="pin" length="middle"/>
-<pin name="DAT3" x="-5.08" y="17.78" visible="pin" length="middle"/>
-<pin name="CMD" x="-5.08" y="15.24" visible="pin" length="middle"/>
-<pin name="VDD" x="-5.08" y="12.7" visible="pin" length="middle"/>
+<symbol name="SD_8+1" urn="urn:adsk.eagle:symbol:5737472/2" library_version="11">
+<pin name="DAT2" x="-5.08" y="17.78" visible="pin" length="middle"/>
+<pin name="DAT3" x="-5.08" y="15.24" visible="pin" length="middle"/>
+<pin name="CMD" x="-5.08" y="12.7" visible="pin" length="middle"/>
+<pin name="VDD" x="-5.08" y="25.4" visible="pin" length="middle"/>
 <pin name="CLK" x="-5.08" y="10.16" visible="pin" length="middle"/>
-<pin name="VSS" x="-5.08" y="7.62" visible="pin" length="middle"/>
-<pin name="DAT0" x="-5.08" y="5.08" visible="pin" length="middle"/>
-<pin name="DAT1" x="-5.08" y="2.54" visible="pin" length="middle"/>
-<pin name="GND" x="-5.08" y="0" visible="pin" length="middle"/>
-<wire x1="0" y1="22.86" x2="0" y2="-2.54" width="0.1524" layer="94"/>
-<wire x1="0" y1="-2.54" x2="10.16" y2="-2.54" width="0.1524" layer="94"/>
-<wire x1="10.16" y1="-2.54" x2="10.16" y2="22.86" width="0.1524" layer="94"/>
-<wire x1="10.16" y1="22.86" x2="0" y2="22.86" width="0.1524" layer="94"/>
-<text x="0" y="24.13" size="1.778" layer="95">&gt;NAME</text>
-<text x="0" y="-3.81" size="1.778" layer="96" align="top-left">&gt;VALUE</text>
+<pin name="VSS" x="-5.08" y="5.08" visible="pin" length="middle"/>
+<pin name="DAT0" x="-5.08" y="22.86" visible="pin" length="middle"/>
+<pin name="DAT1" x="-5.08" y="20.32" visible="pin" length="middle"/>
+<pin name="GND" x="-5.08" y="2.54" visible="pin" length="middle"/>
+<pin name="SD_DETECT" x="-5.08" y="7.62" visible="pin" length="middle"/>
+<wire x1="0" y1="27.94" x2="0" y2="0" width="0.1524" layer="94"/>
+<wire x1="0" y1="0" x2="17.78" y2="0" width="0.1524" layer="94"/>
+<wire x1="17.78" y1="0" x2="17.78" y2="27.94" width="0.1524" layer="94"/>
+<wire x1="17.78" y1="27.94" x2="0" y2="27.94" width="0.1524" layer="94"/>
+<text x="0" y="29.21" size="1.778" layer="95">&gt;NAME</text>
+<text x="0" y="-1.27" size="1.778" layer="96" align="top-left">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="SD_MOLEX_5033981892" urn="urn:adsk.eagle:component:5737474/6" prefix="SD" library_version="10">
+<deviceset name="SD_MOLEX_5033981892" urn="urn:adsk.eagle:component:5737474/7" prefix="SD" library_version="11">
 <gates>
 <gate name="G$1" symbol="SD_8+1" x="0" y="2.54"/>
 </gates>
@@ -2119,6 +2120,7 @@ DIN A4, landscape with location and doc. field</description>
 <connect gate="G$1" pin="DAT2" pad="1"/>
 <connect gate="G$1" pin="DAT3" pad="2"/>
 <connect gate="G$1" pin="GND" pad="DLM"/>
+<connect gate="G$1" pin="SD_DETECT" pad="DSM"/>
 <connect gate="G$1" pin="VDD" pad="4"/>
 <connect gate="G$1" pin="VSS" pad="6"/>
 </connects>
@@ -2300,7 +2302,6 @@ DIN A4, landscape with location and doc. field</description>
 <part name="U$9" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$10" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$11" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
-<part name="U$12" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$13" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$15" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$16" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
@@ -2335,6 +2336,12 @@ DIN A4, landscape with location and doc. field</description>
 <part name="U$17" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$18" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
 <part name="U$19" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="NC" device=""/>
+<part name="R28" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="47k"/>
+<part name="R29" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="47k"/>
+<part name="R30" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="47k"/>
+<part name="R31" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="47k"/>
+<part name="R32" library="resistors" library_urn="urn:adsk.eagle:library:704770" deviceset="RESISTOR_0.1W" device="" package3d_urn="urn:adsk.eagle:package:704947/3" value="47k"/>
+<part name="SUPPLY14" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="+3.3V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -2799,10 +2806,9 @@ AN2606 STM32 microcontroller system memory boot mode
 <instance part="DGND28" gate="G$2" x="238.76" y="76.2"/>
 <instance part="SD1" gate="G$1" x="223.52" y="38.1"/>
 <instance part="DGND29" gate="G$2" x="215.9" y="33.02"/>
-<instance part="SUPPLY9" gate="G$1" x="215.9" y="60.96"/>
+<instance part="SUPPLY9" gate="G$1" x="215.9" y="66.04"/>
 <instance part="IC1" gate="_D" x="121.92" y="114.3" rot="R180"/>
 <instance part="U$11" gate="G$1" x="129.54" y="73.66"/>
-<instance part="U$12" gate="G$1" x="129.54" y="76.2"/>
 <instance part="U$13" gate="G$1" x="129.54" y="81.28"/>
 <instance part="U$15" gate="G$1" x="129.54" y="88.9"/>
 <instance part="U$16" gate="G$1" x="129.54" y="91.44"/>
@@ -2826,6 +2832,12 @@ AN2606 STM32 microcontroller system memory boot mode
 <instance part="U$17" gate="G$1" x="129.54" y="142.24"/>
 <instance part="U$18" gate="G$1" x="129.54" y="139.7"/>
 <instance part="U$19" gate="G$1" x="73.66" y="27.94" rot="R180"/>
+<instance part="R28" gate="G$1" x="200.66" y="68.58" rot="R90"/>
+<instance part="R29" gate="G$1" x="193.04" y="68.58" rot="R90"/>
+<instance part="R30" gate="G$1" x="185.42" y="68.58" rot="R90"/>
+<instance part="R31" gate="G$1" x="177.8" y="68.58" rot="R90"/>
+<instance part="R32" gate="G$1" x="170.18" y="68.58" rot="R90"/>
+<instance part="SUPPLY14" gate="G$1" x="185.42" y="78.74"/>
 </instances>
 <busses>
 </busses>
@@ -2906,13 +2918,13 @@ AN2606 STM32 microcontroller system memory boot mode
 </segment>
 <segment>
 <pinref part="DGND29" gate="G$2" pin="DGND"/>
-<wire x1="215.9" y1="35.56" x2="215.9" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="35.56" x2="215.9" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="SD1" gate="G$1" pin="VSS"/>
-<wire x1="215.9" y1="38.1" x2="215.9" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="215.9" y1="45.72" x2="218.44" y2="45.72" width="0.1524" layer="91"/>
-<junction x="215.9" y="38.1"/>
+<wire x1="215.9" y1="40.64" x2="215.9" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="43.18" x2="218.44" y2="43.18" width="0.1524" layer="91"/>
+<junction x="215.9" y="40.64"/>
 <pinref part="SD1" gate="G$1" pin="GND"/>
-<wire x1="218.44" y1="38.1" x2="215.9" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="40.64" x2="215.9" y2="40.64" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SENSOR_1" class="0">
@@ -3219,9 +3231,9 @@ AN2606 STM32 microcontroller system memory boot mode
 </segment>
 <segment>
 <pinref part="SD1" gate="G$1" pin="VDD"/>
-<wire x1="218.44" y1="50.8" x2="215.9" y2="50.8" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="63.5" x2="215.9" y2="63.5" width="0.1524" layer="91"/>
 <pinref part="SUPPLY9" gate="G$1" pin="VCC"/>
-<wire x1="215.9" y1="50.8" x2="215.9" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="63.5" x2="215.9" y2="66.04" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="SUPPLY6" gate="G$1" pin="VCC"/>
@@ -3237,6 +3249,27 @@ AN2606 STM32 microcontroller system memory boot mode
 <wire x1="25.4" y1="154.94" x2="30.48" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="SENSORS" gate="G$1" pin="28"/>
 <wire x1="25.4" y1="149.86" x2="30.48" y2="149.86" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R32" gate="G$1" pin="2"/>
+<wire x1="170.18" y1="73.66" x2="170.18" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="170.18" y1="76.2" x2="177.8" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R28" gate="G$1" pin="2"/>
+<wire x1="177.8" y1="76.2" x2="185.42" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="185.42" y1="76.2" x2="193.04" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="76.2" x2="200.66" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="200.66" y1="76.2" x2="200.66" y2="73.66" width="0.1524" layer="91"/>
+<junction x="177.8" y="76.2"/>
+<junction x="185.42" y="76.2"/>
+<junction x="193.04" y="76.2"/>
+<pinref part="SUPPLY14" gate="G$1" pin="VCC"/>
+<wire x1="185.42" y1="78.74" x2="185.42" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R29" gate="G$1" pin="2"/>
+<wire x1="193.04" y1="76.2" x2="193.04" y2="73.66" width="0.1524" layer="91"/>
+<pinref part="R30" gate="G$1" pin="2"/>
+<wire x1="185.42" y1="76.2" x2="185.42" y2="73.66" width="0.1524" layer="91"/>
+<pinref part="R31" gate="G$1" pin="2"/>
+<wire x1="177.8" y1="76.2" x2="177.8" y2="73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -3361,21 +3394,25 @@ AN2606 STM32 microcontroller system memory boot mode
 </net>
 <net name="SDMMC1_D0" class="0">
 <segment>
-<pinref part="SD1" gate="G$1" pin="DAT0"/>
-<wire x1="218.44" y1="43.18" x2="193.04" y2="43.18" width="0.1524" layer="91"/>
-<label x="195.58" y="43.18" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="IC1" gate="_C" pin="98-PC8"/>
 <wire x1="76.2" y1="91.44" x2="55.88" y2="91.44" width="0.1524" layer="91"/>
 <label x="58.42" y="91.44" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="SD1" gate="G$1" pin="DAT0"/>
+<wire x1="218.44" y1="60.96" x2="200.66" y2="60.96" width="0.1524" layer="91"/>
+<label x="203.2" y="60.96" size="1.778" layer="95"/>
+<pinref part="R28" gate="G$1" pin="1"/>
+<wire x1="200.66" y1="60.96" x2="200.66" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SDMMC1_D1" class="0">
 <segment>
 <pinref part="SD1" gate="G$1" pin="DAT1"/>
-<wire x1="218.44" y1="40.64" x2="193.04" y2="40.64" width="0.1524" layer="91"/>
-<label x="195.58" y="40.64" size="1.778" layer="95"/>
+<wire x1="218.44" y1="58.42" x2="193.04" y2="58.42" width="0.1524" layer="91"/>
+<label x="203.2" y="58.42" size="1.778" layer="95"/>
+<pinref part="R29" gate="G$1" pin="1"/>
+<wire x1="193.04" y1="63.5" x2="193.04" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="_C" pin="99-PC9"/>
@@ -3386,8 +3423,11 @@ AN2606 STM32 microcontroller system memory boot mode
 <net name="SDMMC1_D2" class="0">
 <segment>
 <pinref part="SD1" gate="G$1" pin="DAT2"/>
-<wire x1="218.44" y1="58.42" x2="193.04" y2="58.42" width="0.1524" layer="91"/>
-<label x="195.58" y="58.42" size="1.778" layer="95"/>
+<wire x1="218.44" y1="55.88" x2="193.04" y2="55.88" width="0.1524" layer="91"/>
+<label x="203.2" y="55.88" size="1.778" layer="95"/>
+<wire x1="193.04" y1="55.88" x2="185.42" y2="55.88" width="0.1524" layer="91"/>
+<pinref part="R30" gate="G$1" pin="1"/>
+<wire x1="185.42" y1="55.88" x2="185.42" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="_C" pin="111-PC10"/>
@@ -3398,8 +3438,11 @@ AN2606 STM32 microcontroller system memory boot mode
 <net name="SDMMC1_D3" class="0">
 <segment>
 <pinref part="SD1" gate="G$1" pin="DAT3"/>
-<wire x1="218.44" y1="55.88" x2="193.04" y2="55.88" width="0.1524" layer="91"/>
-<label x="195.58" y="55.88" size="1.778" layer="95"/>
+<wire x1="218.44" y1="53.34" x2="200.66" y2="53.34" width="0.1524" layer="91"/>
+<label x="203.2" y="53.34" size="1.778" layer="95"/>
+<wire x1="200.66" y1="53.34" x2="177.8" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="R31" gate="G$1" pin="1"/>
+<wire x1="177.8" y1="53.34" x2="177.8" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="_C" pin="112-PC11"/>
@@ -3410,8 +3453,8 @@ AN2606 STM32 microcontroller system memory boot mode
 <net name="SDMMC1_CK" class="0">
 <segment>
 <pinref part="SD1" gate="G$1" pin="CLK"/>
-<wire x1="218.44" y1="48.26" x2="193.04" y2="48.26" width="0.1524" layer="91"/>
-<label x="195.58" y="48.26" size="1.778" layer="95"/>
+<wire x1="218.44" y1="48.26" x2="200.66" y2="48.26" width="0.1524" layer="91"/>
+<label x="203.2" y="48.26" size="1.778" layer="95"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="_C" pin="113-PC12"/>
@@ -3422,8 +3465,12 @@ AN2606 STM32 microcontroller system memory boot mode
 <net name="SDMMC1_CMD" class="0">
 <segment>
 <pinref part="SD1" gate="G$1" pin="CMD"/>
-<wire x1="218.44" y1="53.34" x2="193.04" y2="53.34" width="0.1524" layer="91"/>
-<label x="195.58" y="53.34" size="1.778" layer="95"/>
+<wire x1="218.44" y1="50.8" x2="193.04" y2="50.8" width="0.1524" layer="91"/>
+<label x="203.2" y="50.8" size="1.778" layer="95"/>
+<wire x1="193.04" y1="50.8" x2="177.8" y2="50.8" width="0.1524" layer="91"/>
+<wire x1="177.8" y1="50.8" x2="170.18" y2="50.8" width="0.1524" layer="91"/>
+<pinref part="R32" gate="G$1" pin="1"/>
+<wire x1="170.18" y1="50.8" x2="170.18" y2="63.5" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="_D" pin="116-PD2"/>
@@ -3619,12 +3666,6 @@ AN2606 STM32 microcontroller system memory boot mode
 <pinref part="U$11" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="N$28" class="0">
-<segment>
-<pinref part="IC1" gate="_D" pin="115-PD1"/>
-<pinref part="U$12" gate="G$1" pin="1"/>
-</segment>
-</net>
 <net name="N$29" class="0">
 <segment>
 <pinref part="IC1" gate="_D" pin="117-PD3"/>
@@ -3817,6 +3858,18 @@ AN2606 STM32 microcontroller system memory boot mode
 <segment>
 <pinref part="IC1" gate="_A" pin="104-PA12"/>
 <pinref part="U$19" gate="G$1" pin="1"/>
+</segment>
+</net>
+<net name="SD_DETECT" class="0">
+<segment>
+<pinref part="SD1" gate="G$1" pin="SD_DETECT"/>
+<wire x1="218.44" y1="45.72" x2="200.66" y2="45.72" width="0.1524" layer="91"/>
+<label x="203.2" y="45.72" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="IC1" gate="_D" pin="115-PD1"/>
+<wire x1="127" y1="76.2" x2="152.4" y2="76.2" width="0.1524" layer="91"/>
+<label x="129.54" y="76.2" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
