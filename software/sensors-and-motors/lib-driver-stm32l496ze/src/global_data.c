@@ -58,6 +58,9 @@ volatile bool g_startPauseButtonPressed;
 
 volatile uint32_t g_sdCid[4];
 volatile uint32_t g_sdCsd[4];
+volatile uint32_t g_sdScr[2];
+
+volatile uint16_t g_sdRelativeCardAddress;
 
 volatile bool g_isSdHighCapacity;
 

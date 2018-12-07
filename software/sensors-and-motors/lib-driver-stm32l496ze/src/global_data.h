@@ -77,10 +77,14 @@ extern volatile bool g_startPauseButtonPressed;
 
 #define SD_BUFFER_LENGTH 1024
 
-// card identification number
+// sd card identification number
 extern volatile uint32_t g_sdCid[4];
-// card specific data
+// sd card specific data
 extern volatile uint32_t g_sdCsd[4];
+// sd card configuration register
+extern volatile uint32_t g_sdScr[2];
+
+extern volatile uint16_t g_sdRelativeCardAddress;
 
 extern volatile bool g_isSdHighCapacity;
 

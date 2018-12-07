@@ -14,7 +14,10 @@ static void initializeSdDmaDirection(SdDmaDirection_t direction, uint32_t buffer
 
 static SdResult_t powerOn();
 static SdResult_t initializeSdCard();
+static SdResult_t loadScrRegister();
 static SdResult_t turnOn4BitBus();
+
+static bool is4BitBusSupported();
 
 static uint8_t SD_GetCommandResponse();
 static uint32_t SD_GetResponse(uint32_t responseId);
@@ -46,7 +49,11 @@ SdResult_t initializeSd()
     {
         return sd_result;
     }
-    if ((sd_result = turnOn4BitBus()) != SDR_OK)
+    if ((sd_result = loadScrRegister()) != SDR_OK)
+    {
+        return sd_result;
+    }
+    if (is4BitBusSupported() && (sd_result = turnOn4BitBus()) != SDR_OK)
     {
         return sd_result;
     }
@@ -182,14 +189,12 @@ SdResult_t initializeSdCard()
         return sd_result;
     }
 
-    uint16_t sdRelativeCardAddress;
-
-    if ((sd_result = SD_CmdWithResponse6(SDMMC_CMD_SET_REL_ADDR, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, &sdRelativeCardAddress)) != SDR_OK)
+    if ((sd_result = SD_CmdWithResponse6(SDMMC_CMD_SET_REL_ADDR, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, (uint16_t*) &g_sdRelativeCardAddress)) != SDR_OK)
     {
         return sd_result;
     }
 
-    uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (sdRelativeCardAddress) << 16U);
+    const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (g_sdRelativeCardAddress) << 16U);
 
     if ((sd_result = SD_CmdWithResponse2(SDMMC_CMD_SEND_CSD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, (uint32_t*) g_sdCsd)) != SDR_OK)
     {
@@ -197,6 +202,92 @@ SdResult_t initializeSdCard()
     }
 
     if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SEL_DESEL_CARD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    return SDR_OK;
+}
+
+SdResult_t loadScrRegister()
+{
+    SdResult_t sd_result;
+
+    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, 8, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (g_sdRelativeCardAddress) << 16U);
+
+    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    SDMMC1->DTIMER = 0xFFFFFFFFU;
+    SDMMC1->DLEN = 8;
+    MODIFY_REG(SDMMC1->DCTRL, DCTRL_CLEAR_MASK, SDMMC_DATABLOCK_SIZE_8B |
+                                                SDMMC_TRANSFER_DIR_TO_SDMMC |
+                                                SDMMC_TRANSFER_MODE_BLOCK |
+                                                SDMMC_DPSM_ENABLE);
+
+    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SD_APP_SEND_SCR, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    uint32_t index = 0;
+    uint32_t scr[2] = {0, 0};
+
+    while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_RXOVERR | SDMMC_FLAG_DCRCFAIL | SDMMC_FLAG_DTIMEOUT | SDMMC_FLAG_DBCKEND))
+    {
+        if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_RXDAVL))
+        {
+            scr[index++] = SDMMC1->FIFO;
+        }
+    }
+
+    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_DTIMEOUT))
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_DTIMEOUT);
+        return SDR_DATA_RESPONSE_TIMEOUT;
+    }
+    else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_DCRCFAIL))
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_DCRCFAIL);
+        return SDR_DATA_CRC_FAIL;
+    }
+    else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_RXOVERR))
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_RXOVERR);
+        return SDR_RX_OVERRUN;
+    }
+    else
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_DATA_FLAGS);
+
+        g_sdScr[0] = (((scr[1] & SDMMC_0TO7BITS) << 24)  | ((scr[1] & SDMMC_8TO15BITS) << 8) | \
+                      ((scr[1] & SDMMC_16TO23BITS) >> 8) | ((scr[1] & SDMMC_24TO31BITS) >> 24));
+        g_sdScr[1] = (((scr[0] & SDMMC_0TO7BITS) << 24)  | ((scr[0] & SDMMC_8TO15BITS) << 8) | \
+                      ((scr[0] & SDMMC_16TO23BITS) >> 8) | ((scr[0] & SDMMC_24TO31BITS) >> 24));
+
+        return SDR_OK;
+    }
+}
+
+SdResult_t turnOn4BitBus()
+{
+    SdResult_t sd_result;
+
+    const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t)(g_sdRelativeCardAddress) << 16U);
+
+    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_SD_SET_BUSWIDTH, 2, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
     {
         return sd_result;
     }
@@ -212,15 +303,9 @@ SdResult_t initializeSdCard()
     return SDR_OK;
 }
 
-SdResult_t turnOn4BitBus()
+bool is4BitBusSupported()
 {
-//    45.4.9 Wide bus selection or deselection
-//    Wide bus (4-bit bus width) operation mode is selected or deselected using
-//    SET_BUS_WIDTH (ACMD6). The default bus width after power-up or GO_IDLE_STATE
-//    (CMD0) is 1 bit. SET_BUS_WIDTH (ACMD6) is only valid in a transfer state, which means
-//    that the bus width can be changed only after a card is selected by
-//    SELECT/DESELECT_CARD (CMD7).
-    return SDR_OK;
+    return g_sdScr[1] & (1 << 18);
 }
 
 uint8_t SD_GetCommandResponse()
