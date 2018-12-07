@@ -16,18 +16,16 @@ static SdResult_t powerOn();
 static SdResult_t initializeSdCard();
 static SdResult_t turnOn4BitBus();
 
-// responseId can be one of the following:
-//  SDMMC_RESP1
-//  SDMMC_RESP2
-//  SDMMC_RESP3
-//  SDMMC_RESP4
-static uint32_t SD_GetResponse(uint32_t responseId);
 static uint8_t SD_GetCommandResponse();
+static uint32_t SD_GetResponse(uint32_t responseId);
 
 // cpsm -> command path state machine
-static SdResult_t SD_CmdWithCmdError(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm);
-static SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm);
-static SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm);
+static SdResult_t SD_CmdWithNoResponse(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm);
+static SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint32_t* pResponse1Result);
+static SdResult_t SD_CmdWithResponse2(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint32_t pResponse1Result[4]);
+static SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm);
+static SdResult_t SD_CmdWithResponse6(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint16_t* pResponseResult);
+// TODO spec doesn't have Response 7 WTF is it?
 static SdResult_t SD_CmdWithResponse7(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm);
 
 SdResult_t initializeSd()
@@ -61,10 +59,11 @@ void initialize()
     LL_RCC_SetSDMMCClockSource(LL_RCC_SDMMC1_CLKSOURCE_HSI48);
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SDMMC1);
 
+    // use default configuration for power on
     MODIFY_REG(SDMMC1->CLKCR, CLKCR_CLEAR_MASK, SDMMC_CLOCK_EDGE_RISING |
                                                 SDMMC_CLOCK_BYPASS_DISABLE |
                                                 SDMMC_CLOCK_POWER_SAVE_DISABLE |
-                                                SDMMC_BUS_WIDE_4B |
+                                                SDMMC_BUS_WIDE_1B |
                                                 SDMMC_HARDWARE_FLOW_CONTROL_ENABLE |
                                                 SDMMC_TRANSFER_CLK_DIV);
 
@@ -134,7 +133,7 @@ SdResult_t powerOn()
 {
     SdResult_t sd_result;
 
-    if ((sd_result = SD_CmdWithCmdError(SDMMC_CMD_GO_IDLE_STATE, 0, SDMMC_RESPONSE_NO, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
+    if ((sd_result = SD_CmdWithNoResponse(SDMMC_CMD_GO_IDLE_STATE, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
     {
         return sd_result;
     }
@@ -151,11 +150,11 @@ SdResult_t powerOn()
 
         while (validvoltage == 0)
         {
-            if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, 0, SDMMC_RESPONSE_SHORT, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
+            if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
             {
                 return sd_result;
             }
-            if ((sd_result = SD_CmdWithResponse3(SDMMC_CMD_SD_APP_OP_COND, SDMMC_VOLTAGE_WINDOW_SD | SDMMC_HIGH_CAPACITY, SDMMC_RESPONSE_SHORT, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
+            if ((sd_result = SD_CmdWithResponse3(SDMMC_CMD_SD_APP_OP_COND, SDMMC_VOLTAGE_WINDOW_SD | SDMMC_HIGH_CAPACITY, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
             {
                 return sd_result;
             }
@@ -171,6 +170,45 @@ SdResult_t powerOn()
 
 SdResult_t initializeSdCard()
 {
+    if ((SDMMC1->POWER & SDMMC_POWER_PWRCTRL) == 0)
+    {
+        return SDR_POWER_DOWN;
+    }
+
+    SdResult_t sd_result;
+
+    if ((sd_result = SD_CmdWithResponse2(SDMMC_CMD_ALL_SEND_CID, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, (uint32_t*) g_sdCid)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    uint16_t sdRelativeCardAddress;
+
+    if ((sd_result = SD_CmdWithResponse6(SDMMC_CMD_SET_REL_ADDR, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, &sdRelativeCardAddress)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (sdRelativeCardAddress) << 16U);
+
+    if ((sd_result = SD_CmdWithResponse2(SDMMC_CMD_SEND_CSD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, (uint32_t*) g_sdCsd)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SEL_DESEL_CARD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    // configuration to be used when robot is running (4 bit wide bus and power saving enabled)
+    MODIFY_REG(SDMMC1->CLKCR, CLKCR_CLEAR_MASK, SDMMC_CLOCK_EDGE_RISING |
+                                                SDMMC_CLOCK_BYPASS_DISABLE |
+                                                SDMMC_CLOCK_POWER_SAVE_ENABLE |
+                                                SDMMC_BUS_WIDE_4B |
+                                                SDMMC_HARDWARE_FLOW_CONTROL_ENABLE |
+                                                SDMMC_TRANSFER_CLK_DIV);
+
     return SDR_OK;
 }
 
@@ -185,23 +223,23 @@ SdResult_t turnOn4BitBus()
     return SDR_OK;
 }
 
+uint8_t SD_GetCommandResponse()
+{
+    return (uint8_t)(SDMMC1->RESPCMD);
+}
+
 uint32_t SD_GetResponse(uint32_t responseId)
 {
-    uint32_t responseAddress = (uint32_t)(&(SDMMC1->RESP1)) + SDMMC_RESP1;
+    uint32_t responseAddress = (uint32_t) (&(SDMMC1->RESP1)) + responseId;
     return (*(__IO uint32_t *) responseAddress);
 }
 
-uint8_t SD_GetCommandResponse()
-{
-    return (uint8_t) (SDMMC1->RESPCMD);
-}
-
-SdResult_t SD_CmdWithCmdError(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm)
+SdResult_t SD_CmdWithNoResponse(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm)
 {
     __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
 
     SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, cmdIndex | response | waitForInterrupt | cpsm);
+    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_NO | cmdIndex | waitForInterrupt | cpsm);
 
     do
     {
@@ -219,12 +257,12 @@ SdResult_t SD_CmdWithCmdError(uint32_t cmdIndex, uint32_t argument, uint32_t res
     return SDR_OK;
 }
 
-SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm)
+SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint32_t* pResponse1Result)
 {
     __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
 
     SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, cmdIndex | response | waitForInterrupt | cpsm);
+    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_SHORT | cmdIndex | waitForInterrupt | cpsm);
 
     do
     {
@@ -248,98 +286,27 @@ SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t re
 
     __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
 
-    uint32_t cmd_response = SD_GetResponse(SDMMC_RESP1);
+    uint32_t response1 = SD_GetResponse(SDMMC_RESP1);
 
-    if ((cmd_response & SDMMC_OCR_ERRORBITS) == SDMMC_ALLZERO)
+    if (pResponse1Result)
+    {
+        *pResponse1Result = response1;
+    }
+
+    if ((response1 & SDMMC_OCR_ERRORBITS) == SDMMC_ALLZERO)
     {
         return SDR_OK;
     }
 
-    return SDR_ERROR;
-//    else if ((cmd_response & SDMMC_OCR_ADDR_OUT_OF_RANGE) == SDMMC_OCR_ADDR_OUT_OF_RANGE)
-//    {
-//        return SDR_ADDRESS_OUT_OF_RANGE;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_ADDR_MISALIGNED) == SDMMC_OCR_ADDR_MISALIGNED)
-//    {
-//        return SDR_ADDRESS_MISALIGNED;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_BLOCK_LEN_ERR) == SDMMC_OCR_BLOCK_LEN_ERR)
-//    {
-//        return SDR_BLOCK_LENGTH_ERROR;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_ERASE_SEQ_ERR) == SDMMC_OCR_ERASE_SEQ_ERR)
-//    {
-//        return SDR_ERASE_SEQUENCE_ERROR;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_BAD_ERASE_PARAM) == SDMMC_OCR_BAD_ERASE_PARAM)
-//    {
-//        return SDR_BAD_ERASE_PARAMETER;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_WRITE_PROT_VIOLATION) == SDMMC_OCR_WRITE_PROT_VIOLATION)
-//    {
-//        return SDR_ERROR_WRITE_PROT_VIOLATION;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_LOCK_UNLOCK_FAILED) == SDMMC_OCR_LOCK_UNLOCK_FAILED)
-//    {
-//        return SDR_ERROR_LOCK_UNLOCK_FAILED;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_COM_CRC_FAILED) == SDMMC_OCR_COM_CRC_FAILED)
-//    {
-//        return SDR_ERROR_COM_CRC_FAILED;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_ILLEGAL_CMD) == SDMMC_OCR_ILLEGAL_CMD)
-//    {
-//        return SDR_ERROR_ILLEGAL_CMD;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_CARD_ECC_FAILED) == SDMMC_OCR_CARD_ECC_FAILED)
-//    {
-//        return SDR_ERROR_CARD_ECC_FAILED;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_CC_ERROR) == SDMMC_OCR_CC_ERROR)
-//    {
-//        return SDR_ERROR_CC_ERR;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_STREAM_READ_UNDERRUN) == SDMMC_OCR_STREAM_READ_UNDERRUN)
-//    {
-//        return SDR_ERROR_STREAM_READ_UNDERRUN;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_STREAM_WRITE_OVERRUN) == SDMMC_OCR_STREAM_WRITE_OVERRUN)
-//    {
-//        return SDR_ERROR_STREAM_WRITE_OVERRUN;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_CID_CSD_OVERWRITE) == SDMMC_OCR_CID_CSD_OVERWRITE)
-//    {
-//        return SDR_ERROR_CID_CSD_OVERWRITE;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_WP_ERASE_SKIP) == SDMMC_OCR_WP_ERASE_SKIP)
-//    {
-//        return SDR_ERROR_WP_ERASE_SKIP;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_CARD_ECC_DISABLED) == SDMMC_OCR_CARD_ECC_DISABLED)
-//    {
-//        return SDR_ERROR_CARD_ECC_DISABLED;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_ERASE_RESET) == SDMMC_OCR_ERASE_RESET)
-//    {
-//        return SDR_ERROR_ERASE_RESET;
-//    }
-//    else if ((cmd_response & SDMMC_OCR_AKE_SEQ_ERROR) == SDMMC_OCR_AKE_SEQ_ERROR)
-//    {
-//        return SDR_ERROR_AKE_SEQ_ERR;
-//    }
-//    else
-//    {
-//        return SDR_ERROR_GENERAL_UNKNOWN_ERR;
-//    }
+    return SDR_RESPONSE1_ERROR;
 }
 
-SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm)
+SdResult_t SD_CmdWithResponse2(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint32_t pResponse1Result[4])
 {
     __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
 
     SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, cmdIndex | response | waitForInterrupt | cpsm);
+    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_LONG | cmdIndex | waitForInterrupt | cpsm);
 
     do
     {
@@ -349,12 +316,91 @@ SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t re
     if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
     {
         __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDMMC_ERROR_CMD_RSP_TIMEOUT;
+        return SDR_COMMAND_RESPONSE_TIMEOUT;
+    }
+    else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL))
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL);
+        return SDR_COMMAND_CRC_FAIL;
+    }
+
+    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
+
+    pResponse1Result[0] = SD_GetResponse(SDMMC_RESP1);
+    pResponse1Result[1] = SD_GetResponse(SDMMC_RESP2);
+    pResponse1Result[2] = SD_GetResponse(SDMMC_RESP3);
+    pResponse1Result[3] = SD_GetResponse(SDMMC_RESP4);
+
+    return SDR_OK;
+}
+
+SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm)
+{
+    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
+
+    SDMMC1->ARG = argument;
+    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_SHORT | cmdIndex | waitForInterrupt | cpsm);
+
+    do
+    {
+        // CMD timeout is 64 SDMMC_CK cycles
+    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
+
+    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
+        return SDR_COMMAND_RESPONSE_TIMEOUT;
     }
     else
     {
         __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
         return SDR_OK;
+    }
+}
+
+SdResult_t SD_CmdWithResponse6(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint16_t* pResponseResult)
+{
+    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
+
+    SDMMC1->ARG = argument;
+    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_SHORT | cmdIndex | waitForInterrupt | cpsm);
+
+    do
+    {
+        // CMD timeout is 64 SDMMC_CK cycles
+    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
+
+    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
+    {
+        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
+        return SDR_COMMAND_RESPONSE_TIMEOUT;
+    }
+
+    if (SD_GetCommandResponse() != cmdIndex)
+    {
+        return SDR_COMMAND_CRC_FAIL;
+    }
+
+    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
+
+    uint32_t response1 = SD_GetResponse(SDMMC_RESP1);
+
+    if ((response1 & (SDMMC_R6_GENERAL_UNKNOWN_ERROR | SDMMC_R6_ILLEGAL_CMD | SDMMC_R6_COM_CRC_FAILED)) == SDMMC_ALLZERO)
+    {
+        *pResponseResult = (uint16_t) (response1 >> 16);
+        return SDR_OK;
+    }
+    else if ((response1 & SDMMC_R6_ILLEGAL_CMD) == SDMMC_R6_ILLEGAL_CMD)
+    {
+        return SDR_ILLEGAL_COMMAND;
+    }
+    else if ((response1 & SDMMC_R6_COM_CRC_FAILED) == SDMMC_R6_COM_CRC_FAILED)
+    {
+        return SDR_COMMAND_CRC_FAIL;
+    }
+    else
+    {
+        return SDR_UNKNOWN_ERROR;
     }
 }
 

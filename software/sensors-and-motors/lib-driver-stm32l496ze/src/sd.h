@@ -9,10 +9,13 @@ typedef enum
 typedef enum
 {
     SDR_OK                         = 0,
-    SDR_COMMAND_CRC_FAIL           = 1,
-    SDR_COMMAND_RESPONSE_TIMEOUT   = 2,
-    SDR_CARD_VERSION_NOT_SUPPORTED = 3,
-    SDR_ERROR                      = 4,
+    SDR_ILLEGAL_COMMAND            = 1,
+    SDR_COMMAND_CRC_FAIL           = 2,
+    SDR_COMMAND_RESPONSE_TIMEOUT   = 3,
+    SDR_CARD_VERSION_NOT_SUPPORTED = 4,
+    SDR_POWER_DOWN                 = 5,
+    SDR_RESPONSE1_ERROR            = 6,
+    SDR_UNKNOWN_ERROR              = 7,
 } SdResult_t;
 
 SdResult_t initializeSd();
