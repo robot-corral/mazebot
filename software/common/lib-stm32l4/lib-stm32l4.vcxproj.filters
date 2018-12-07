@@ -26,9 +26,6 @@
     <ClInclude Include="src\stm32l4xx.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\stm32l496xx.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\system_stm32l4xx.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -72,6 +69,12 @@
       <Filter>stm32</Filter>
     </ClInclude>
     <ClInclude Include="stm32\stm32l4xx_ll_adc.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="stm32\stm32l4xx_ll_sdmmc.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="stm32\stm32l496xx.h">
       <Filter>stm32</Filter>
     </ClInclude>
   </ItemGroup>

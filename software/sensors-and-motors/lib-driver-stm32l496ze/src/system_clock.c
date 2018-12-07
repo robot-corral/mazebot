@@ -80,7 +80,7 @@ uint32_t getCurrentTimeInMicroseconds()
 
 void initializeTaskTimer()
 {
-    NVIC_SetPriority(TIM2_IRQn, 3);
+    NVIC_SetPriority(TIM2_IRQn, 4);
     NVIC_EnableIRQ(TIM2_IRQn);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);

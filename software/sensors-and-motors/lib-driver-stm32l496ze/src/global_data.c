@@ -51,3 +51,11 @@ volatile GPIO_TypeDef* g_spiDisableGpio;
 
 volatile bool g_flushSdButtonPressed;
 volatile bool g_startPauseButtonPressed;
+
+/*******************************************************************************
+ * sd                                                                          *
+ *******************************************************************************/
+
+volatile bool g_isSdHighCapacity;
+
+volatile char* g_sdBuffer[SD_BUFFER_LENGTH];

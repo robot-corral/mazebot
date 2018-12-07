@@ -70,3 +70,13 @@ extern volatile GPIO_TypeDef* g_spiDisableGpio;
 
 extern volatile bool g_flushSdButtonPressed;
 extern volatile bool g_startPauseButtonPressed;
+
+/*******************************************************************************
+ * sd                                                                          *
+ *******************************************************************************/
+
+#define SD_BUFFER_LENGTH 1024
+
+extern volatile bool g_isSdHighCapacity;
+
+extern volatile char* g_sdBuffer[SD_BUFFER_LENGTH];

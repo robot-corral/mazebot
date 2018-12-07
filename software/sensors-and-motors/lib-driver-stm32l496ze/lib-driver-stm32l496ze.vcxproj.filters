@@ -50,6 +50,9 @@
     <ClInclude Include="src\line_sensor_r1.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\sd.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\driver.c">
@@ -89,6 +92,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\timing.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sd.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

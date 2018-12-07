@@ -2,6 +2,7 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+#include "sd.h"
 #include "spi.h"
 #include "exti.h"
 #include "gpio.h"
@@ -26,6 +27,7 @@ void initializeDriver()
     initializeLineSensorR1();
     initializeSpi();
     initializeImuLsm6ds3h();
+    initializeSd();
 }
 
 void initializeDebugDriver(bool enable)
