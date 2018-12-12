@@ -50,7 +50,7 @@
     <ClInclude Include="src\line_sensor_r1.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\sd.h">
+    <ClInclude Include="src\sd_impl.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -94,7 +94,7 @@
     <ClCompile Include="src\timing.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\sd.c">
+    <ClCompile Include="src\sd_impl.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

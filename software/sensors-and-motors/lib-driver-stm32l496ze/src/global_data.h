@@ -9,6 +9,7 @@
 
 #include "stm32/stm32l4xx_ll_gpio.h"
 
+#include "sd_impl.h"
 #include "line_sensor_r1.h"
 
 /*******************************************************************************
@@ -75,17 +76,4 @@ extern volatile bool g_startPauseButtonPressed;
  * sd                                                                          *
  *******************************************************************************/
 
-#define SD_BUFFER_LENGTH 1024
-
-// sd card identification number
-extern volatile uint32_t g_sdCid[4];
-// sd card specific data
-extern volatile uint32_t g_sdCsd[4];
-// sd card configuration register
-extern volatile uint32_t g_sdScr[2];
-
-extern volatile uint16_t g_sdRelativeCardAddress;
-
-extern volatile bool g_isSdHighCapacity;
-
-extern volatile char* g_sdBuffer[SD_BUFFER_LENGTH];
+extern volatile SdCard_t g_sdCard;

@@ -62,6 +62,7 @@
     <ClInclude Include="inc\line_sensor.h" />
     <ClInclude Include="inc\motor_controller.h" />
     <ClInclude Include="inc\parameters.h" />
+    <ClInclude Include="inc\sd.h" />
     <ClInclude Include="inc\status.h" />
     <ClInclude Include="inc\tasks.h" />
     <ClInclude Include="inc\timing.h" />

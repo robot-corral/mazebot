@@ -56,12 +56,4 @@ volatile bool g_startPauseButtonPressed;
  * sd                                                                          *
  *******************************************************************************/
 
-volatile uint32_t g_sdCid[4];
-volatile uint32_t g_sdCsd[4];
-volatile uint32_t g_sdScr[2];
-
-volatile uint16_t g_sdRelativeCardAddress;
-
-volatile bool g_isSdHighCapacity;
-
-volatile char* g_sdBuffer[SD_BUFFER_LENGTH];
+volatile SdCard_t g_sdCard;
