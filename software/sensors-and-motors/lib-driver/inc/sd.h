@@ -21,14 +21,43 @@ typedef enum
     SDR_RESPONSE1_ERROR            = 9,
     SDR_UNKNOWN_ERROR              = 10,
     SDR_BUSY                       = 11,
-    SDR_CARD_NOT_PRESENT           = 12,
-    SDR_CARD_NOT_INITIALIZED       = 13,
-    SDR_INVALID_DMA_DIRECTION      = 14,
+    SDR_CARD_NOT_READY             = 12,
+    SDR_INVALID_DMA_DIRECTION      = 13,
 } SdResult_t;
 
-bool isSdCardPresentAndSupported();
+/*
+ * @return true if SD card is present and is usable (status can change at any moment though).
+ */
+bool isSdCardPresentAndInitialized();
 
-uint32_t getSdCardBlockSize();
-uint32_t getSdCardNumberOfBlock();
+/*
+ * @return block size which must be used during read/write/erase operations.
+ */
+uint32_t getSdCardBlockSizeInBytes();
 
-SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startAddress, uint32_t numberOfBlocks);
+/*
+ * @return maximum block id which can be used in read/write/erase operations (minimum block id is 0).
+ */
+uint32_t getSdCardNumberOfBlocks();
+
+/*
+ * Reads blocks from SD card to memory (asynchronously).
+ *
+ * Note: startBlockIndex + numberOfBlocks <= getSdCardNumberOfBlocks().
+ *
+ * @param pBlocksBuffer pointer to a buffer of size numberOfBlocks * getSdCardBlockSizeInBytes().
+ * @param startBlockIndex block index starting from which data should be read.
+ * @param numberOfBlocks number of blocks to be read.
+ */
+SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uint32_t numberOfBlocks);
+
+/*
+ * Writes blocks from memory to SD card (asynchronously).
+ *
+ * Note: startBlockIndex + numberOfBlocks <= getSdCardNumberOfBlocks().
+ *
+ * @param pBlocksBuffer pointer to a buffer of size numberOfBlocks * getSdCardBlockSizeInBytes().
+ * @param startBlockIndex block index starting to which data should be written.
+ * @param numberOfBlocks number of blocks to be write.
+ */
+SdResult_t writeBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uint32_t numberOfBlocks);
