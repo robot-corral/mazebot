@@ -97,5 +97,8 @@
     <ClCompile Include="src\sd_impl.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\sd_impl_cmd.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

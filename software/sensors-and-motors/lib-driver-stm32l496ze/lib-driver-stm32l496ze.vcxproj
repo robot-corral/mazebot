@@ -64,6 +64,7 @@
     <ClCompile Include="src\imu_lsm6ds3h.c" />
     <ClCompile Include="src\motor_controller_mc33926.c" />
     <ClCompile Include="src\sd_impl.c" />
+    <ClCompile Include="src\sd_impl_cmd.c" />
     <ClCompile Include="src\spi.c" />
     <ClCompile Include="src\status.c" />
     <ClCompile Include="src\system_clock.c" />

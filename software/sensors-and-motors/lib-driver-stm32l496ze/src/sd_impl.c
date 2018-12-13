@@ -1,6 +1,19 @@
 /*******************************************************************************
  * Copyright (C) 2018 Pavel Krupets                                            *
+ *                                                                             *
+ * For documenation see Simplified Specifications at https://www.sdcard.org    *
+ * Relevant ones:                                                              *
+ *  Part 1 Simplified - Physical Layer Simplified Specification                *
+ *                                                                             *
+ * Implemented version is 6.00 Aug. 29, 2018                                   *
  *******************************************************************************/
+
+// TODO
+// 1) Need to go over spec and check if I execute all commands correctly (current one is based on STM32L4 drivers)
+// 2) Need to go over timeouts for block read and block write (currently they are set to max value)
+// 3) Need to add SD card detect pin handling
+// 4) Need to check voltage level trials retry count (timeout?)
+// 5) Need to add interrupt handling for errors and DMA (proper one)
 
 #include <stdatomic.h>
 
@@ -14,66 +27,15 @@
 
 #include "sd.h"
 
-static void initializeSdMmc();
-static void initializeSdDma();
-
-static SdResult_t powerOn();
-static SdResult_t initializeSdCard(volatile SdCard_t* pSdCard);
-static SdResult_t decodeSdCardV2SpecificData(uint32_t pCsd[4], volatile SdCard_t* pSdCard);
-static SdResult_t loadScrRegister(uint16_t relativeAddress, uint32_t pScr[2]);
-static SdResult_t turnOn4BitBus(uint16_t relativeAddress);
-
-static uint8_t SD_GetCommandResponse();
-static uint32_t SD_GetResponse(uint32_t responseId);
-
-// cpsm -> command path state machine
-static SdResult_t SD_CmdWithNoResponse(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm);
-static SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint32_t* pResponse1Result);
-static SdResult_t SD_CmdWithResponse2(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, volatile uint32_t pResponse1Result[4]);
-static SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm);
-static SdResult_t SD_CmdWithResponse6(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, volatile uint16_t* pResponseResult);
-static SdResult_t SD_CmdWithResponse7(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm);
-
-static SdResult_t initializeSdDmaDirection(uint32_t direction, void* pBuffer, uint32_t bufferLengthBytes);
+bool __attribute__((weak)) isSdCardPresent()
+{
+    return true;
+}
 
 void initializeSd()
 {
-    // messed up with schematics and forgot to add SD card present pin
-    // will be fixed in Rev 2, for now assume card is always present
-    g_sdCard.status = SDS_CARD_PRESENT;
-
     initializeSdMmc();
     initializeSdDma();
-
-    if (g_sdCard.status & SDS_CARD_PRESENT)
-    {
-        SdResult_t sd_result;
-
-        if ((sd_result = powerOn()) != SDR_OK)
-        {
-            return;
-        }
-        if ((sd_result = initializeSdCard(&g_sdCard)) != SDR_OK)
-        {
-            return;
-        }
-
-        uint32_t scr[2];
-
-        if ((sd_result = loadScrRegister(g_sdCard.relativeAddress, scr)) != SDR_OK)
-        {
-            return;
-        }
-
-        bool is4BitBusSupported = scr[1] & (1 << 18);
-
-        if (is4BitBusSupported && (sd_result = turnOn4BitBus(g_sdCard.relativeAddress)) != SDR_OK)
-        {
-            return;
-        }
-
-        g_sdCard.status |= SDS_INITIALIZED;
-    }
 }
 
 void initializeSdMmc()
@@ -110,135 +72,224 @@ void initializeSdDma()
     LL_DMA_EnableIT_TE(DMA2, LL_DMA_CHANNEL_4);
 }
 
-SdResult_t powerOn()
+SdResult_t markSdCardAsBusy(volatile SdCard_t* pSdCard, uint8_t statusFlagsMaskWhichMustBePresent, uint8_t* newFlag)
 {
-    SdResult_t sd_result;
+    uint8_t oldStatus;
 
-    if ((sd_result = SD_CmdWithNoResponse(SDMMC_CMD_GO_IDLE_STATE, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
+    do
     {
-        return sd_result;
-    }
+        oldStatus = atomic_load(&g_sdCard.statusUnion.status.flags);
 
-    if ((sd_result = SD_CmdWithResponse7(SDMMC_CMD_HS_SEND_EXT_CSD, SDMMC_CHECK_PATTERN, SDMMC_RESPONSE_SHORT, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
-    {
-        // version is less than v2.0
-        return SDR_CARD_VERSION_NOT_SUPPORTED;
-    }
-    else
-    {
-        uint32_t response = 0;
-        uint32_t validvoltage = 0;
-
-        while (validvoltage == 0)
+        if ((oldStatus & statusFlagsMaskWhichMustBePresent) != statusFlagsMaskWhichMustBePresent)
         {
-            if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
-            {
-                return sd_result;
-            }
-            if ((sd_result = SD_CmdWithResponse3(SDMMC_CMD_SD_APP_OP_COND, SDMMC_VOLTAGE_WINDOW_SD | SDMMC_HIGH_CAPACITY, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE)) != SDR_OK)
-            {
-                return sd_result;
-            }
-            response = SD_GetResponse(SDMMC_RESP1);
-            validvoltage = (((response >> 31U) == 1U) ? 1U : 0U);
+            return SDR_ERR_CARD_NOT_READY;
         }
+        if ((oldStatus & SDS_BUSY) != 0)
+        {
+            return SDR_ERR_CARD_IS_BUSY;
+        }
+    } while (!atomic_compare_exchange_weak(&g_sdCard.statusUnion.status.flags, &oldStatus, oldStatus | SDS_BUSY));
+
+    if (newFlag)
+    {
+        *newFlag = oldStatus | SDS_BUSY;
     }
 
     return SDR_OK;
 }
 
-SdResult_t initializeSdCard(volatile SdCard_t* pSdCard)
+void clearSdFlag(volatile SdCard_t* pSdCard, uint8_t statusFlagsMask)
+{
+    atomic_fetch_and(&pSdCard->statusUnion.status.flags, ~statusFlagsMask);
+}
+
+SdResult_t initializeSdCard(uint32_t* pCardStatus)
+{
+    SdResult_t sd_result;
+
+    if ((sd_result = markSdCardAsBusy(&g_sdCard, 0, NULL)) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    // in case card is unplugged and then maybe plugged back in (which is detected by interrupt with priority 0) we need to make sure we don't mark card as initialized.
+    // see atomic_compare_exchange_strong below.
+    uint16_t oldPackedStatus = atomic_load(&g_sdCard.statusUnion.packedStatus);
+
+    if ((sd_result = sdCardReset()) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    if ((sd_result = sdCardOperatingConditionValidation(pCardStatus)) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    uint32_t pCid[4];
+    uint16_t newRelativeAddress;
+    uint32_t pTempRegisterStorage[4];
+
+    if ((sd_result = sdCardIdentification(pTempRegisterStorage, pCid, &newRelativeAddress, pCardStatus)) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    uint8_t status;
+    uint32_t maxBlockIndex;
+
+    if ((sd_result = decodeSdCardSpecificData(pTempRegisterStorage, &status, &maxBlockIndex)) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    if ((sd_result = sdCardLoadScrRegister(newRelativeAddress, pTempRegisterStorage, pCardStatus)) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    bool is4BitBusSupported = pTempRegisterStorage[1] & (1 << 18);
+
+    if (is4BitBusSupported && (sd_result = sdcardTurnOn4BitBus(newRelativeAddress, pCardStatus)) != SDR_OK)
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return sd_result;
+    }
+
+    g_sdCard.cid[0] = pCid[0];
+    g_sdCard.cid[1] = pCid[1];
+    g_sdCard.cid[2] = pCid[2];
+    g_sdCard.cid[3] = pCid[3];
+    g_sdCard.maxBlockIndex = maxBlockIndex;
+    g_sdCard.relativeAddress = newRelativeAddress;
+
+    SdCardStatusUnion_t newStatus;
+    newStatus.packedStatus = oldPackedStatus;
+    newStatus.status.flags = status | SDS_INITIALIZED;
+    newStatus.status.sdCardChangeDetectionIdx = newStatus.status.sdCardChangeDetectionIdx + 1;
+
+    if (!atomic_compare_exchange_strong(&g_sdCard.statusUnion.packedStatus, &oldPackedStatus, newStatus.packedStatus))
+    {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
+        return SDR_ERR_CARD_UNPLUGGED;
+    }
+    else
+    {
+        return SDR_OK;
+    }
+}
+
+uint32_t getSdCardBlockSizeInBytes()
+{
+    return BLOCK_SIZE_BYTES;
+}
+
+uint32_t getSdCardMaxBlockIndex()
+{
+    return g_sdCard.maxBlockIndex;
+}
+
+SdResult_t sdCardReset()
+{
+    SdResult_t sd_result;
+
+    if ((sd_result = sdCmdWithNoResponse(SDMMC_CMD_GO_IDLE_STATE, 0)) != SDR_OK)
+    {
+        return sd_result;
+    }
+
+    return SDR_OK;
+}
+
+SdResult_t sdCardOperatingConditionValidation(uint32_t* pCardStatus)
+{
+    SdResult_t sd_result;
+
+    uint32_t response;
+    uint32_t cmdArgument;
+    uint32_t validVoltage = 0;
+
+    if ((sd_result = sdCmdWithResponse7(SDMMC_CMD_HS_SEND_EXT_CSD, SDMMC_CHECK_PATTERN)) != SDR_OK)
+    {
+        cmdArgument = SDMMC_VOLTAGE_WINDOW_SD | SDMMC_STD_CAPACITY;
+    }
+    else
+    {
+        cmdArgument = SDMMC_VOLTAGE_WINDOW_SD | SDMMC_HIGH_CAPACITY;
+    }
+
+    while (validVoltage == 0)
+    {
+        if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_APP_CMD, 0, pCardStatus)) != SDR_OK)
+        {
+            return sd_result;
+        }
+        if ((sd_result = sdCmdWithResponse3(SDMMC_CMD_SD_APP_OP_COND, cmdArgument, &response)) != SDR_OK)
+        {
+            return sd_result;
+        }
+        validVoltage = (((response >> 31U) == 1U) ? 1U : 0U);
+    }
+
+    return SDR_OK;
+}
+
+SdResult_t sdCardIdentification(uint32_t* pCsd, uint32_t* pCid, uint16_t* pNewCardRelativeAddress, uint32_t* pCardStatus)
 {
     if ((SDMMC1->POWER & SDMMC_POWER_PWRCTRL) == 0)
     {
-        return SDR_POWER_DOWN;
+        return SDR_ERR_CARD_POWER_DOWN;
     }
 
     SdResult_t sd_result;
 
-    if ((sd_result = SD_CmdWithResponse2(SDMMC_CMD_ALL_SEND_CID, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, pSdCard->cid)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse2(SDMMC_CMD_ALL_SEND_CID, 0, pCid)) != SDR_OK)
     {
         return sd_result;
     }
 
-    if ((sd_result = SD_CmdWithResponse6(SDMMC_CMD_SET_REL_ADDR, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, &pSdCard->relativeAddress)) != SDR_OK)
+    uint16_t newCardRelativeAddress;
+
+    if ((sd_result = sdCmdWithResponse6(SDMMC_CMD_SET_REL_ADDR, 0, &newCardRelativeAddress, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
 
-    const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (pSdCard->relativeAddress) << 16U);
+    const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (newCardRelativeAddress) << 16U);
 
-    uint32_t sdCsd[4];
-
-    if ((sd_result = SD_CmdWithResponse2(SDMMC_CMD_SEND_CSD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, (uint32_t*) sdCsd)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse2(SDMMC_CMD_SEND_CSD, sdRelativeCardAddressCmdArg, pCsd)) != SDR_OK)
     {
         return sd_result;
     }
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SEL_DESEL_CARD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_SEL_DESEL_CARD, sdRelativeCardAddressCmdArg, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
 
-    return decodeSdCardV2SpecificData(sdCsd, pSdCard);
-}
-
-SdResult_t decodeSdCardV2SpecificData(uint32_t pCsd[4], volatile SdCard_t* pSdCard)
-{
-    const uint16_t ccc = pCsd[1] >> 20U;
-
-    if ((ccc & MINIMUM_REQUIRED_COMAND_CLASSES) != MINIMUM_REQUIRED_COMAND_CLASSES)
-    {
-        return SDR_CARD_VERSION_NOT_SUPPORTED;
-    }
-
-    const uint32_t read_bl_len = (pCsd[1] >> 16U) & 0xFU;
-    const uint8_t version = (pCsd[0] & 0xC0000000U) >> 30U;
-
-    if (version == 0)
-    {
-        const uint32_t c_size = ((pCsd[1] & 0x000003FFU) << 2U) | ((pCsd[2] & 0xC0000000U) >> 30U);
-        const uint8_t c_size_mul = (pCsd[2] & 0x00038000U) >> 15U;
-        pSdCard->maxBlockAddress = c_size * (1 << (c_size_mul + 2U));
-        pSdCard->status &= ~SDS_HIGH_CAPACITY;
-    }
-    else if (version == 1)
-    {
-        const uint32_t c_size = ((pCsd[2] >> 16U) & 0xFFFFU) | ((pCsd[1] & 0x3FU) << 16U);
-        pSdCard->maxBlockAddress = c_size << 10;
-        pSdCard->status |= SDS_HIGH_CAPACITY;
-    }
-    else
-    {
-        return SDR_CARD_VERSION_NOT_SUPPORTED;
-    }
-
-    bool isPermanentlyWriteProtected = pCsd[3] & (1 << 13);
-    bool isTemporarilyWriteProtected = pCsd[3] & (1 << 12);
-    if (isPermanentlyWriteProtected || isTemporarilyWriteProtected)
-    {
-        pSdCard->status &= ~SDS_ALLOWS_WRITE;
-    }
-    else
-    {
-        pSdCard->status |= SDS_ALLOWS_WRITE;
-    }
+    *pNewCardRelativeAddress = newCardRelativeAddress;
 
     return SDR_OK;
 }
 
-SdResult_t loadScrRegister(uint16_t relativeAddress, uint32_t pScr[2])
+SdResult_t sdCardLoadScrRegister(uint16_t relativeAddress, uint32_t* pScr, uint32_t* pCardStatus)
 {
     SdResult_t sd_result;
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, 8, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, 8 /* 8 bytes, 2 x uint32_t is the length of SCR register */, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
 
     const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (relativeAddress) << 16U);
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_APP_CMD, sdRelativeCardAddressCmdArg, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
@@ -250,7 +301,7 @@ SdResult_t loadScrRegister(uint16_t relativeAddress, uint32_t pScr[2])
                                                 SDMMC_TRANSFER_MODE_BLOCK |
                                                 SDMMC_DPSM_ENABLE);
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SD_APP_SEND_SCR, 0, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_SD_APP_SEND_SCR, 0, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
@@ -269,17 +320,17 @@ SdResult_t loadScrRegister(uint16_t relativeAddress, uint32_t pScr[2])
     if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_DTIMEOUT))
     {
         __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_DTIMEOUT);
-        return SDR_DATA_RESPONSE_TIMEOUT;
+        return SDR_ERR_DATA_RESPONSE_TIMEOUT;
     }
     else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_DCRCFAIL))
     {
         __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_DCRCFAIL);
-        return SDR_DATA_CRC_FAIL;
+        return SDR_ERR_DATA_CRC_FAIL;
     }
     else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_RXOVERR))
     {
         __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_RXOVERR);
-        return SDR_RX_OVERRUN;
+        return SDR_ERR_RX_OVERRUN;
     }
     else
     {
@@ -294,18 +345,18 @@ SdResult_t loadScrRegister(uint16_t relativeAddress, uint32_t pScr[2])
     }
 }
 
-SdResult_t turnOn4BitBus(uint16_t relativeAddress)
+SdResult_t sdcardTurnOn4BitBus(uint16_t relativeAddress, uint32_t* pCardStatus)
 {
     SdResult_t sd_result;
 
     const uint32_t sdRelativeCardAddressCmdArg = ((uint32_t) (relativeAddress) << 16U);
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_CMD, sdRelativeCardAddressCmdArg, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_APP_CMD, sdRelativeCardAddressCmdArg, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_APP_SD_SET_BUSWIDTH, 2, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_APP_SD_SET_BUSWIDTH, BUS_WIDTH_4, pCardStatus)) != SDR_OK)
     {
         return sd_result;
     }
@@ -321,217 +372,52 @@ SdResult_t turnOn4BitBus(uint16_t relativeAddress)
     return SDR_OK;
 }
 
-uint8_t SD_GetCommandResponse()
+SdResult_t decodeSdCardSpecificData(uint32_t* pCsd, uint8_t* pDecodedStatus, uint32_t* pDecodedMaxBlockIndex)
 {
-    return (uint8_t)(SDMMC1->RESPCMD);
-}
+    const uint16_t ccc = pCsd[1] >> 20U;
 
-uint32_t SD_GetResponse(uint32_t responseId)
-{
-    uint32_t responseAddress = (uint32_t) (&(SDMMC1->RESP1)) + responseId;
-    return (*(__IO uint32_t *) responseAddress);
-}
-
-SdResult_t SD_CmdWithNoResponse(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm)
-{
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-
-    SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_NO | cmdIndex | waitForInterrupt | cpsm);
-
-    do
+    if ((ccc & MINIMUM_REQUIRED_COMAND_CLASSES) != MINIMUM_REQUIRED_COMAND_CLASSES)
     {
-        // CMD timeout is 64 SDMMC_CK cycles
-    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CMDSENT | SDMMC_FLAG_CTIMEOUT));
-
-    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDR_COMMAND_RESPONSE_TIMEOUT;
+        return SDR_ERR_CARD_NOT_SUPPORTED;
     }
 
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
+    uint8_t newStatus = 0;
+    uint32_t newMaxBlockIndex;
+
+    const uint32_t read_bl_len = (pCsd[1] >> 16U) & 0xFU;
+    const uint8_t version = (pCsd[0] & 0xC0000000U) >> 30U;
+
+    if (version == 0)
+    {
+        const uint32_t c_size = ((pCsd[1] & 0x000003FFU) << 2U) | ((pCsd[2] & 0xC0000000U) >> 30U);
+        const uint8_t c_size_mul = (pCsd[2] & 0x00038000U) >> 15U;
+        newMaxBlockIndex = c_size * (1 << (c_size_mul + 2U));
+    }
+    else if (version == 1)
+    {
+        const uint32_t c_size = ((pCsd[2] >> 16U) & 0xFFFFU) | ((pCsd[1] & 0x3FU) << 16U);
+        newStatus |= SDS_HIGH_CAPACITY;
+        newMaxBlockIndex = c_size << 10 /* mul 1024 (to convert kilo-blocks to blocks) */;
+    }
+    else
+    {
+        return SDR_ERR_CARD_NOT_SUPPORTED;
+    }
+
+    bool isPermanentlyWriteProtected = pCsd[3] & (1 << 13);
+    bool isTemporarilyWriteProtected = pCsd[3] & (1 << 12);
+    if (!isPermanentlyWriteProtected && !isTemporarilyWriteProtected)
+    {
+        newStatus |= SDS_ALLOWS_WRITE;
+    }
+
+    *pDecodedStatus = newStatus;
+    *pDecodedMaxBlockIndex = newMaxBlockIndex;
 
     return SDR_OK;
 }
 
-SdResult_t SD_CmdWithResponse1(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, uint32_t* pResponse1Result)
-{
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-
-    SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_SHORT | cmdIndex | waitForInterrupt | cpsm);
-
-    do
-    {
-        // CMD timeout is 64 SDMMC_CK cycles
-    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
-  
-    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDR_COMMAND_RESPONSE_TIMEOUT;
-    }
-    else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL);
-        return SDR_COMMAND_CRC_FAIL;
-    }
-    else if (SD_GetCommandResponse() != cmdIndex)
-    {
-        return SDR_COMMAND_CRC_FAIL;
-    }
-
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
-
-    uint32_t response1 = SD_GetResponse(SDMMC_RESP1);
-
-    if (pResponse1Result)
-    {
-        *pResponse1Result = response1;
-    }
-
-    if ((response1 & SDMMC_OCR_ERRORBITS) == SDMMC_ALLZERO)
-    {
-        return SDR_OK;
-    }
-
-    return SDR_RESPONSE1_ERROR;
-}
-
-SdResult_t SD_CmdWithResponse2(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, volatile uint32_t pResponse1Result[4])
-{
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-
-    SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_LONG | cmdIndex | waitForInterrupt | cpsm);
-
-    do
-    {
-        // CMD timeout is 64 SDMMC_CK cycles
-    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
-
-    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDR_COMMAND_RESPONSE_TIMEOUT;
-    }
-    else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL);
-        return SDR_COMMAND_CRC_FAIL;
-    }
-
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
-
-    pResponse1Result[0] = SD_GetResponse(SDMMC_RESP1);
-    pResponse1Result[1] = SD_GetResponse(SDMMC_RESP2);
-    pResponse1Result[2] = SD_GetResponse(SDMMC_RESP3);
-    pResponse1Result[3] = SD_GetResponse(SDMMC_RESP4);
-
-    return SDR_OK;
-}
-
-SdResult_t SD_CmdWithResponse3(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm)
-{
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-
-    SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_SHORT | cmdIndex | waitForInterrupt | cpsm);
-
-    do
-    {
-        // CMD timeout is 64 SDMMC_CK cycles
-    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
-
-    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDR_COMMAND_RESPONSE_TIMEOUT;
-    }
-    else
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
-        return SDR_OK;
-    }
-}
-
-SdResult_t SD_CmdWithResponse6(uint32_t cmdIndex, uint32_t argument, uint32_t waitForInterrupt, uint32_t cpsm, volatile uint16_t* pResponseResult)
-{
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-
-    SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, SDMMC_RESPONSE_SHORT | cmdIndex | waitForInterrupt | cpsm);
-
-    do
-    {
-        // CMD timeout is 64 SDMMC_CK cycles
-    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
-
-    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDR_COMMAND_RESPONSE_TIMEOUT;
-    }
-
-    if (SD_GetCommandResponse() != cmdIndex)
-    {
-        return SDR_COMMAND_CRC_FAIL;
-    }
-
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
-
-    uint32_t response1 = SD_GetResponse(SDMMC_RESP1);
-
-    if ((response1 & (SDMMC_R6_GENERAL_UNKNOWN_ERROR | SDMMC_R6_ILLEGAL_CMD | SDMMC_R6_COM_CRC_FAILED)) == SDMMC_ALLZERO)
-    {
-        *pResponseResult = (uint16_t) (response1 >> 16);
-        return SDR_OK;
-    }
-    else if ((response1 & SDMMC_R6_ILLEGAL_CMD) == SDMMC_R6_ILLEGAL_CMD)
-    {
-        return SDR_ILLEGAL_COMMAND;
-    }
-    else if ((response1 & SDMMC_R6_COM_CRC_FAILED) == SDMMC_R6_COM_CRC_FAILED)
-    {
-        return SDR_COMMAND_CRC_FAIL;
-    }
-    else
-    {
-        return SDR_UNKNOWN_ERROR;
-    }
-}
-
-SdResult_t SD_CmdWithResponse7(uint32_t cmdIndex, uint32_t argument, uint32_t response, uint32_t waitForInterrupt, uint32_t cpsm)
-{
-    __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-
-    SDMMC1->ARG = argument;
-    MODIFY_REG(SDMMC1->CMD, CMD_CLEAR_MASK, cmdIndex | response | waitForInterrupt | cpsm);
-
-    do
-    {
-        // CMD timeout is 64 SDMMC_CK cycles
-    } while (!__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL | SDMMC_FLAG_CMDREND | SDMMC_FLAG_CTIMEOUT));
-
-    if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CTIMEOUT);
-        return SDR_COMMAND_RESPONSE_TIMEOUT;
-    }
-    else if (__SDMMC_GET_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL))
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_FLAG_CCRCFAIL);
-        return SDR_COMMAND_CRC_FAIL;
-    }
-    else
-    {
-        __SDMMC_CLEAR_FLAG(SDMMC1, SDMMC_STATIC_CMD_FLAGS);
-        return SDR_OK;
-    }
-}
-
-SdResult_t initializeSdDmaDirection(uint32_t direction, void* pBuffer, uint32_t bufferLengthBytes)
+SdResult_t initializeSdDmaChannel(uint32_t direction, void* pBuffer, uint32_t bufferLengthBytes)
 {
     LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_4);
 
@@ -562,7 +448,7 @@ SdResult_t initializeSdDmaDirection(uint32_t direction, void* pBuffer, uint32_t 
     }
     else
     {
-        return SDR_INVALID_DMA_DIRECTION;
+        return SDR_ERR_INVALID_DMA_DIRECTION;
     }
 
     // DMA reads words (4x bytes), so need to divide bufferLengthBytes by 4
@@ -571,16 +457,17 @@ SdResult_t initializeSdDmaDirection(uint32_t direction, void* pBuffer, uint32_t 
     return SDR_OK;
 }
 
-SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uint32_t numberOfBlocks)
+SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uint32_t numberOfBlocks, uint32_t* pCardStatus)
 {
     if (numberOfBlocks == 0)
     {
         return SDR_OK;
     }
 
+    uint8_t flags;
     SdResult_t sd_result;
 
-    if ((sd_result = markSdCardAsBusy(&g_sdCard, SDS_CARD_PRESENT | SDS_INITIALIZED)) != SDR_OK)
+    if ((sd_result = markSdCardAsBusy(&g_sdCard, SDS_INITIALIZED, &flags)) != SDR_OK)
     {
         return sd_result;
     }
@@ -591,16 +478,18 @@ SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uin
 
     __SDMMC_ENABLE_IT(SDMMC1, SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_RXOVERR);
 
-    if ((sd_result = initializeSdDmaDirection(LL_DMA_DIRECTION_PERIPH_TO_MEMORY, pBlocksBuffer, numberOfBytes)) != SDR_OK)
+    if ((sd_result = initializeSdDmaChannel(LL_DMA_DIRECTION_PERIPH_TO_MEMORY, pBlocksBuffer, numberOfBytes)) != SDR_OK)
     {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
         return sd_result;
     }
 
     LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_4);
     __SDMMC_DMA_ENABLE(SDMMC1);
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, BLOCK_SIZE_BYTES, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, BLOCK_SIZE_BYTES, pCardStatus)) != SDR_OK)
     {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
         return sd_result;
     }
 
@@ -611,22 +500,24 @@ SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uin
                                                 SDMMC_TRANSFER_MODE_BLOCK   |
                                                 SDMMC_DPSM_ENABLE);
 
-    if ((g_sdCard.status & SDS_HIGH_CAPACITY) == 0)
+    if ((flags & SDS_HIGH_CAPACITY) == 0)
     {
         startBlockIndex *= BLOCK_SIZE_BYTES;
     }
 
     if (numberOfBlocks > 1)
     {
-        if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_READ_MULT_BLOCK, startBlockIndex, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+        if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_READ_MULT_BLOCK, startBlockIndex, pCardStatus)) != SDR_OK)
         {
+            clearSdFlag(&g_sdCard, SDS_BUSY);
             return sd_result;
         }
     }
     else
     {
-        if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_READ_SINGLE_BLOCK, startBlockIndex, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+        if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_READ_SINGLE_BLOCK, startBlockIndex, pCardStatus)) != SDR_OK)
         {
+            clearSdFlag(&g_sdCard, SDS_BUSY);
             return sd_result;
         }
     }
@@ -634,16 +525,17 @@ SdResult_t readBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uin
     return SDR_OK;
 }
 
-SdResult_t writeBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uint32_t numberOfBlocks)
+SdResult_t writeBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, uint32_t numberOfBlocks, uint32_t* pCardStatus)
 {
     if (numberOfBlocks == 0)
     {
         return SDR_OK;
     }
 
+    uint8_t flags;
     SdResult_t sd_result;
 
-    if ((sd_result = markSdCardAsBusy(&g_sdCard, SDS_CARD_PRESENT | SDS_INITIALIZED | SDS_ALLOWS_WRITE)) != SDR_OK)
+    if ((sd_result = markSdCardAsBusy(&g_sdCard, SDS_INITIALIZED | SDS_ALLOWS_WRITE, &flags)) != SDR_OK)
     {
         return sd_result;
     }
@@ -654,35 +546,39 @@ SdResult_t writeBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, ui
 
     __SDMMC_ENABLE_IT(SDMMC1, SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR);
 
-    if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, BLOCK_SIZE_BYTES, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+    if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_SET_BLOCKLEN, BLOCK_SIZE_BYTES, pCardStatus)) != SDR_OK)
     {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
         return sd_result;
     }
 
-    if ((g_sdCard.status & SDS_HIGH_CAPACITY) == 0)
+    if ((flags & SDS_HIGH_CAPACITY) == 0)
     {
         startBlockIndex *= BLOCK_SIZE_BYTES;
     }
 
     if (numberOfBlocks > 1)
     {
-        if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_WRITE_MULT_BLOCK, startBlockIndex, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+        if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_WRITE_MULT_BLOCK, startBlockIndex, pCardStatus)) != SDR_OK)
         {
+            clearSdFlag(&g_sdCard, SDS_BUSY);
             return sd_result;
         }
     }
     else
     {
-        if ((sd_result = SD_CmdWithResponse1(SDMMC_CMD_WRITE_SINGLE_BLOCK, startBlockIndex, SDMMC_WAIT_NO, SDMMC_CPSM_ENABLE, NULL)) != SDR_OK)
+        if ((sd_result = sdCmdWithResponse1(SDMMC_CMD_WRITE_SINGLE_BLOCK, startBlockIndex, pCardStatus)) != SDR_OK)
         {
+            clearSdFlag(&g_sdCard, SDS_BUSY);
             return sd_result;
         }
     }
 
     __SDMMC_DMA_ENABLE(SDMMC1);
 
-    if ((sd_result = initializeSdDmaDirection(LL_DMA_DIRECTION_MEMORY_TO_PERIPH, pBlocksBuffer, numberOfBytes)) != SDR_OK)
+    if ((sd_result = initializeSdDmaChannel(LL_DMA_DIRECTION_MEMORY_TO_PERIPH, pBlocksBuffer, numberOfBytes)) != SDR_OK)
     {
+        clearSdFlag(&g_sdCard, SDS_BUSY);
         return sd_result;
     }
 
@@ -696,32 +592,6 @@ SdResult_t writeBlocksAsync(uint8_t* pBlocksBuffer, uint32_t startBlockIndex, ui
     LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_4);
 
     return SDR_OK;
-}
-
-SdResult_t markSdCardAsBusy(volatile SdCard_t* pSdCard, uint8_t statusFlagsMaskWhichMustBePresent)
-{
-    uint8_t oldStatus;
-
-    do
-    {
-        oldStatus = atomic_load(&g_sdCard.status);
-
-        if ((oldStatus & statusFlagsMaskWhichMustBePresent) != statusFlagsMaskWhichMustBePresent)
-        {
-            return SDR_CARD_NOT_READY;
-        }
-        if ((oldStatus & SDS_BUSY) != 0)
-        {
-            return SDR_BUSY;
-        }
-    } while (!atomic_compare_exchange_weak(&g_sdCard.status, &oldStatus, oldStatus | SDS_BUSY));
-
-    return SDR_OK;
-}
-
-void clearSdFlag(volatile SdCard_t* pSdCard, uint8_t statusFlagsMask)
-{
-    atomic_fetch_and(&pSdCard->status, ~statusFlagsMask);
 }
 
 void SDMMC1_IRQHandler()
