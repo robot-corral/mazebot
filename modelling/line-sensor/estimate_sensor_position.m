@@ -6,17 +6,23 @@
 % arguments:
 %   sensor_data - [NUMBER_OF_SAMPLES, NUMBER_OF_SENSORS] array which contains sensor readings
 %   sensor_data_filter - filter to be applied to sensor_data (after it is normalized)
+%   settling_samples_count - settling time of a filter for step response
 %   sensor_normalization_parameters - [2, NUMBER_OF_SENSORS] array which contains min and max values for each sensor
 %   sensor_model_parameters - [NUMBER_OF_SENSORS, 3] array of parabola coefficients a, b, c for each sensor. This
 %       describes parabola: a * y ^ 2 + b * y + c.
 %
 % returns:
 %   [NUMBER_OF_SAMPLES] array of estimated sensor position, if sensor position cannot be estimated NaN is used.
-function y = estimate_sensor_position(sensor_data, sensor_data_filter, sensor_normalization_parameters, sensor_model_parameters)
+function y = estimate_sensor_position(sensor_data, sensor_data_filter, settling_samples_count, sensor_normalization_parameters, sensor_model_parameters)
     number_of_samples = size(sensor_data, 1);
     number_of_sensors = size(sensor_data, 2);
 
-    normalized_data = (sensor_data - sensor_normalization_parameters(1, :)) ./ (sensor_normalization_parameters(2, :) - sensor_normalization_parameters(1, :));
+    prefixed_sensor_data = [repmat(sensor_data(1, :), settling_samples_count, 1); sensor_data];
+    filtered_sensor_data = filtfilt(sensor_data_filter, prefixed_sensor_data);
+    stable_filtered_sensor_data = filtered_sensor_data(settling_samples_count + 1 : end, :);
+    stable_filtered_sensor_data(stable_filtered_sensor_data < 0) = 0;
+
+    normalized_data = (stable_filtered_sensor_data - sensor_normalization_parameters(1, :)) ./ (sensor_normalization_parameters(2, :) - sensor_normalization_parameters(1, :));
     normalized_data(normalized_data < 0) = 0;
     normalized_data(normalized_data > 1) = 1;
 
@@ -31,16 +37,13 @@ function y = estimate_sensor_position(sensor_data, sensor_data_filter, sensor_no
     max_f = c - b_squared ./ a_for_times;
     max_y = - b ./ a_twice;
 
-    filtered_sensor_data = filtfilt(sensor_data_filter, normalized_data);
-    filtered_sensor_data(filtered_sensor_data < 0) = 0;
-    
     for sensor_index = 1 : number_of_sensors
-        filtered_sensor_data(filtered_sensor_data(:, sensor_index) > max_f(sensor_index), sensor_index) = max_f(sensor_index);
+        normalized_data(normalized_data(:, sensor_index) > max_f(sensor_index), sensor_index) = max_f(sensor_index);
     end
 
-    black_filter = abs(filtered_sensor_data) > 0.05;
+    black_filter = abs(normalized_data) > 0.05;
 
-    root = sqrt(b_squared + a_for_times .* (filtered_sensor_data - c));
+    root = sqrt(b_squared + a_for_times .* (normalized_data - c));
     y_1 = (-b - root) ./ (a_twice);
     y_2 = (-b + root) ./ (a_twice);
     y_1 = y_1 .* black_filter ./ black_filter;

@@ -3,21 +3,28 @@
 % when it moves across the black line (see documentation for more details).
 %
 % arguments:
-%   normalized_data - [NUMBER_OF_SAMPLES, NUMBER_OF_SENSORS] array which
-%       contains sensor readings normalized so they all fall into [0 ... 1]
-%       range (assumption is that 1st sensor crosses line 1st)
+%   number_of_sensors - (scalar) number of sensors
+%   min_max_data - [2, NUMBER_OF_SENSORS] - min and max values for each
+%       sensor
+%   data_sets - [NUMBER_OF_DATA_SETS, NUMBER_OF_SAMPLES, NUMBER_OF_SENSORS]
+%       cell array which contains sensor readings data sets.
 % returns:
-%   y - [NUMBER_OF_SAMPLES] array of values of y estimated from the sensor
-%       data or NaN if no sensor reads the line. See sensor configuration
-%       documentation to get sensor displacement from the center.
-%   parabola_parameters - [NUMBER_OF_SENSORS, 3] array of parabola
-%       coefficients a, b, c for each sensor. This describes parabola:
-%       a * y ^ 2 + b * y + c.
-function [y, parabola_parameters] = compute_model_parameters(normalized_data)
-    start_end_indexes = find_start_end(normalized_data);
-    [min_y, peak_y, max_y] = fit_parabolas(normalized_data, start_end_indexes);
-    y = interpolate_y(normalized_data, min_y, peak_y, max_y);
-    parabola_parameters = calculate_parabola_parameters(normalized_data, y, min_y, peak_y, max_y);
+%   all_parabola_parameters - [NUMBER_OF_DATA_SETS, NUMBER_OF_SENSORS, 3]
+%       array of parabola coefficients a, b, c for each data set and each 
+%       sensor. This describes parabola: a * y ^ 2 + b * y + c.
+function [all_parabola_parameters] = compute_model_parameters(number_of_sensors, min_max_data, data_sets)
+    number_of_data_sets = length(data_sets);
+    all_parabola_parameters = zeros(number_of_data_sets, number_of_sensors, 3);
+
+    for i = 1 : number_of_data_sets
+        normalized_data = normalize_data(data_sets{i}, min_max_data);
+        [black_filtered_data, white_filtered_data] = split_to_black_and_white(normalized_data);
+        start_end_indexes = find_start_end(black_filtered_data);
+        [min_y, peak_y, max_y] = fit_parabolas(black_filtered_data, start_end_indexes);
+        y = interpolate_y(black_filtered_data, min_y, peak_y, max_y);
+        parabola_parameters = calculate_parabola_parameters(black_filtered_data, y, min_y, peak_y, max_y);
+        all_parabola_parameters(i, :, :) = parabola_parameters;
+    end
 end
 
 % finds potential start and end indexes for values of a sensor where line
@@ -102,8 +109,8 @@ function [min_y, peak_y, max_y] = fit_parabolas(normalized_data, start_end_index
     % plot_data(normalized_data, min_y, max_y, a, b, c, mu_1, mu_2);
 end
 
-% function can be used to plit fitted parabolas and original data for
-% debugging purposes.
+% function can be used to plot fitted parabolas and original data for
+% debugging purposes (see fit_parabolas function).
 %
 % parabola is described by the following equation:
 %   a * ((y - mu_1) / mu_2) ^ 2 + b * (y - mu_1) / mu_2 + c

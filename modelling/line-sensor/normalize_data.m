@@ -12,7 +12,6 @@
 %   readings normalized so they all fall into [0 ... 1] range. In case last
 %   sensor comes 1st data will be flipped so 1st sensor data comes 1st.
 function normalized_data = normalize_data(data, min_max_data)
-    data = data(:, 2 : end);
     [~, first_row_max_index] = max(data(:, 1));
     [~, last_row_max_index] = max(data(:, end));
     normalized_data = (data - min_max_data(1, :)) ./ (min_max_data(2, :) - min_max_data(1, :));
