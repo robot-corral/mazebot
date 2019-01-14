@@ -15,7 +15,7 @@
 %       NaN for what is suspected to be white
 function [black_data, white_data] = split_to_black_and_white(data)
     epsilon = 0.0001;
-    cutoff_values = max(data) / 2;
+    cutoff_values = min(data) + (max(data) - min(data)) / 2;
 
     number_of_sensors = size(data, 2);
     number_of_samples = size(data, 1);
