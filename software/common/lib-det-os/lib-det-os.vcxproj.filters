@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{021cb54e-1f73-4862-9ac4-abff38fabd01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc">
+      <UniqueIdentifier>{0bc35d90-668d-4cd5-bdcd-5c89c1bde3cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{fa9d5bb8-03c9-4e24-9224-c838956b6c13}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib-det-os-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="lib-det-os-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\det_os.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\global_data.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\types.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\det_os_implementation.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\global_data.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\task_switching.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\schedule_task.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\svc_handler.s">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dummy.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
