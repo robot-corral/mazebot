@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{e0456533-2f10-4edb-9633-310e5a68e5e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8b3c1bb9-dd76-4a0d-a9bb-12fe1963cd18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stm32">
+      <UniqueIdentifier>{75473f20-ec50-4178-800e-288087420051}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib-stm32l151ze-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="lib-stm32l151ze-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_adc.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_gpio.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_spi.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_usart.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_utils.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stm32l1xx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\system_stm32l1xx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_bus.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_pwr.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_system.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_rcc.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_cortex.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_dma.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32l1xx_ll_i2c.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\startup_stm32l151xe.s">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\stm32l1xx_ll_utils.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system_stm32l1xx.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
