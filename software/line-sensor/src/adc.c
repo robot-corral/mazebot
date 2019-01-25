@@ -9,6 +9,8 @@
 static void configureBankA();
 static void configureBankB();
 
+// ADC query takes ~55 usec
+
 void initializeAdc()
 {
     //            -----                            reserved
@@ -156,6 +158,23 @@ void DMA1_Channel1_IRQHandler()
 {
     if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
     {
+        if (LL_ADC_GetChannelsBank(ADC1) == LL_ADC_CHANNELS_BANK_A)
+        {
+            configureBankB();
+            LL_DMA_ConfigAddresses(DMA1,
+                                   LL_DMA_CHANNEL_1,
+                                   LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
+                                   (uint32_t) &g_adcDataBuffer[20],
+                                   LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+            LL_ADC_REG_StartConversionSWStart(ADC1);
+        }
+        else
+        {
+            // TODO fix range
+            // TODO convert to Q1.15
+            // TODO apply FIR filter
+            // TODO swap ready buffer
+        }
         LL_DMA_ClearFlag_TC1(DMA1);
     }
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)

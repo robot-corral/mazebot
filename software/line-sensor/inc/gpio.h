@@ -24,3 +24,13 @@ void initializeGpio(communicationInterface_t communicationInterface);
  * all unused pins will be in analog mode to conserve power.
  */
 communicationInterface_t getCommunicationInterface();
+
+/*
+ * Sets pin, used for figure out executing times, to high.
+ */
+void setOutput0High();
+
+/*
+ * Sets pin, used for figure out executing times, to low.
+ */
+void setOutput0Low();

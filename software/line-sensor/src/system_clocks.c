@@ -42,6 +42,7 @@ void initializeSystemClocks(communicationInterface_t communicationInterface)
         LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA |
                                  LL_AHB1_GRP1_PERIPH_GPIOB |
                                  LL_AHB1_GRP1_PERIPH_GPIOC |
+                                 LL_AHB1_GRP1_PERIPH_GPIOD |
                                  LL_AHB1_GRP1_PERIPH_GPIOE |
                                  LL_AHB1_GRP1_PERIPH_GPIOF |
                                  LL_AHB1_GRP1_PERIPH_GPIOG |

@@ -53,27 +53,27 @@ void initializeGpio(communicationInterface_t communicationInterface)
             // output type        -    1 (open drain)
             // alternate function - 0100 (AF4)
 
-            // pin             14  12  10  08  06  04  02  00
-            GPIOB->MODER = 0b11111111111111111010111111111111;
-            // pin           15  13  11  09  07  05  03  01
-
-            // pin             14  12  10  08  06  04  02  00
-            GPIOB->PUPDR = 0b00000000000000000101000000000000;
-            // pin           15  13  11  09  07  05  03  01
-
             // pin               14  12  10  08  06  04  02  00
-            GPIOB->OSPEEDR = 0b00000000000000001111000000000000;
+            GPIOB->MODER   = 0b11111111111111111010111010111111;
             // pin             15  13  11  09  07  05  03  01
 
-            // pin                             1 1 1 0 0 0 0 0
-            //                                 4 2 0 8 6 4 2 0
-            GPIOB->OTYPER = 0b00000000000000000000000011000000;
-            // pin                            1 1 1 0 0 0 0 0
-            //                                5 3 1 9 7 5 3 1
+            // pin               14  12  10  08  06  04  02  00
+            GPIOB->PUPDR   = 0b00000000000000000101000100000000;
+            // pin             15  13  11  09  07  05  03  01
 
-            // pin                0006    0004    0002    0000
-            GPIOB->AFR[0] = 0b01000100000000000000000000000000;
-            // pin            0007    0005    0003    0001
+            // pin               14  12  10  08  06  04  02  00
+            GPIOB->OSPEEDR = 0b00000000000000001111000011000000;
+            // pin             15  13  11  09  07  05  03  01
+
+            // pin                              1 1 1 0 0 0 0 0
+            //                                  4 2 0 8 6 4 2 0
+            GPIOB->OTYPER  = 0b00000000000000000000000011000000;
+            // pin                             1 1 1 0 0 0 0 0
+            //                                 5 3 1 9 7 5 3 1
+
+            // pin                 0006    0004    0002    0000
+            GPIOB->AFR[0]  = 0b01000100000000000000000000000000;
+            // pin             0007    0005    0003    0001
         }
         else
         {
@@ -138,24 +138,24 @@ void initializeGpio(communicationInterface_t communicationInterface)
             // output type        -    0 (push-pull)
             // alternate function - 0101 (AF5)
 
-            // pin             14  12  10  08  06  04  02  00
-            GPIOB->MODER = 0b11111111111111111111111010111010;
-            // pin           15  13  11  09  07  05  03  01
-
             // pin               14  12  10  08  06  04  02  00
-            GPIOB->OSPEEDR = 0b00000000000000000000001111001111;
+            GPIOD->MODER   = 0b11111111110111111111111010111010;
             // pin             15  13  11  09  07  05  03  01
 
-            // pin                0006    0004    0002    0000
-            GPIOB->AFR[0] = 0b00000000000001010101000001010101;
-            // pin            0007    0005    0003    0001
+            // pin               14  12  10  08  06  04  02  00
+            GPIOD->OSPEEDR = 0b00000000001100000000001111001111;
+            // pin             15  13  11  09  07  05  03  01
+
+            // pin                 0006    0004    0002    0000
+            GPIOD->AFR[0]  = 0b00000000000001010101000001010101;
+            // pin             0007    0005    0003    0001
         }
         else if (communicationInterface == CI_USART)
         {
             // same as else block with the exception of:
             //
-            // PD5 - USART2_TX
-            // PD6 - USART2_RX
+            // PD8 - USART2_TX
+            // PD9 - USART2_RX
             //
             // for both pins:
             //
@@ -165,17 +165,17 @@ void initializeGpio(communicationInterface_t communicationInterface)
             // output type        -    0 (push-pull)
             // alternate function - 0111 (AF7)
 
-            // pin             14  12  10  08  06  04  02  00
-            GPIOB->MODER = 0b11111111111111111110101111111111;
-            // pin           15  13  11  09  07  05  03  01
-
             // pin               14  12  10  08  06  04  02  00
-            GPIOB->OSPEEDR = 0b00000000000000000011110000000000;
+            GPIOD->MODER   = 0b11111111110110101111111111111111;
             // pin             15  13  11  09  07  05  03  01
 
-            // pin                0006    0004    0002    0000
-            GPIOB->AFR[0] = 0b00000111011100000000000000000000;
-            // pin            0007    0005    0003    0001
+            // pin               14  12  10  08  06  04  02  00
+            GPIOD->OSPEEDR = 0b00000000001111110000000000000000;
+            // pin             15  13  11  09  07  05  03  01
+
+            // pin                 0014    0012    0010    0008
+            GPIOD->AFR[1]  = 0b00000000000000000000000001110111;
+            // pin             0015    0013    0011    0009
         }
         else
         {
@@ -189,13 +189,27 @@ void initializeGpio(communicationInterface_t communicationInterface)
             // PD7  - UNUSED
             // PD8  - UNUSED
             // PD9  - UNUSED
-            // PD10 - UNUSED
+            // PD10 - (output) Timing Pin 0
             // PD11 - UNUSED
             // PD12 - UNUSED
             // PD13 - UNUSED
             // PD14 - UNUSED
             // PD15 - UNUSED
-            GPIOD->MODER = 0b11111111111111111111111111111111;
+
+            // for output pin:
+            //
+            // mode               -   01 (general purpose output mode)
+            // port pull up/down  -   00 (no)
+            // output speed       -   11 (very high)
+            // output type        -    0 (push-pull)
+
+            // pin               14  12  10  08  06  04  02  00
+            GPIOD->MODER   = 0b11111111110111111111111111111111;
+            // pin             15  13  11  09  07  05  03  01
+
+            // pin               14  12  10  08  06  04  02  00
+            GPIOD->OSPEEDR = 0b00000000001100000000000000000000;
+            // pin             15  13  11  09  07  05  03  01
         }
     }
 
@@ -291,9 +305,16 @@ communicationInterface_t getCommunicationInterface()
     }
     else
     {
-        return CI_USART;
-        // TODO
-        // return CI_UNKNOWN;
-        // TODO
+        return CI_UNKNOWN;
     }
+}
+
+inline void setOutput0High()
+{
+    LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_10);
+}
+
+inline void setOutput0Low()
+{
+    LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_10);
 }

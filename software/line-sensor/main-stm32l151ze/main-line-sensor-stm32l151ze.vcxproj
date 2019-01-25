@@ -43,12 +43,15 @@
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <InlineFunctions>
+      </InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -65,8 +68,8 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="main-stm32l151ze-Debug.vgdbsettings" />
-    <None Include="main-stm32l151ze-Release.vgdbsettings" />
+    <None Include="main-line-sensor-stm32l151ze-Debug.vgdbsettings" />
+    <None Include="main-line-sensor-stm32l151ze-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
