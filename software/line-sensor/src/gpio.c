@@ -154,8 +154,8 @@ void initializeGpio(communicationInterface_t communicationInterface)
         {
             // same as else block with the exception of:
             //
-            // PD8 - USART2_TX
-            // PD9 - USART2_RX
+            // PD8 - USART3_TX
+            // PD9 - USART3_RX
             //
             // for both pins:
             //

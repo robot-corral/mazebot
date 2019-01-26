@@ -62,6 +62,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\stm32l1xx.h" />
     <ClInclude Include="..\src\system_stm32l1xx.h" />
+    <ClInclude Include="..\stm32\stm32l151xe.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_adc.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_bus.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_cortex.h" />

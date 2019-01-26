@@ -65,6 +65,9 @@
     <ClInclude Include="..\stm32\stm32l1xx_ll_i2c.h">
       <Filter>stm32</Filter>
     </ClInclude>
+    <ClInclude Include="..\stm32\stm32l151xe.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\startup_stm32l151xe.s">

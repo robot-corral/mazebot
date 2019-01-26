@@ -19,7 +19,6 @@ void main()
     communicationInterface_t communicationInterface = getCommunicationInterface();
     initializeSystemClocks(communicationInterface);
     initializeGpio(communicationInterface);
-    initializeDma(communicationInterface);
     initializeAdc();
     switch (communicationInterface)
     {
@@ -31,6 +30,7 @@ void main()
             return; // somebody forgot to set communication selector pin
         }
     }
+    initializeDma(communicationInterface);
     startQueryingAdc();
     for (;;) ;
 }
