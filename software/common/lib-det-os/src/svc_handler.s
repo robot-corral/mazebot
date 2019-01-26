@@ -25,7 +25,7 @@ SVC_Handler:
     LDRB    R1, [R2, #-2]
     # call C function to process SVC OS call
     # R0 contains pointer to osCallParameters_t object
-    BL      OS_SVC_Handler
+    BL      systemCallHandler
     # restore registers we used from the stack
     # to return from exception restore PC value from the stack
     POP     {R0-R2, PC}

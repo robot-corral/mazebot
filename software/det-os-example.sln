@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-det-os-stm32l496ze", "common\lib-det-os\lib-stm32l496ze\lib-det-os-stm32l496ze.vcxproj", "{8D721BB8-9200-41CC-9EEE-BC5125E89409}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "det-os-example-stm32l496ze", "examples\det-os-example\lib-stm32l496ze\det-os-example-stm32l496ze.vcxproj", "{C19D5768-DDEA-4D98-A339-ADB8669501E9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|VisualGDB = Debug|VisualGDB
+		Release|VisualGDB = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{8D721BB8-9200-41CC-9EEE-BC5125E89409}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{8D721BB8-9200-41CC-9EEE-BC5125E89409}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{8D721BB8-9200-41CC-9EEE-BC5125E89409}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{8D721BB8-9200-41CC-9EEE-BC5125E89409}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{C19D5768-DDEA-4D98-A339-ADB8669501E9}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{C19D5768-DDEA-4D98-A339-ADB8669501E9}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{C19D5768-DDEA-4D98-A339-ADB8669501E9}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{C19D5768-DDEA-4D98-A339-ADB8669501E9}.Release|VisualGDB.Build.0 = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B52DDE93-F05B-4004-9B7F-D6096B6191BC}
+	EndGlobalSection
+EndGlobal

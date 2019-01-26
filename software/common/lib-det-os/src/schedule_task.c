@@ -2,14 +2,9 @@
 
 #include "global_data.h"
 
-void OS_SVC_Handler(osCallParameters_t* pOsCallParameters, uint8_t svcCode)
+result_t osScheduleTask(task_t task, uint8_t priority, void* pTaskParameter)
 {
-    // TODO
-}
-
-void PendSV_Handler()
-{
-    // TODO
+    return R_OK;
 }
 
 result_t scheduleTask(task_t task, uint8_t priority, void* pTaskParameter)

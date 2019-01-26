@@ -46,36 +46,38 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MAX_SCHEDULED_TASKS=8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MAX_SCHEDULED_TASKS=8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="inc\det_os.h" />
-    <ClInclude Include="inc\det_os_implementation.h" />
-    <ClInclude Include="src\global_data.h" />
-    <ClInclude Include="src\types.h" />
+    <ClInclude Include="..\inc\det_os.h" />
+    <ClInclude Include="..\inc\det_os_implementation.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\schedule_task.h" />
+    <ClInclude Include="..\src\system_call.h" />
+    <ClInclude Include="..\src\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="lib-det-os-Debug.vgdbsettings" />
-    <None Include="lib-det-os-Release.vgdbsettings" />
+    <None Include="lib-det-os-stm32l496ze-Debug.vgdbsettings" />
+    <None Include="lib-det-os-stm32l496ze-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\dummy.c" />
-    <ClCompile Include="src\global_data.c" />
-    <ClCompile Include="src\schedule_task.c" />
-    <ClCompile Include="src\svc_handler.s" />
-    <ClCompile Include="src\task_switching.c" />
+    <ClCompile Include="..\src\stubs.c" />
+    <ClCompile Include="..\src\global_data.c" />
+    <ClCompile Include="..\src\schedule_task.c" />
+    <ClCompile Include="..\src\svc_handler.s" />
+    <ClCompile Include="..\src\system_call.c" />
   </ItemGroup>
 </Project>
