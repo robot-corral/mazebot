@@ -23,69 +23,69 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\stm32l4xx.h">
+    <ClInclude Include="..\src\stm32l4xx.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\system_stm32l4xx.h">
+    <ClInclude Include="..\src\system_stm32l4xx.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_bus.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_adc.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_exti.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_bus.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_gpio.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_dma.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_lptim.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_exti.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_pwr.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_gpio.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_rcc.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_lptim.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_system.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_lpuart.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_tim.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_pwr.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_utils.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_rcc.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_usart.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_sdmmc.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_lpuart.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_spi.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_spi.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_system.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_dma.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_tim.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_adc.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_usart.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l4xx_ll_sdmmc.h">
+    <ClInclude Include="..\stm32\stm32l4xx_ll_utils.h">
       <Filter>stm32</Filter>
     </ClInclude>
-    <ClInclude Include="stm32\stm32l496xx.h">
+    <ClInclude Include="..\stm32\stm32l496xx.h">
       <Filter>stm32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\startup_stm32l496xx.s">
+    <ClCompile Include="..\src\startup_stm32l496xx.s">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\system_stm32l4xx.c">
+    <ClCompile Include="..\src\stm32l4xx_ll_utils.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\stm32l4xx_ll_utils.c">
+    <ClCompile Include="..\src\system_stm32l4xx.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
