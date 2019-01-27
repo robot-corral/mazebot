@@ -161,33 +161,6 @@ void initializeUsartDma()
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
 
-    LL_USART_EnableDMAReq_RX(USART3);
-    LL_USART_EnableDMAReq_TX(USART3);
-
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
-}
-
-void DMA1_Channel2_IRQHandler(void)
-{
-    if (LL_DMA_IsActiveFlag_TC2(DMA1))
-    {
-        LL_DMA_ClearFlag_GI2(DMA1);
-    }
-    else if (LL_DMA_IsActiveFlag_TE2(DMA1))
-    {
-        for (;;) ;
-    }
-}
-
-void DMA1_Channel3_IRQHandler(void)
-{
-    if (LL_DMA_IsActiveFlag_TC3(DMA1))
-    {
-        LL_DMA_ClearFlag_GI3(DMA1);
-    }
-    else if (LL_DMA_IsActiveFlag_TE3(DMA1))
-    {
-        for (;;);
-    }
 }
