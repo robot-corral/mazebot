@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2018 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #include "dma.h"
 
 #include "global_data.h"
@@ -24,7 +28,7 @@ void initializeDma(communicationInterface_t communicationInterface)
 
 void initializeAdcDma()
 {
-    NVIC_SetPriority(DMA1_Channel1_IRQn, 1);
+    NVIC_SetPriority(DMA1_Channel1_IRQn, 2);
     NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_1, LL_DMA_DIRECTION_PERIPH_TO_MEMORY |

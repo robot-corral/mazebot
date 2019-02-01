@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % function interpolates position for all the samples and calculates / fits
 % parabolas for each sensor. Parabolas closely resemble what sensor sees
 % when it moves across the black line (see documentation for more details).

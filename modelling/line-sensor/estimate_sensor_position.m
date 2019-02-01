@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % model is designed to follow a line which robot is supposed to follow. If
 % robot crosses parallel lines special code will be used to handle this. In
 % this case multiple sensors can be at maximum or at minimum or anywhere in

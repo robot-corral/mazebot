@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % function does its best to split data into black and white data. Black
 % is data where sensor reads the line (at or close enough to the line to
 % sense it) and white is where sensor isn't nowhere near the line.

@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2018 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #include "adc.h"
 
 #include "global_data.h"
@@ -170,15 +174,18 @@ void DMA1_Channel1_IRQHandler()
         }
         else
         {
+            for (uint32_t i = 0; i < NUMBER_OF_SENSORS; ++i)
+            {
+                g_dataBuffer
+            }
             // TODO fix range
             // TODO convert to Q1.15
-            // TODO apply FIR filter
             // TODO swap ready buffer
         }
         LL_DMA_ClearFlag_TC1(DMA1);
     }
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
-        LL_DMA_ClearFlag_TE1(DMA1);
+        for (;;);
     }
 }

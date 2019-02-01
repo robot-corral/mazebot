@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % normalize data so it fits [0 ... 1] range and makes sure that data for
 % the 1st sensor appears 1st.
 %

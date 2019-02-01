@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % given set of sensor parabolas finds 'average' one to be used as a final
 % model
 %

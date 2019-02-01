@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % arguments:
 %   original_data_set_file_names - array of file names from which
 %       normalization data is to be inferred

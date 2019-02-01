@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2018 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #include "gpio.h"
 
 #include <stm32/stm32l1xx_ll_bus.h>
@@ -305,7 +309,8 @@ communicationInterface_t getCommunicationInterface()
     }
     else
     {
-        return CI_UNKNOWN;
+        return CI_USART;
+        // return CI_UNKNOWN;
     }
 }
 

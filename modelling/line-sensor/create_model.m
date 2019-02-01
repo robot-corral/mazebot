@@ -1,3 +1,7 @@
+%*******************************************************************************
+% Copyright (C) 2018 Pavel Krupets                                             *
+%*******************************************************************************
+
 % sensor 1 is on the right side (y displacement is -0.044 m)
 % sensor 23 is on the left side (y displacement is 0.044 m)
 

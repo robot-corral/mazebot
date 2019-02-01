@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2018 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #include "global_data.h"
 
 volatile uint16_t g_firstUsedScheduledTaskNodeIndex = MAX_SCHEDULED_TASKS;
