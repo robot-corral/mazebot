@@ -21,4 +21,4 @@ typedef enum
 
 typedef void (*task_t)(void* pTaskParameter);
 
-result_t scheduleTask(task_t task, uint8_t priority, void* pTaskParameter);
+extern result_t scheduleTask(task_t task, uint8_t priority, void* pTaskParameter);
