@@ -10,6 +10,15 @@
     <ClCompile Include="..\src\schedule_task.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\det_os_implementation.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\global_data.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\execute_task.s">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\det_os.h">
@@ -17,6 +26,12 @@
     </ClInclude>
     <ClInclude Include="..\inc\det_os_implementation.h">
       <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\types.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\global_data.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

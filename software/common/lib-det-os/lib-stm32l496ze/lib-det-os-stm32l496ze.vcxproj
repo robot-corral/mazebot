@@ -60,6 +60,8 @@
   <ItemGroup>
     <ClInclude Include="..\inc\det_os.h" />
     <ClInclude Include="..\inc\det_os_implementation.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -70,6 +72,9 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\det_os_implementation.c" />
+    <ClCompile Include="..\src\execute_task.s" />
+    <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\schedule_task.c" />
     <ClCompile Include="..\src\schedule_task_svc.s" />
     <ClCompile Include="..\src\svc_handler.s" />

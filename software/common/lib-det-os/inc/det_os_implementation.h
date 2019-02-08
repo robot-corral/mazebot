@@ -6,7 +6,7 @@
 
 #include "det_os.h"
 
-void initializeOsHardware();
+void startDetOsTimer();
 
 void taskSchedulerTimerCallback();
 

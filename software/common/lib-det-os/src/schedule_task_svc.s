@@ -14,7 +14,7 @@ scheduleTask:
     # store R0 and return address on the stack
     # R0 will hold return value from SVC call once SVC call is complete
     PUSH        {R0, LR}
-    # perform SVC call
+    # perform SVC call (#1 is a hardcoded literal)
     SVC         #1
     # restore registers and return to the caller
     POP         {R0, PC}
