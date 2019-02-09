@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\src\svc_handler.s">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\schedule_task_svc.s">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\schedule_task.c">
       <Filter>src</Filter>
     </ClCompile>
@@ -16,8 +10,17 @@
     <ClCompile Include="..\src\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\execute_task.s">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src-asm\execute_task.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\schedule_task_svc.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\svc_handler.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\task_scheduler_timer_callback.s">
+      <Filter>src-asm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +57,9 @@
     </Filter>
     <Filter Include="VisualGDB settings">
       <UniqueIdentifier>{e2fa0991-f289-4ed7-9660-2bb53604f4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-asm">
+      <UniqueIdentifier>{f94274ee-0690-4eab-8f2f-440e3fd9b0df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

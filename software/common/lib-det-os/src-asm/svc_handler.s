@@ -2,8 +2,6 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-# TODO how to handle parameters which are on stack (for functions which use more than just R0-R4)
-
 .syntax unified
     .cpu cortex-m4
     .fpu vfpv2
@@ -21,24 +19,53 @@ SVC_Handler:
     # as per spec ARM®v7-M Architecture Reference Manual
     # B1.5.8 Exception return behavior
     # 2nd bit (starting from zero) is:
-    # - zero if return stack is main (MSP)
-    # - one if return stack is process (PSP)
+    # - 0 if return stack is main (MSP)
+    # - 1 if return stack is process (PSP)
     TST         LR, #4
-    ITE         NE
-    MRSNE       R4, PSP
+    # true is when bit 2 is zero
+    # this instruction determines how next 3 instructions are going to be executed
+    # in this case it is: {then}, {then}, {else}
+    # so 1st two are only executed if bit 2 is zero
+    # last 3rd instructions is only executed if bit 2 is one
+    ITTE        EQ
+    # load MSP (main stack register) into R4
     MRSEQ       R4, MSP
+    # add 4 * 4 to R4 (this is to account for PUSH above which is done on main stack)
+    ADDEQ       R4, #16
+    # load PSP (process stack register) into R4
+    MRSNE       R4, PSP
     # load PC value so we can read previous instruction's SVC code
     # (previous instruction is SVS #imm where #imm is 8 bit value)
-    LDR         R5, [R4, #40]
+    LDR         R5, [R4, #24]
     # read previous instruction #imm argument value (into R6)
     LDRB        R6, [R5, #-2]
-#
-# TODO need to add branching to handle different SVC calls
-#
-    # call C function to process SVC OS call
+    # is it a SVC 0 handler?
+    CMP         R6, 0
+    # if so go to code which calls SVC 0 handler
+    BEQ         callScheduleNextTaskSvc
+    # is it a SVC 1 handler?
+    CMP         R6, 1
+    # if so go to code which calls SVC 1 handler
+    BEQ         callScheduleTaskSvc
+    # go to end of svc call handling
+    B           endOfSvcHandling
+
+callScheduleNextTaskSvc:
+    # call SVC C function
+    BL          scheduleNextTaskSvc
+    # go to end of svc call handling
+    B           endOfSvcHandling
+
+callScheduleTaskSvc:
+    # call SVC C function
     BL          scheduleTaskSvc
+    # go to end of svc call handling
+    B           endOfSvcHandling
+
+endOfSvcHandling:
+
     # store SVC OS call result on the stack so it can be returned from original function
-    STR         R0, [R4, #48]
+    STR         R0, [R4, #32]
     # restore remaining registers we used from the stack
     # to return from exception restore PC value from the stack
     POP         {R4, R5, R6, PC}
