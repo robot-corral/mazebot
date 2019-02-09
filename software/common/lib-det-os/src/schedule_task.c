@@ -6,7 +6,7 @@
 
 #include "global_data.h"
 
-result_t scheduleNextTaskSvc()
+result_t scheduleNextTaskSvc(void** ppTaskParameter, task_t* pTask, void** ppStackStartAddress)
 {
     return R_OK; // TODO
 }

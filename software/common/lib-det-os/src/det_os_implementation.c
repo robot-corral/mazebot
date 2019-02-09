@@ -7,7 +7,7 @@
 #include "types.h"
 #include "global_data.h"
 
-extern void executeTask(void* pTaskParameter, task_t task, void* pStackStartAddress);
+extern result_t executeTask(void* pTaskParameter, task_t task, void* pStackStartAddress);
 
 void runDetOs(task_t startTask)
 {

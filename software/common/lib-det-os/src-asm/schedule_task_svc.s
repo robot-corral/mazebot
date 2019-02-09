@@ -11,13 +11,11 @@
     .section    .text.scheduleTask
     .type       scheduleTask, %function
 scheduleTask:
-    # store R0 and return address on the stack
-    # R0 will hold return value from SVC call once SVC call is complete
-    PUSH        {R0, LR}
     # perform SVC call (#1 is a hardcoded literal)
+    # result of the call is stored in R0
     SVC         #1
-    # restore registers and return to the caller
-    POP         {R0, PC}
+    # return to calling function
+    BX          LR
     .size       scheduleTask, .-scheduleTask
 
 .end
