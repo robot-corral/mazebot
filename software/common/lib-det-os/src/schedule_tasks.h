@@ -2,8 +2,10 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-#include "det_os_implementation.h"
+#pragma once
 
-void runDetOs(task_t startTask)
-{
-}
+#include "types.h"
+
+extern void executeTasks(void* pStackStartAddress);
+
+extern void starkNewTask(void* pTaskParameter, task_t task, void* pStackStartAddress);

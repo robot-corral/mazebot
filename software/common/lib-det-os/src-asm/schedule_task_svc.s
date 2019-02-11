@@ -3,8 +3,8 @@
  *******************************************************************************/
 
 .syntax unified
-    .cpu cortex-m4
-    .fpu vfpv2
+    .cpu        cortex-m4
+    .fpu        vfpv2
     .thumb
 
     .globl      scheduleTask

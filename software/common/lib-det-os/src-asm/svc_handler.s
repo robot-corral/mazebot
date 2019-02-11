@@ -3,8 +3,8 @@
  *******************************************************************************/
 
 .syntax unified
-    .cpu cortex-m4
-    .fpu vfpv2
+    .cpu        cortex-m4
+    .fpu        vfpv2
     .thumb
 
     .globl      SVC_Handler
@@ -40,7 +40,7 @@ SVC_Handler:
     # is it a SVC 0 handler?
     CMP         R3, 0
     # if so go to code which calls SVC 0 handler
-    BEQ         callScheduleNextTaskSvc
+    BEQ         callMarkCurrentTaskAsCompletedAndStartNextTaskSvc
     # is it a SVC 1 handler?
     CMP         R3, 1
     # if so go to code which calls SVC 1 handler
@@ -48,26 +48,9 @@ SVC_Handler:
     # go to end of svc call handling
     B           endOfSvcHandling
 
-callScheduleNextTaskSvc:
-    # push R1, R2, R3 onto stack (they will hold result from scheduleNextTaskSvc)
-    # to keep stack 8 byte aligned we also add dummy R4 to it
-    PUSH        {R1, R2, R3, R4}
-    # R2 should have address of 3rd parameter
-    ADD         R2, SP, #8
-    # R1 should have address of 2nd parameter
-    ADD         R1, SP, #4
-    # R0 should have address of 1st parameter
-    MOV         R0, SP
+callMarkCurrentTaskAsCompletedAndStartNextTaskSvc:
     # call SVC C function
-    BL          scheduleNextTaskSvc
-    # retrieve all stored registers from the stack
-    POP         {R1, R2, R3, R4}
-    # put 1st parameter onto caller stack (in place of R1 register)
-    STR         R1, [R4, #4]
-    # put 2nd parameter onto caller stack (in place of R2 register)
-    STR         R2, [R4, #8]
-    # put 3rd parameter onto caller stack (in place of R3 register)
-    STR         R3, [R4, #12]
+    BL          markCurrentTaskAsCompletedAndStartNextTaskSvc
     # go to end of svc call handling
     B           endOfSvcHandling
 
