@@ -7,6 +7,10 @@
     .fpu        vfpv2
     .thumb
 
+    .globl      executeTasksOnPsp
+    .section    .text.executeTasksOnPsp
+    .type       executeTasksOnPsp, %function
+
     .globl      executeTasks
     .section    .text.executeTasks
     .type       executeTasks, %function
@@ -19,6 +23,7 @@ executeTasks:
     MSR         CONTROL, R3
     # write R0 which has process stack start address to SP (stack register)
     MSR         PSP, R0
+executeTasksOnPsp:
     # call OS to schedule next task
     SVC         #0
     # this function never exits as SVC #0 will reset next instruction back to SVC #0
