@@ -73,7 +73,9 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src-asm\det_os_idle.s" />
     <ClCompile Include="..\src-asm\execute_tasks.s" />
+    <ClCompile Include="..\src-asm\resume_task.s" />
     <ClCompile Include="..\src-asm\schedule_task_svc.s" />
     <ClCompile Include="..\src-asm\stark_new_task.s" />
     <ClCompile Include="..\src-asm\svc_handler.s" />

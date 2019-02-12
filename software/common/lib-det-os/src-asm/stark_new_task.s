@@ -8,21 +8,6 @@
  * R2 - void*  pStackStartAddress
  */
 
-/*
- * stack after 1st call to SVC #0:
- * 20000268 007a11ff 00000000 00000002 00000000 08000911 08000936 41000000
- * r0       r1       r2       r3       r12      lr       return   xPSR
- *                                                       address
- *                                                       ^^^^^^^ <- next instruction address after SVC #0 call
- *                                              ^^^^^^^^ <- next instruction after executeTasks(...) method
- * 
- * fix:
- * 
- * 1) replace LR with ReturnAddress - 2 (08000936 - 2) (to make sure that next instruction after task is SVC #0)
- * 2) replace ReturnAddress with address of the task to be executed
- * 3) replace R0 with the address of the parameter
- */
-
 .syntax unified
     .cpu        cortex-m4
     .fpu        vfpv2

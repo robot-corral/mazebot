@@ -10,12 +10,6 @@
     <ClCompile Include="..\src-asm\schedule_task_svc.s">
       <Filter>src-asm</Filter>
     </ClCompile>
-    <ClCompile Include="..\src-asm\svc_handler.s">
-      <Filter>src-asm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src-asm\task_scheduler_timer_callback.s">
-      <Filter>src-asm</Filter>
-    </ClCompile>
     <ClCompile Include="..\src-asm\execute_tasks.s">
       <Filter>src-asm</Filter>
     </ClCompile>
@@ -23,6 +17,18 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src-asm\stark_new_task.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\det_os_idle.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\task_scheduler_timer_callback.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\resume_task.s">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\svc_handler.s">
       <Filter>src-asm</Filter>
     </ClCompile>
   </ItemGroup>

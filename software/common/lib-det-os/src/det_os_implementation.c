@@ -11,14 +11,13 @@
 void runDetOs(task_t startTask)
 {
     g_scheduledTasks[0].pTaskParameter = 0;
-    g_scheduledTasks[0].inProgressTaskIndex = 0;
-    g_scheduledTasks[0].parentTaskIdx = NULL_SCHEDULED_TASK_INDEX;
+    g_scheduledTasks[0].nextTaskIdx = NULL_SCHEDULED_TASK_INDEX;
     g_scheduledTasks[0].priority = TP_NORMAL_PRIORITY;
     g_scheduledTasks[0].status = STS_SCHEDULED;
     g_scheduledTasks[0].task = startTask;
 
-    g_scheduledTasksTailIndex = 0;
-    g_runningTaskIndex = NULL_SCHEDULED_TASK_INDEX;
+    g_scheduledTasksRootIndex = 0;
 
-    executeTasks(GET_TASK_STACK_START_ADDRESS(g_inProgressTaskData[0]));
+    startDetOsTimer();
+    executeTasks(GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, 0));
 }

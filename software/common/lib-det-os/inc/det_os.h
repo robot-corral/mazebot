@@ -10,6 +10,8 @@
 typedef enum
 {
     R_OK = 0,
+
+    R_ERR_STATE_CORRUPTED = -1,
 } result_t;
 
 typedef enum
@@ -21,4 +23,4 @@ typedef enum
 
 typedef void (*task_t)(void* pTaskParameter);
 
-extern result_t scheduleTask(task_t task, uint8_t priority, void* pTaskParameter);
+extern result_t scheduleTask(task_t task, taskPriority_t priority, void* pTaskParameter);

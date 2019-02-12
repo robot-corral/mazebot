@@ -26,7 +26,8 @@ executeTasks:
 executeTasksOnPsp:
     # call OS to schedule next task
     SVC         #0
-    # this function never exits as SVC #0 will reset next instruction back to SVC #0
+    # return back to the caller
+    BX          LR
     .size       executeTasks, .-executeTasks
 
 .end

@@ -12,7 +12,7 @@
  * max number of scheduled tasks should be less than maximum value of scheduledTaskIndex_t type.
  * this is needed to allow for NULL parent.
  */
-#define MAX_NUMBER_OF_SCHEDULED_TASKS 10
+#define MAX_NUMBER_OF_SCHEDULED_TASKS 5
 
 /*
  * as tasks data is statically allocated we need index which represents null scheduled task.
@@ -25,15 +25,15 @@
 #define TASK_STACK_SIZE 512
 
 /*
- * R4, R5, R6, R7, R8, R9, R10, R11, SP, PC
- * (the rest are saved to the stack by exception handler)
+ * stack to be used when there are no tasks to execute
  */
-#define TASK_REGISTERS_STORAGE_SIZE (10 * 4)
+#define IDLE_TASK_STACK_SIZE (8 * 4)
 
 /*
- * maximum number of tasks which can be in progress (one is running and the rest are suspended).
+ * R4, R5, R6, R7, R8, R9, R10, R11, PSP
+ * (the rest are saved to the stack by exception handler)
  */
-#define MAX_NUMBER_OF_IN_ROGRESS_TASKS 2
+#define TASK_REGISTERS_STORAGE_SIZE (9 * 4)
 
 typedef enum
 {
@@ -46,26 +46,30 @@ typedef enum
 typedef uint8_t scheduledTaskIndex_t;
 typedef uint8_t inProgressTaskIndex_t;
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     task_t task;
 
     void* pTaskParameter;
 
-    uint8_t status;
-    uint8_t priority;
+    taskPriority_t priority;
 
-    scheduledTaskIndex_t parentTaskIdx;
-    inProgressTaskIndex_t inProgressTaskIndex;
+    scheduledTaskStatus_t status;
+
+    scheduledTaskIndex_t nextTaskIdx;
+
+    uint8_t pRegisterStorage[TASK_REGISTERS_STORAGE_SIZE];
 } scheduledTaskNode_t;
 
 /*
  * stack grows backwards and start address is never used, so need to point to next word after the end of stack memory
  */
-#define GET_TASK_STACK_START_ADDRESS(inProgressTaskData) (inProgressTaskData).savedRegisters
+#define GET_TASK_STACK_START_ADDRESS(inProgressTasksStacks, inProgressTaskStackIndex) (inProgressTasksStacks)[(inProgressTaskStackIndex) + 1].pStack
 
-typedef struct __attribute__((packed))
+/*
+ * stacks for all the scheduled tasks (they have to be separate from other data as stack start address should be 8 byte algigned to avoid wasting memory.
+ */
+typedef struct 
 {
-    uint8_t stack[TASK_STACK_SIZE];
-    uint8_t savedRegisters[TASK_REGISTERS_STORAGE_SIZE];
-} inProgressTaskData_t;
+    uint8_t pStack[TASK_STACK_SIZE];
+} inProgressTaskStack_t;
