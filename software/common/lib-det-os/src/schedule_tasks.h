@@ -18,4 +18,4 @@ extern void starkNewTask(void* pTaskParameter, task_t task, void* pStackStartAdd
 
 extern void resumeTask(void* pStackStartAddress, void* pRegisterStorage);
 
-result_t moveToNextTaskSvc(scheduledTaskStatus_t oldTaskStatus, void** ppOutParam1, void** ppOutParam2, void** ppOutParam3);
+result_t finishCurrentAndMoveToNextTaskSvc(void** ppOutParam1, void** ppOutParam2, void** ppOutParam3);

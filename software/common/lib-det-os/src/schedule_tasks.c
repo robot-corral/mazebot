@@ -8,62 +8,45 @@
 
 #include "global_data.h"
 
-result_t moveToNextTaskSvc(scheduledTaskStatus_t oldTaskStatus, void** ppOutParam1, void** ppOutParam2, void** ppOutParam3)
+result_t finishCurrentAndMoveToNextTaskSvc(void** ppOutParam1, void** ppOutParam2, void** ppOutParam3)
 {
-    if (oldTaskStatus == STS_EMPTY)
+    const scheduledTaskIndex_t previouslyRunningTaskIndex = g_scheduledTasksRootIndex;
+
+    if (previouslyRunningTaskIndex != NULL_SCHEDULED_TASK_INDEX)
     {
-        if (g_scheduledTasksRootIndex != NULL_SCHEDULED_TASK_INDEX && g_scheduledTasks[g_scheduledTasksRootIndex].status == STS_RUNNING)
-        {
-            g_scheduledTasks[g_scheduledTasksRootIndex].status = STS_EMPTY;
-            g_scheduledTasksRootIndex = g_scheduledTasks[g_scheduledTasksRootIndex].nextTaskIdx;
-        }
-    }
-    else
-    {
-        g_scheduledTasks[g_scheduledTasksRootIndex].status = STS_SUSPENDED;
+        scheduledTaskNode_t* pPreviouslyRunningTask = &g_scheduledTasks[previouslyRunningTaskIndex];
 
-        scheduledTaskIndex_t lastInGroupScheduledTaskIndex = g_scheduledTasksRootIndex;
-        const taskPriority_t currentTaskPriority = g_scheduledTasks[g_scheduledTasksRootIndex].priority;
-
-        while (g_scheduledTasks[lastInGroupScheduledTaskIndex].nextTaskIdx != NULL_SCHEDULED_TASK_INDEX &&
-               g_scheduledTasks[g_scheduledTasks[lastInGroupScheduledTaskIndex].nextTaskIdx].priority == currentTaskPriority)
+        if (pPreviouslyRunningTask->status == STS_RUNNING)
         {
-            lastInGroupScheduledTaskIndex = g_scheduledTasks[lastInGroupScheduledTaskIndex].nextTaskIdx;
-        }
-
-        if (lastInGroupScheduledTaskIndex != g_scheduledTasksRootIndex)
-        {
-            const scheduledTaskIndex_t oldScheduledTasksRootIndex = g_scheduledTasksRootIndex;
-            g_scheduledTasksRootIndex = g_scheduledTasks[oldScheduledTasksRootIndex].nextTaskIdx;
-            g_scheduledTasks[oldScheduledTasksRootIndex].nextTaskIdx = g_scheduledTasks[lastInGroupScheduledTaskIndex].nextTaskIdx;
-            g_scheduledTasks[lastInGroupScheduledTaskIndex].nextTaskIdx = oldScheduledTasksRootIndex;
+            pPreviouslyRunningTask->status = STS_EMPTY;
+            g_scheduledTasksRootIndex = pPreviouslyRunningTask->nextTaskIdx;
         }
     }
 
-    if (g_scheduledTasksRootIndex == NULL_SCHEDULED_TASK_INDEX)
+    const scheduledTaskIndex_t newRunningTaskIndex = g_scheduledTasksRootIndex;
+
+    if (newRunningTaskIndex == NULL_SCHEDULED_TASK_INDEX)
     {
-        *ppOutParam1 = 0;
         *ppOutParam2 = detOsIdle;
         *ppOutParam3 = g_detOsIdleStack + IDLE_TASK_STACK_SIZE;
         return R_NO_TASKS_LEFT;
     }
 
     result_t result;
-
-    scheduledTaskNode_t* pCurrentScheduledTask = &g_scheduledTasks[g_scheduledTasksRootIndex];
-    const scheduledTaskStatus_t oldStatus = pCurrentScheduledTask->status;
+    scheduledTaskNode_t* pNewRunningTask = &g_scheduledTasks[newRunningTaskIndex];
+    const scheduledTaskStatus_t oldStatus = pNewRunningTask->status;
 
     if (oldStatus == STS_SCHEDULED)
     {
-        *ppOutParam1 = pCurrentScheduledTask->pTaskParameter;
-        *ppOutParam2 = pCurrentScheduledTask->task;
-        *ppOutParam3 = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, g_scheduledTasksRootIndex);
+        *ppOutParam1 = pNewRunningTask->pTaskParameter;
+        *ppOutParam2 = pNewRunningTask->task;
+        *ppOutParam3 = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, newRunningTaskIndex);
         result = R_NEW_TASK_FOUND;
     }
     else if (oldStatus == STS_SUSPENDED)
     {
-        *ppOutParam1 = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, g_scheduledTasksRootIndex);
-        *ppOutParam2 = pCurrentScheduledTask->pRegisterStorage;
+        *ppOutParam1 = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, newRunningTaskIndex);
+        *ppOutParam2 = pNewRunningTask->pRegisterStorage;
         result = R_SUSPENDED_TASK_FOUND;
     }
     else
@@ -71,7 +54,7 @@ result_t moveToNextTaskSvc(scheduledTaskStatus_t oldTaskStatus, void** ppOutPara
         return R_ERR_STATE_CORRUPTED;
     }
 
-    g_scheduledTasks[g_scheduledTasksRootIndex].status = STS_RUNNING;
+    pNewRunningTask->status = STS_RUNNING;
 
     return result;
 }

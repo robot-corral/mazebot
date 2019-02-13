@@ -50,18 +50,16 @@ SVC_Handler:
     B           endOfSvcHandling
 
 callMarkCurrentTaskAsCompletedAndStartNextTaskSvc:
-    # R0 will have argument to mark currently running task as STS_EMPTY
-    MOV         R0, 0
     # allocate memory for return parameters from moveToNextTaskSvc function
-    PUSH        {R1-R3}
+    PUSH        {R0-R2}
     # save address of 1st output parameter to R1
-    MOV         R1, SP
+    MOV         R0, SP
     # save address of 2nd output parameter to R2
-    ADD         R2, SP, 4
+    ADD         R1, SP, 4
     # save address of 3rd output parameter to R3
-    ADD         R3, SP, 8
+    ADD         R2, SP, 8
     # call SVC C function
-    BL          moveToNextTaskSvc
+    BL          finishCurrentAndMoveToNextTaskSvc
     # compare result to 0
     TST         R0, #0
     # if less then 0 execute next 2 instructions
