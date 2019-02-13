@@ -2,6 +2,8 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+  #include "../src/svc_defs.h"
+
 .syntax unified
     .cpu        cortex-m4
     .fpu        vfpv2
@@ -20,7 +22,7 @@ SVC_Handler:
     # 2nd bit (starting from zero) is:
     # - 0 if return stack is main (MSP)
     # - 1 if return stack is process (PSP)
-    TST         LR, #4
+    TST         LR, 4
     # true is when bit 2 is zero
     # this instruction determines how next 3 instructions are going to be executed
     # in this case it is: {then}, {then}, {else}
@@ -30,46 +32,46 @@ SVC_Handler:
     # load MSP (main stack register) into R12
     MRSEQ       R12, MSP
     # add 2 * 4 bytes to R12 (this is to account for PUSH above which is done on main stack)
-    ADDEQ       R12, #8
+    ADDEQ       R12, 8
     # load PSP (process stack register) into R12
     MRSNE       R12, PSP
     # load PC value from caller stack to R14 so we can read previous instruction's SVC code
     # (previous instruction is SVS #imm where #imm is 8 bit value)
-    LDR         R14, [R12, #24]
+    LDR         R14, [R12, 24]
     # read previous instruction #imm argument value (into R14)
-    LDRB        R14, [R14, #-2]
-    # is it a SVC 0 handler?
-    CMP         R14, #0
-    # if so go to code which calls SVC 0 handler
-    BEQ         callMarkCurrentTaskAsCompletedAndStartNextTaskSvc
-    # is it a SVC 1 handler?
-    CMP         R14, #1
-    # if so go to code which calls SVC 1 handler
+    LDRB        R14, [R14, -2]
+    # compare R14 with SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK
+    CMP         R14, SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK
+    # R14 equals SVC SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK then go to callFinishCurrentAndMoveToNextTaskSvc
+    BEQ         callFinishCurrentAndMoveToNextTaskSvc
+    # comare R14 with SVC_SCHEDULE_TASK
+    CMP         R14, SVC_SCHEDULE_TASK
+    # R14 equals SVC_SCHEDULE_TASK then go to callScheduleTaskSvc
     BEQ         callScheduleTaskSvc
     # go to end of svc call handling
     B           endOfSvcHandling
 
-callMarkCurrentTaskAsCompletedAndStartNextTaskSvc:
-    # allocate memory for return parameters from moveToNextTaskSvc function
-    PUSH        {R0-R2}
-    # save address of 1st output parameter to R1
+callFinishCurrentAndMoveToNextTaskSvc:
+    # allocate memory for return parameters from finishCurrentAndMoveToNextTaskSvc function
+    SUB         SP, 12
+    # save address of 1st output parameter to R0
     MOV         R0, SP
-    # save address of 2nd output parameter to R2
+    # save address of 2nd output parameter to R1
     ADD         R1, SP, 4
-    # save address of 3rd output parameter to R3
+    # save address of 3rd output parameter to R2
     ADD         R2, SP, 8
     # call SVC C function
     BL          finishCurrentAndMoveToNextTaskSvc
     # compare result to 0
-    TST         R0, #0
+    TST         R0, 0
     # if less then 0 execute next 2 instructions
     ITT         MI
     # roll back stack by 3 * 4 = 12 bytes
-    ADDMI       SP, #12
+    ADDMI       SP, 12
     # go to the end as error occured and we are done
     BMI         endOfSvcHandling
     # compare result stored in R0 to 3
-    CMP         R0, #3
+    CMP         R0, 3
     # restore output parameters from stack to R0, R1, R2
     POP         {R0-R2}
     # if R14 not equal to 3 go to callStartNewTask

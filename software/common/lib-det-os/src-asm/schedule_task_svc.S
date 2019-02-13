@@ -2,6 +2,8 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+ #include "../src/svc_defs.h"
+
 .syntax unified
     .cpu        cortex-m4
     .fpu        vfpv2
@@ -11,9 +13,9 @@
     .section    .text.scheduleTask
     .type       scheduleTask, %function
 scheduleTask:
-    # perform SVC call (#1 is a hardcoded literal)
+    # perform SVC call (SVC_SCHEDULE_TASK is a hardcoded literal)
     # result of the call is stored in R0
-    SVC         #1
+    SVC         SVC_SCHEDULE_TASK
     # return to calling function
     BX          LR
     .size       scheduleTask, .-scheduleTask

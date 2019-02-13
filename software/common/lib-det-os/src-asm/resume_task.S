@@ -19,7 +19,7 @@ resumeTask:
     # load stack address from PSP to R3
     MRS         R3, PSP
     # load xPSR value from previous task PSP stack into R3
-    LDR         R3, [R3, #28]
+    LDR         R3, [R3, 28]
     # load suspended task register values and update R1 address to point to register value after R11
     LDM         R1!, {R4, R5, R6, R7, R8, R9, R10, R11}
     # load stack address into R2
@@ -27,7 +27,7 @@ resumeTask:
     # load stack address from R2 to PSP
     MSR         PSP, R2
     # save xPSR value from R3 to new task PSP stack
-    STR         R3, [R2, #28]
+    STR         R3, [R2, 28]
     # return to calling function
     BX          LR
     .size       resumeTask, .-resumeTask

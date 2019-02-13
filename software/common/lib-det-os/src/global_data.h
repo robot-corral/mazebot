@@ -6,7 +6,10 @@
 
 #include "types.h"
 
-extern scheduledTaskIndex_t g_scheduledTasksRootIndex;
+extern scheduledTaskIndex_t g_scheduledTaskRootIndex;
+
+extern scheduledTaskIndex_t g_currentlyRunningTaskIndex;
+extern scheduledTaskIndex_t g_currentlyRunningParentTaskIndex;
 
 extern scheduledTaskNode_t g_scheduledTasks[MAX_NUMBER_OF_SCHEDULED_TASKS];
 

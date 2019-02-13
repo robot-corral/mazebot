@@ -4,7 +4,10 @@
 
 #include "global_data.h"
 
-scheduledTaskIndex_t g_scheduledTasksRootIndex;
+scheduledTaskIndex_t g_scheduledTaskRootIndex;
+
+scheduledTaskIndex_t g_currentlyRunningTaskIndex;
+scheduledTaskIndex_t g_currentlyRunningParentTaskIndex;
 
 scheduledTaskNode_t g_scheduledTasks[MAX_NUMBER_OF_SCHEDULED_TASKS];
 

@@ -6,8 +6,4 @@
 
 #include "det_os.h"
 
-void startDetOsTimer();
-
-void taskSchedulerTimerCallback();
-
 void runDetOs(task_t startTask);

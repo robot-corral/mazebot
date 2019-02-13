@@ -58,6 +58,11 @@ typedef struct __attribute__((packed))
 
     scheduledTaskIndex_t nextTaskIdx;
 
+    /*
+     * pRegisterStorage must be 4 byte aligned so we add this dummy field
+     */
+    uint8_t reserved;
+
     uint8_t pRegisterStorage[TASK_REGISTERS_STORAGE_SIZE];
 } scheduledTaskNode_t;
 

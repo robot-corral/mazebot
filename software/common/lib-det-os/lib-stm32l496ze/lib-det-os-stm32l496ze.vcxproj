@@ -48,6 +48,7 @@
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MAX_SCHEDULED_TASKS=8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
@@ -55,6 +56,7 @@
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>MAX_SCHEDULED_TASKS=8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -62,6 +64,8 @@
     <ClInclude Include="..\inc\det_os_implementation.h" />
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\schedule_tasks.h" />
+    <ClInclude Include="..\src\schedule_tasks_defs.h" />
+    <ClInclude Include="..\src\svc_defs.h" />
     <ClInclude Include="..\src\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -73,15 +77,20 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-asm\det_os_idle.s" />
-    <ClCompile Include="..\src-asm\execute_tasks.s" />
-    <ClCompile Include="..\src-asm\resume_task.s" />
-    <ClCompile Include="..\src-asm\schedule_task_svc.s" />
-    <ClCompile Include="..\src-asm\stark_new_task.s" />
-    <ClCompile Include="..\src-asm\svc_handler.s" />
-    <ClCompile Include="..\src-asm\task_scheduler_timer_callback.s" />
+    <ClCompile Include="..\src-asm\det_os_idle.S" />
+    <ClCompile Include="..\src-asm\execute_tasks.S" />
+    <ClCompile Include="..\src-asm\resume_task.S" />
+    <ClCompile Include="..\src-asm\schedule_task_svc.S" />
+    <ClCompile Include="..\src-asm\stark_new_task.S" />
+    <ClCompile Include="..\src-asm\svc_handler.S" />
+    <ClCompile Include="..\src-asm\tim2_irq_handler.S" />
     <ClCompile Include="..\src\det_os_implementation.c" />
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\schedule_tasks.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj">
+      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
+    </ProjectReference>
   </ItemGroup>
 </Project>
