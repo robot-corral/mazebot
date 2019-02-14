@@ -2,7 +2,7 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
- #include "../src/svc_defs.h"
+#include "../src/svc_defs.h"
 
 .syntax unified
     .cpu        cortex-m4

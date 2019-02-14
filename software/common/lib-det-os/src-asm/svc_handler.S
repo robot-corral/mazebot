@@ -2,7 +2,9 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-  #include "../src/svc_defs.h"
+#include "../src/svc_defs.h"
+#include "../inc/result_codes.h"
+#include "../src/schedule_tasks_defs.h"
 
 .syntax unified
     .cpu        cortex-m4
@@ -14,9 +16,8 @@
     .type       SVC_Handler, %function
 SVC_Handler:
     # store LR register as it is going to be changed by calling SVC handlers
-    # to keep stack 8 byte aligned need to store dummy register R12. R12 is chosen as, if we are going to resume a task we couldn't push/pop any registers apart from R0-R3 and R12,
-    # R0-R3 are used to pass arguments in (so we couldn't modify them), so the only register left is R12.
-    PUSH        {R12, LR}
+    # need to use register R4 to store result address
+    PUSH        {R4, LR}
     # as per spec ARM®v7-M Architecture Reference Manual
     # B1.5.8 Exception return behavior
     # 2nd bit (starting from zero) is:
@@ -29,30 +30,32 @@ SVC_Handler:
     # so 1st two are only executed if bit 2 is zero
     # last 3rd instruction is only executed if bit 2 is one
     ITTE        EQ
-    # load MSP (main stack register) into R12
-    MRSEQ       R12, MSP
-    # add 2 * 4 bytes to R12 (this is to account for PUSH above which is done on main stack)
-    ADDEQ       R12, 8
-    # load PSP (process stack register) into R12
-    MRSNE       R12, PSP
+    # load MSP (main stack register) into R4
+    MRSEQ       R4, MSP
+    # add 2 * 4 bytes to R4 (this is to account for PUSH above which is done on main stack)
+    ADDEQ       R4, 8
+    # load PSP (process stack register) into R4
+    MRSNE       R4, PSP
     # load PC value from caller stack to R14 so we can read previous instruction's SVC code
     # (previous instruction is SVS #imm where #imm is 8 bit value)
-    LDR         R14, [R12, 24]
+    LDR         R14, [R4, 24]
     # read previous instruction #imm argument value (into R14)
     LDRB        R14, [R14, -2]
     # compare R14 with SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK
     CMP         R14, SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK
-    # R14 equals SVC SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK then go to callFinishCurrentAndMoveToNextTaskSvc
-    BEQ         callFinishCurrentAndMoveToNextTaskSvc
+    # R14 equals SVC SVC_FINISH_CURRENT_AND_MOVE_TO_NEXT_TASK then go to labelFinishCurrentAndMoveToNextTaskSvc
+    BEQ         labelFinishCurrentAndMoveToNextTaskSvc
     # comare R14 with SVC_SCHEDULE_TASK
     CMP         R14, SVC_SCHEDULE_TASK
-    # R14 equals SVC_SCHEDULE_TASK then go to callScheduleTaskSvc
-    BEQ         callScheduleTaskSvc
+    # R14 equals SVC_SCHEDULE_TASK then go to labelScheduleTaskSvc
+    BEQ         labelScheduleTaskSvc
+    # store R_ERR_UNKNOWN_SVC_CALL result to be returned to the caller
+    MOV         R0, R_ERR_UNKNOWN_SVC_CALL
     # go to end of svc call handling
-    B           endOfSvcHandling
+    B           labelEndFunctionWithResult
 
-callFinishCurrentAndMoveToNextTaskSvc:
-    # allocate memory for return parameters from finishCurrentAndMoveToNextTaskSvc function
+labelFinishCurrentAndMoveToNextTaskSvc:
+    # allocate memory for return parameters 3 * 4 = 12 bytes from finishCurrentAndMoveToNextTaskSvc function
     SUB         SP, 12
     # save address of 1st output parameter to R0
     MOV         R0, SP
@@ -64,43 +67,47 @@ callFinishCurrentAndMoveToNextTaskSvc:
     BL          finishCurrentAndMoveToNextTaskSvc
     # compare result to 0
     TST         R0, 0
-    # if less then 0 execute next 2 instructions
-    ITT         MI
+    # less than or equal to 0 then execute next 2 instructions
+    ITT         LE
     # roll back stack by 3 * 4 = 12 bytes
-    ADDMI       SP, 12
+    ADDLE       SP, 12
     # go to the end as error occured and we are done
-    BMI         endOfSvcHandling
-    # compare result stored in R0 to 3
-    CMP         R0, 3
+    BLE         labelError
+    # compare result stored in R0 to R_RESUME_NEW_TASK
+    CMP         R0, R_RESUME_NEW_TASK
     # restore output parameters from stack to R0, R1, R2
     POP         {R0-R2}
-    # if R14 not equal to 3 go to callStartNewTask
-    BNE         callStartNewTask
+    # R14 not equal to 3 go to labelStartNewTask
+    BNE         labelStartNewTask
     # call resume task
     BL          resumeTask
-    # make sure result is R_OK = 0
-    MOV         R0, 0
     # go to the end
-    B           endOfSvcHandling
-callStartNewTask:
+    B           labelEndFunction
+labelStartNewTask:
     # call start new task
     BL          starkNewTask
-    # make sure result is R_OK = 0
-    MOV         R0, 0
     # go to the end
-    B           endOfSvcHandling
+    B           labelEndFunction
 
-callScheduleTaskSvc:
+labelScheduleTaskSvc:
     # call SVC C function
     BL          scheduleTaskSvc
-    # go to end of svc call handling
-    B           endOfSvcHandling
 
-endOfSvcHandling:
+labelEndFunctionWithResult:
     # store SVC OS call result on the stack (where R0 is stored) so it can be returned to calling function
-    STR         R0, [R12]
+    STR         R0, [R4]
     # restore remaining registers we used from the stack
     # to return from exception restore PC value from the stack
+    POP         {R4, PC}
+
+labelError:
+    # repeat forever
+    B           labelError
+
+labelEndFunction:
+    # restore remaining registers we used from the stack
+    # to return from exception restore PC value from the stack
+    # R4 was modified by task manager to contain executing task data so restore R12 which is caller saved register
     POP         {R12, PC}
     .size       SVC_Handler, .-SVC_Handler
 

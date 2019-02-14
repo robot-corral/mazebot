@@ -7,12 +7,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef enum
-{
-    R_OK = 0,
+#include "result_codes.h"
 
-    R_ERR_STATE_CORRUPTED = -1,
-} result_t;
+typedef int32_t result_t;
 
 typedef enum
 {

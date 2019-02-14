@@ -54,6 +54,9 @@
     <ClInclude Include="..\src\svc_defs.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\result_codes.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib-det-os-stm32l496ze-Debug.vgdbsettings">

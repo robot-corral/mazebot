@@ -17,8 +17,9 @@
     .section    .text.TIM2_IRQHandler
     .type       TIM2_IRQHandler, %function
 TIM2_IRQHandler:
-    # store original LR in R12 so we can return from the function
-    MOV         R12, LR
+    # store original LR so we can return later
+    # R12 is stored to keep stack 8 bytes align
+    PUSH        {R12, LR}
 
     # store TIM2 base address to R0
     MOV         R0, 0x40000000
@@ -118,10 +119,8 @@ labelOldTaskContinuesExecution:
     ADD         SP, SP, 16
 
 labelEndFunction:
-    # restore original LR so we can return from the function
-    MOV         LR, R12
     # return to calling function
-    BX          LR
+    POP         {R12, PC}
     .size       TIM2_IRQHandler, .-TIM2_IRQHandler
 
 .end

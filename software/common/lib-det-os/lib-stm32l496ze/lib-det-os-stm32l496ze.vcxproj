@@ -62,6 +62,7 @@
   <ItemGroup>
     <ClInclude Include="..\inc\det_os.h" />
     <ClInclude Include="..\inc\det_os_implementation.h" />
+    <ClInclude Include="..\inc\result_codes.h" />
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\schedule_tasks.h" />
     <ClInclude Include="..\src\schedule_tasks_defs.h" />
