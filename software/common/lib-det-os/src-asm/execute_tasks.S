@@ -23,7 +23,7 @@ executeTasks:
     ORR         R3, 0x02
     # write R3 register into CONTROL register
     MSR         CONTROL, R3
-    # write R0 which has process stack start address to SP (stack register)
+    # write R0 which has idle stack start address to SP (stack register)
     MSR         PSP, R0
 executeTasksOnPsp:
     # call OS to schedule next task

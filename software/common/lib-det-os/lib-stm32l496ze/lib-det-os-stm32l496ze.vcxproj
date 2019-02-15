@@ -80,7 +80,6 @@
   <ItemGroup>
     <ClCompile Include="..\src-asm\det_os_idle.S" />
     <ClCompile Include="..\src-asm\execute_tasks.S" />
-    <ClCompile Include="..\src-asm\resume_task.S" />
     <ClCompile Include="..\src-asm\schedule_task_svc.S" />
     <ClCompile Include="..\src-asm\stark_new_task.S" />
     <ClCompile Include="..\src-asm\svc_handler.S" />

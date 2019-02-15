@@ -11,6 +11,7 @@
     .section    .text.detOsIdle
     .type       detOsIdle, %function
 detOsIdle:
+    # endless loop back to detOsIdle
     B           detOsIdle
     .size       detOsIdle, .-detOsIdle
 

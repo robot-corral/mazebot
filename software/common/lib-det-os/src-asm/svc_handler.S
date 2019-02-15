@@ -79,8 +79,10 @@ labelFinishCurrentAndMoveToNextTaskSvc:
     POP         {R0-R2}
     # R14 not equal to 3 go to labelStartNewTask
     BNE         labelStartNewTask
-    # call resume task
-    BL          resumeTask
+    # load suspended task register values
+    LDM         R0, {R4, R5, R6, R7, R8, R9, R10, R11, R12}
+    # save stack address from R12 to PSP
+    MSR         PSP, R12
     # go to the end
     B           labelEndFunction
 labelStartNewTask:

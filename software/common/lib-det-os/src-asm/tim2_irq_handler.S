@@ -58,12 +58,10 @@ TIM2_IRQHandler:
 
     # load old task register storage address into R1
     POP         {R1}
+    # load PSP address into R12
+    MRS         R12, PSP
     # store all general registers into task register storage
-    STM         R1!, {R4, R5, R6, R7, R8, R9, R10, R11}
-    # load PSP address into R2
-    MRS         R2, PSP
-    # store PSP address into task register storage
-    STR         R2, [R1]
+    STM         R1, {R4, R5, R6, R7, R8, R9, R10, R11, R12}
 
     # compare result stored in R0 to R_SUSPEND_OLD_TASK_START_NEW_TASK == 4
     CMP         R0, R_SUSPEND_OLD_TASK_START_NEW_TASK
@@ -77,7 +75,7 @@ labelError:
     B           labelError
 
 labelStartNewTask:
-    # load resumeTask parameters into R0, R1, R2
+    # load startNewTask parameters into R0, R1, R2
     POP         {R0, R1, R2}
     # skip last parameter as it's not used
     ADD         SP, SP, 4
@@ -87,12 +85,14 @@ labelStartNewTask:
     B           labelEndFunction
 
 labelResumeNewTask:
-    # load resumeTask parameters into R0, R1
-    POP         {R0, R1}
+    # load resumeTask parameter into R0
+    POP         {R0}
     # skip last parameter as it's not used
-    ADD         SP, SP, 8
-    # call resumeTask
-    BL          resumeTask
+    ADD         SP, SP, 12
+    # load suspended task register values
+    LDM         R0, {R4, R5, R6, R7, R8, R9, R10, R11, R12}
+    # save stack address from R12 to PSP
+    MSR         PSP, R12
     # we are done go to the end of the function
     B           labelEndFunction
 
@@ -106,11 +106,13 @@ labelSuspendOldTaskStartNewTask:
 
 labelSuspendOldTaskResumeNewTask:
     # load resumeTask parameters into R0, R1
-    POP         {R0, R1}
+    POP         {R0}
     # skip last parameter as it's not used
-    ADD         SP, SP, 4
-    # call resumeTask
-    BL          resumeTask
+    ADD         SP, SP, 8
+    # load suspended task register values
+    LDM         R0, {R4, R5, R6, R7, R8, R9, R10, R11, R12}
+    # save stack address from R12 to PSP
+    MSR         PSP, R12
     # we are done go to the end of the function
     B           labelEndFunction
 

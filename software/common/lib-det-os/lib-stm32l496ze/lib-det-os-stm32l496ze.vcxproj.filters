@@ -19,9 +19,6 @@
     <ClCompile Include="..\src-asm\execute_tasks.S">
       <Filter>src-asm</Filter>
     </ClCompile>
-    <ClCompile Include="..\src-asm\resume_task.S">
-      <Filter>src-asm</Filter>
-    </ClCompile>
     <ClCompile Include="..\src-asm\schedule_task_svc.S">
       <Filter>src-asm</Filter>
     </ClCompile>

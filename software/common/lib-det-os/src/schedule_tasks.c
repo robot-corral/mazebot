@@ -33,8 +33,7 @@ static inline result_t executeRootScheduledTask(void** ppOutParam1, void** ppOut
     }
     else if (oldStatus == STS_SUSPENDED)
     {
-        *ppOutParam1 = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, newRunningTaskIndex);
-        *ppOutParam2 = pNewRunningTask->pRegisterStorage;
+        *ppOutParam1 = pNewRunningTask->pRegisterStorage;
         result = R_RESUME_NEW_TASK;
     }
     else
@@ -128,8 +127,7 @@ static inline result_t suspendOldTaskExecuteNewTask(scheduledTaskIndex_t oldRunn
     else if (oldStatus == STS_SUSPENDED)
     {
         *ppOutParam1 = pOldRunningTask->pRegisterStorage;
-        *ppOutParam2 = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, newRunningTaskIndex);
-        *ppOutParam3 = pNewRunningTask->pRegisterStorage;
+        *ppOutParam2 = pNewRunningTask->pRegisterStorage;
         result = R_SUSPEND_OLD_TASK_RESUME_NEW_TASK;
     }
     else

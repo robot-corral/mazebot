@@ -24,5 +24,5 @@ void runDetOs(task_t startTask)
 
     LL_TIM_EnableCounter(TIM2); // start OS timer
 
-    executeTasks(GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, 0));
+    executeTasks(g_detOsIdleStack + IDLE_TASK_STACK_SIZE);
 }
