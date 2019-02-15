@@ -23,27 +23,27 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\assert.h">
+    <ClInclude Include="..\inc\assert.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="inc\test.h">
+    <ClInclude Include="..\inc\test.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="src\global_data.h">
+    <ClInclude Include="..\src\global_data.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\output.h">
+    <ClInclude Include="..\src\output.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\assert.c">
+    <ClCompile Include="..\src\assert.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\global_data.c">
+    <ClCompile Include="..\src\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\output.c">
+    <ClCompile Include="..\src\output.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

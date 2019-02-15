@@ -14,7 +14,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
-    <BSP_VERSION>2018.08</BSP_VERSION>
+    <BSP_VERSION>2018.12</BSP_VERSION>
     <InPlaceBSPSubdir />
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -52,10 +52,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="inc\assert.h" />
-    <ClInclude Include="inc\test.h" />
-    <ClInclude Include="src\global_data.h" />
-    <ClInclude Include="src\output.h" />
+    <ClInclude Include="..\inc\assert.h" />
+    <ClInclude Include="..\inc\test.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\output.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -66,8 +66,8 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\assert.c" />
-    <ClCompile Include="src\global_data.c" />
-    <ClCompile Include="src\output.c" />
+    <ClCompile Include="..\src\assert.c" />
+    <ClCompile Include="..\src\global_data.c" />
+    <ClCompile Include="..\src\output.c" />
   </ItemGroup>
 </Project>

@@ -66,7 +66,7 @@ labelFinishCurrentAndMoveToNextTaskSvc:
     # call SVC C function
     BL          finishCurrentAndMoveToNextTaskSvc
     # compare result to 0
-    TST         R0, 0
+    CMP         R0, #0
     # less than or equal to 0 then execute next 2 instructions
     ITT         LE
     # roll back stack by 3 * 4 = 12 bytes
