@@ -1,0 +1,16 @@
+#pragma once
+
+#define NUMBER_OF_SENSORS 40
+
+#define LSC_RESET                0x01
+#define LSC_START_CALIBRATION    0x02
+#define LSC_FINISH_CALIBRATION   0x03
+#define LSC_USE_CALIBRATION_DATA 0x04
+#define LSC_SEND_SENSOR_DATA     0x05
+
+#define LSS_FAILURE                  0x01
+#define LSS_CALIBRATION_ERROR        0x02
+#define LSS_INVALID_CALIBRATION_DATA 0x03
+#define LSS_SENSOR_NOT_CALIBRATED    0x04
+
+#define LSS_FLAG_NEW_DATA_AVAILABLE  0x80

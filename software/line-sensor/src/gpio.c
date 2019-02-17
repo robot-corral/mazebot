@@ -314,12 +314,17 @@ communicationInterface_t getCommunicationInterface()
     }
 }
 
-inline void setOutput0High()
+void setOutput0High()
 {
     LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_10);
 }
 
-inline void setOutput0Low()
+void setOutput0Low()
 {
     LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_10);
+}
+
+void toggleOutput0()
+{
+    LL_GPIO_TogglePin(GPIOD, LL_GPIO_PIN_10);
 }

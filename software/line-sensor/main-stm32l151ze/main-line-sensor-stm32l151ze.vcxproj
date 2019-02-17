@@ -43,8 +43,7 @@
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <InlineFunctions>
-      </InlineFunctions>
+      <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
@@ -54,16 +53,6 @@
       <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\inc\adc.h" />
-    <ClInclude Include="..\inc\dma.h" />
-    <ClInclude Include="..\inc\global_data.h" />
-    <ClInclude Include="..\inc\gpio.h" />
-    <ClInclude Include="..\inc\i2c.h" />
-    <ClInclude Include="..\inc\spi.h" />
-    <ClInclude Include="..\inc\system_clocks.h" />
-    <ClInclude Include="..\inc\usart.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
@@ -87,5 +76,20 @@
     <ProjectReference Include="..\..\common\lib-stm32l1\lib-stm32l151ze\lib-stm32l151ze.vcxproj">
       <Project>{3e06d10a-43c7-40b0-90c8-e35bb970aa0e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\line_sensor.h" />
+    <ClInclude Include="..\inc\line_sensor_defs.h" />
+    <ClInclude Include="..\src\adc.h" />
+    <ClInclude Include="..\src\buffer_index.h" />
+    <ClInclude Include="..\src\dma.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\gpio.h" />
+    <ClInclude Include="..\src\i2c.h" />
+    <ClInclude Include="..\src\qmath.h" />
+    <ClInclude Include="..\src\spi.h" />
+    <ClInclude Include="..\src\system_clocks.h" />
+    <ClInclude Include="..\src\types.h" />
+    <ClInclude Include="..\src\usart.h" />
   </ItemGroup>
 </Project>

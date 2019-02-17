@@ -4,7 +4,7 @@
 
 #pragma once
 
-/*
+ /*
  * initializes ADC hardware.
  *
  * should only be called once after reset.

@@ -23,32 +23,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\adc.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\gpio.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\spi.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\usart.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\system_clocks.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\i2c.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\dma.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\global_data.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\src\main.c">
       <Filter>src</Filter>
     </ClCompile>
@@ -76,5 +50,46 @@
     <ClCompile Include="..\src\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\adc.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dma.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\global_data.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gpio.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\i2c.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\spi.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\system_clocks.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\usart.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\line_sensor.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\line_sensor_defs.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\types.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\buffer_index.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\qmath.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

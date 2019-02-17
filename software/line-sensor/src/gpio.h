@@ -38,3 +38,8 @@ void setOutput0High();
  * Sets pin, used for figure out executing times, to low.
  */
 void setOutput0Low();
+
+/*
+ * Toggle pin, used for figure out executing times, to low.
+ */
+void toggleOutput0();

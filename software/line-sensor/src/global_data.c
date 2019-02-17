@@ -4,7 +4,10 @@
 
 #include "global_data.h"
 
-volatile uint16_t g_adcDataBuffer[40];
+bool g_isCalibrated;
 
-volatile uint8_t g_txBuffer[TX_BUFFER_LENGTH];
-volatile uint8_t g_rxBuffer[RX_BUFFER_LENGTH];
+volatile uint32_t g_currentProducerConsumerIndex;
+
+volatile lineSensorData_t g_dataBuffers[NUMBER_OF_DATA_BUFFERS];
+
+lineSensorCommandResponseFinishCalibration_t g_calibrationData;

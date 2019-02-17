@@ -4,7 +4,9 @@
 
 #include "adc.h"
 
+#include "qmath.h"
 #include "global_data.h"
+#include "buffer_index.h"
 
 #include <stm32/stm32l1xx_ll_adc.h>
 #include <stm32/stm32l1xx_ll_bus.h>
@@ -12,8 +14,6 @@
 
 static void configureBankA();
 static void configureBankB();
-
-// ADC query takes ~55 usec
 
 void initializeAdc()
 {
@@ -150,42 +150,74 @@ void configureBankB()
 void startQueryingAdc()
 {
     configureBankA();
+    const bufferIndex_t bufferIndex = getCurrentProducerIndex();
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_1,
                            LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
-                           (uint32_t) &g_adcDataBuffer[0],
+                           (uint32_t) &g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[0],
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
     LL_ADC_REG_StartConversionSWStart(ADC1);
 }
 
 void DMA1_Channel1_IRQHandler()
 {
+    if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
+    {
+        for (;;);
+    }
     if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
     {
+        LL_DMA_ClearFlag_TC1(DMA1);
+
         if (LL_ADC_GetChannelsBank(ADC1) == LL_ADC_CHANNELS_BANK_A)
         {
             configureBankB();
+            const bufferIndex_t bufferIndex = getCurrentProducerIndex();
             LL_DMA_ConfigAddresses(DMA1,
                                    LL_DMA_CHANNEL_1,
                                    LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
-                                   (uint32_t) &g_adcDataBuffer[20],
+                                   (uint32_t)&g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[20],
                                    LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
             LL_ADC_REG_StartConversionSWStart(ADC1);
         }
         else
         {
-            for (uint32_t i = 0; i < NUMBER_OF_SENSORS; ++i)
+            const bufferIndex_t bufferIndex = getCurrentProducerIndex();
+
+            if (g_isCalibrated)
             {
-                g_dataBuffer
+                for (sensorIndex_t i = 0; i < NUMBER_OF_SENSORS; ++i)
+                {
+                    if (g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] > g_calibrationData.maxSensorUnitValues[i])
+                    {
+                        g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] = g_calibrationData.maxSensorUnitValues[i];
+                    }
+
+                    if (g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] < g_calibrationData.minSensorUnitValues[i])
+                    {
+                        g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] = 0;
+                    }
+                    else
+                    {
+                        g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] -= g_calibrationData.minSensorUnitValues[i];
+                    }
+
+                    g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] = 
+                        convertValueToUQ1_15(g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i],
+                                             g_calibrationData.maxSensorUnitValues[i]);
+                }
+
+                g_dataBuffers[bufferIndex].header.status = 0;
             }
-            // TODO fix range
-            // TODO convert to Q1.15
-            // TODO swap ready buffer
+            else
+            {
+                g_dataBuffers[bufferIndex].header.status = LSS_SENSOR_NOT_CALIBRATED;
+            }
+
+            g_dataBuffers[bufferIndex].header.status |= LSS_FLAG_NEW_DATA_AVAILABLE;
+
+            moveProducerIndexToNextOne();
+            startQueryingAdc();
         }
-        LL_DMA_ClearFlag_TC1(DMA1);
-    }
-    if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
-    {
-        for (;;);
     }
 }

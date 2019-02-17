@@ -59,17 +59,17 @@ void USART3_IRQHandler()
         // upon reset board sends random byte (can be 0 can be 255).
         // need to figure out how to handle it
 
-        uint32_t remainingBufferLength = LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_3);
-        uint32_t numberOfReceivedBytes = RX_BUFFER_LENGTH - remainingBufferLength;
+        //uint32_t remainingBufferLength = LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_3);
+        //uint32_t numberOfReceivedBytes = RX_BUFFER_LENGTH - remainingBufferLength;
 
-        // TODO process received command
+        //// TODO process received command
 
-        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
-        LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
-                               LL_USART_DMA_GetRegAddr(USART3),
-                               (uint32_t) &g_rxBuffer[0],
-                               LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, RX_BUFFER_LENGTH);
-        LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
+        //LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
+        //LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
+        //                       LL_USART_DMA_GetRegAddr(USART3),
+        //                       (uint32_t) &g_rxBuffer[0],
+        //                       LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+        //LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, RX_BUFFER_LENGTH);
+        //LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
     }
 }

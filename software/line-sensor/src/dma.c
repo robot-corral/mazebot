@@ -132,13 +132,6 @@ void initializeUsartDma()
                                                   LL_DMA_PDATAALIGN_BYTE |
                                                   LL_DMA_MDATAALIGN_BYTE);
 
-    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
-                           LL_USART_DMA_GetRegAddr(USART3),
-                           (uint32_t) g_rxBuffer,
-                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, RX_BUFFER_LENGTH);
-
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_3);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
 
@@ -154,13 +147,6 @@ void initializeUsartDma()
                                                   LL_DMA_MEMORY_INCREMENT |
                                                   LL_DMA_PDATAALIGN_BYTE |
                                                   LL_DMA_MDATAALIGN_BYTE);
-
-    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_2,
-                           (uint32_t) g_txBuffer,
-                           LL_USART_DMA_GetRegAddr(USART3),
-                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, TX_BUFFER_LENGTH);
 
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
