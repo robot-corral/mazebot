@@ -1,4 +1,4 @@
-data = csvread('./data/output_voltage_dependence_on_r1.csv', 1);
+data = csvread('./data/output-voltage-dependence-on-r1.csv', 1);
 r1 = data(:, 1);
 r2 = 220000;
 v_in_3p5_to_v_out = data(:, 2:3);
