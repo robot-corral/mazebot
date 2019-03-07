@@ -1,4 +1,4 @@
-voltage in (V),current (mA),all black v min (V),all black v mean (V),all black v max (V),white line min (V),white line mean (V),white line max (V),all white min (V),all white mean (V),all white max (V)
+voltage in (V),current (mA),all black v min (V),all black v mean (V),all black v max (V),black line min (V),black line mean (V),black line max (V),all white min (V),all white mean (V),all white max (V)
 2.6,33,1.92,2.05,2.2,1.48,1.63,1.76,0.16,0.228,0.28
 2.8,37,2.04,2.15,2.28,1.52,1.65,1.76,0.16,0.221,0.28
 3,40,2.08,2.21,2.32,1.56,1.66,1.8,0.16,0.217,0.28
