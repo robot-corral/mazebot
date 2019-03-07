@@ -23,16 +23,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\rolling_values.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\math_utils.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\rolling_values.c">
+    <ClCompile Include="..\src\rolling_values.c">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\math_utils.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\rolling_values.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

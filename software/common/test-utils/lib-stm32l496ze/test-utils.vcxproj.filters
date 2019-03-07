@@ -20,15 +20,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\rolling_values_test.c">
+    <ClCompile Include="..\src\main.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.c">
+    <ClCompile Include="..\src\rolling_values_test.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\rolling_values_test.h">
+    <ClInclude Include="..\src\rolling_values_test.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

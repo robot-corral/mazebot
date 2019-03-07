@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.438
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-utils", "common\test-utils\lib-stm32l496ze\test-utils.vcxproj", "{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils", "common\lib-utils\lib-stm32l496ze\lib-utils.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-test-stm32l496ze", "common\lib-test\lib-stm32l496ze\lib-test-stm32l496ze.vcxproj", "{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|VisualGDB = Debug|VisualGDB
+		Release|VisualGDB = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.Build.0 = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {943A206F-2FFB-4B1F-97DF-BF3A425B9D39}
+	EndGlobalSection
+EndGlobal

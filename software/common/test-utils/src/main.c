@@ -6,17 +6,14 @@
 
 #include "rolling_values_test.h"
 
-#include "debug.h"
-#include "driver.h"
-
 void printString(const char* pMessage, size_t messageLength)
 {
-    transmitDebugBuffer(pMessage, messageLength);
+    // TODO transmitDebugBuffer(pMessage, messageLength);
 }
 
 int main()
 {
-    initializeDebugDriver(true);
+    // TODO initializeDebugDriver(true);
 
     test_calculateRolling16BitValueDifference();
 
