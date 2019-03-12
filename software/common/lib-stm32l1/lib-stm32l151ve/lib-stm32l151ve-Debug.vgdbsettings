@@ -15,7 +15,7 @@
         <Revision>0</Revision>
       </Version>
     </ToolchainID>
-    <ProjectFile>main-line-sensor-stm32l151ze.vcxproj</ProjectFile>
+    <ProjectFile>lib-stm32l151ve.vcxproj</ProjectFile>
     <ParallelJobCount>0</ParallelJobCount>
     <SuppressDirectoryChangeMessages>true</SuppressDirectoryChangeMessages>
   </Build>
@@ -58,7 +58,7 @@
         <ExtraParameters>
           <Frequency xsi:nil="true" />
           <BoostedFrequency xsi:nil="true" />
-          <ConnectUnderReset>true</ConnectUnderReset>
+          <ConnectUnderReset>false</ConnectUnderReset>
         </ExtraParameters>
         <LoadProgressGUIThreshold>131072</LoadProgressGUIThreshold>
         <ProgramMode>Auto</ProgramMode>

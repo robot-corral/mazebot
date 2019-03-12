@@ -12,10 +12,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="main-line-sensor-stm32l151ze-Debug.vgdbsettings">
+    <None Include="main-line-sensor-stm32l151ve-Debug.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
-    <None Include="main-line-sensor-stm32l151ze-Release.vgdbsettings">
+    <None Include="main-line-sensor-stm32l151ve-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
     <None Include="stm32.xml">
