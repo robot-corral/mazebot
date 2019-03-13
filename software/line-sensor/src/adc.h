@@ -16,6 +16,8 @@ void initializeAdc();
  */
 void startQueryingAdc();
 
+#define ADC_SQR_RANKS_COUNT(ranksCount) (((ranksCount) - 1) << 20)
+
 #define ADC_SQR_RANK_1(channelIdx) (channelIdx)
 #define ADC_SQR_RANK_2(channelIdx) ((channelIdx) << 5)
 #define ADC_SQR_RANK_3(channelIdx) ((channelIdx) << 10)

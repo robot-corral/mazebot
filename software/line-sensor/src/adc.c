@@ -61,26 +61,26 @@ void initializeAdc()
     // the following ranks are used in bank A only and these registers never change
     // so we can set them only once
 
-    ADC1->SQR2 = ADC_SQR_RANK_1(24) |
-                 ADC_SQR_RANK_2(25) |
-                 ADC_SQR_RANK_3(18) |
-                 ADC_SQR_RANK_4(19) |
-                 ADC_SQR_RANK_5(20) |
-                 ADC_SQR_RANK_6(21);
+    ADC1->SQR2 = ADC_SQR_RANK_1(23) |
+                 ADC_SQR_RANK_2(24) |
+                 ADC_SQR_RANK_3(25) |
+                 ADC_SQR_RANK_4(18) |
+                 ADC_SQR_RANK_5(19) |
+                 ADC_SQR_RANK_6(20);
 
-    ADC1->SQR3 = ADC_SQR_RANK_1(14) |
-                 ADC_SQR_RANK_2(15) |
-                 ADC_SQR_RANK_3(8)  |
-                 ADC_SQR_RANK_4(9)  |
-                 ADC_SQR_RANK_5(22) |
-                 ADC_SQR_RANK_6(23);
+    ADC1->SQR3 = ADC_SQR_RANK_1(7)  |
+                 ADC_SQR_RANK_2(14) |
+                 ADC_SQR_RANK_3(15) |
+                 ADC_SQR_RANK_4(8)  |
+                 ADC_SQR_RANK_5(9)  |
+                 ADC_SQR_RANK_6(22);
 
-    ADC1->SQR4 = ADC_SQR_RANK_1(2) |
-                 ADC_SQR_RANK_2(3) |
-                 ADC_SQR_RANK_3(4) |
-                 ADC_SQR_RANK_4(5) |
-                 ADC_SQR_RANK_5(6) |
-                 ADC_SQR_RANK_6(7);
+    ADC1->SQR4 = ADC_SQR_RANK_1(1) |
+                 ADC_SQR_RANK_2(2) |
+                 ADC_SQR_RANK_3(3) |
+                 ADC_SQR_RANK_4(4) |
+                 ADC_SQR_RANK_5(5) |
+                 ADC_SQR_RANK_6(6);
 
     // SMPR0, SMPR1, SMPR2, SMPR3 are all set for 4 cycles which is a reset state so no need to do anything.
 
@@ -91,35 +91,24 @@ void configureBankA()
 {
     LL_ADC_SetChannelsBank(ADC1, LL_ADC_CHANNELS_BANK_A);
 
-    //             -------                          reserved
-    //                    -----                     L       - 10111 (regular channel sequence length, 24 (channels to convert) - 1 -> 23)
-    //                         -----                rank 28 -     0 (default/ignored)
-    //                              -----           rank 27 -     0 (default/ignored)
-    //                                   -----      rank 26 -     0 (default/ignored)
-    //                                        ----- rank 25 -     0 (default/ignored)
-    ADC1->SQR1 = 0b00000001011100000000000000000000;
+    ADC1->SQR1 = ADC_SQR_RANKS_COUNT(25) | ADC_SQR_RANK_1(21);
 
     ADC1->SQR5 = ADC_SQR_RANK_1(10) |
-                 ADC_SQR_RANK_2(11) |
-                 ADC_SQR_RANK_3(12) |
-                 ADC_SQR_RANK_4(13) |
-                 ADC_SQR_RANK_5(0)  |
-                 ADC_SQR_RANK_6(1);
+                 ADC_SQR_RANK_2(10) |
+                 ADC_SQR_RANK_3(11) |
+                 ADC_SQR_RANK_4(12) |
+                 ADC_SQR_RANK_5(13) |
+                 ADC_SQR_RANK_6(0);
 }
 
 void configureBankB()
 {
     LL_ADC_SetChannelsBank(ADC1, LL_ADC_CHANNELS_BANK_B);
 
-    //             -------                          reserved
-    //                    -----                     L       - 00000 (regular channel sequence length, 1 (channel to convert) - 1 -> 0)
-    //                         -----                rank 28 -     0 (default/ignored)
-    //                              -----           rank 27 -     0 (default/ignored)
-    //                                   -----      rank 26 -     0 (default/ignored)
-    //                                        ----- rank 25 -     0 (default/ignored)
-    ADC1->SQR1 = 0b00000000000000000000000000000000;
+    ADC1->SQR1 = ADC_SQR_RANKS_COUNT(2);
 
-    ADC1->SQR5 = ADC_SQR_RANK_1(0);
+    ADC1->SQR5 = ADC_SQR_RANK_1(0) |
+                 ADC_SQR_RANK_2(0);
 }
 
 void startQueryingAdc()
@@ -131,9 +120,9 @@ void startQueryingAdc()
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_1,
                            LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
-                           (uint32_t) &g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[0],
+                           (uint32_t) g_adcBuffer1,
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, 24);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, ADC_BUFFER_1_LENGTH);
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
     LL_ADC_REG_StartConversionSWStart(ADC1);
 }
@@ -156,9 +145,9 @@ void DMA1_Channel1_IRQHandler()
             LL_DMA_ConfigAddresses(DMA1,
                                    LL_DMA_CHANNEL_1,
                                    LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
-                                   (uint32_t) &g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[24],
+                                   (uint32_t) g_adcBuffer2,
                                    LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-            LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, 1);
+            LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, ADC_BUFFER_2_LENGTH);
             LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
             LL_ADC_REG_StartConversionSWStart(ADC1);
         }
