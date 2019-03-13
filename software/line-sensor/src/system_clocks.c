@@ -3,6 +3,7 @@
  *******************************************************************************/
 
 #include "system_clocks.h"
+#include "line_sensor_defs.h"
 
 #include <stm32/stm32l1xx_ll_bus.h>
 #include <stm32/stm32l1xx_ll_pwr.h>
@@ -11,7 +12,7 @@
 #include <stm32/stm32l1xx_ll_cortex.h>
 #include <stm32/stm32l1xx_ll_system.h>
 
-void initializeSystemClocks(communicationInterface_t communicationInterface)
+void initializeSystemClocks()
 {
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
@@ -48,22 +49,15 @@ void initializeSystemClocks(communicationInterface_t communicationInterface)
                              LL_AHB1_GRP1_PERIPH_GPIOC |
                              LL_AHB1_GRP1_PERIPH_GPIOD |
                              LL_AHB1_GRP1_PERIPH_GPIOE |
-                             LL_AHB1_GRP1_PERIPH_GPIOF |
-                             LL_AHB1_GRP1_PERIPH_GPIOG |
                              LL_AHB1_GRP1_PERIPH_DMA1);
 
-    if (communicationInterface == CI_I2C)
-    {
-        LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C1);
-    }
-    else if(communicationInterface == CI_SPI)
-    {
-        LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI2);
-    }
-    else if (communicationInterface == CI_USART)
-    {
-        LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
-    }
+#ifdef ACTIVE_COMMUNICATION_I2C
+    #error not implemented
+#elif defined ACTIVE_COMMUNICATION_SPI
+    #error not implemented
+#elif defined ACTIVE_COMMUNICATION_USART
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+#endif
 
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC1);
 }

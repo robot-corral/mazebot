@@ -23,7 +23,7 @@ void initializeAdc()
     //                    -                        AWDEN   - 0 (analog watchdog enable on regular channels, disabled)
     //                     -                       JAWDEN  - 0 (analog watchdog enable on injected channels, disabled)
     //                      ----                   reserved
-    //                          -                  PDI     - 1 (power down during the idle phase, enabled)
+    //                          -                  PDI     - 0 (power down during the idle phase, disabled)
     //                           -                 PDD     - 0 (power down during the delay phase, disabled)
     //                            ---              DISCNUM - 0 (discontinuous mode channel count, default/ignored)
     //                               -             JDISCEN - 0 (discontinuous mode on injected channels, disabled)
@@ -33,7 +33,7 @@ void initializeAdc()
     //                                   -         SCAN    - 1 (scan mode, enabled)
     //                                    -        JEOCIE  - 0 (interrupt enable for injected channels, disabled)
     //                                     -       AWDIE   - 0 (analog watchdog interrupt, disabled)
-    //                                      -      EOCIE   - 0 (end of conversation interrupt, disabled)
+    //                                      -      EOCIE   - 0 (end of conversation interrupt, enabled)
     //                                       ----- AWDCH   - 0 (analog watchdog channel selector, default/ignored)
     ADC1->CR1 = 0b00000000000000100000000100000000;
 
@@ -58,13 +58,29 @@ void initializeAdc()
     //                                           - ADON     - 0 (a/d converter on / off, disabled)
     ADC1->CR2 = 0b00000000000000000000001100000000;
 
-    //             -------                          reserved
-    //                    -----                     L       - 10011 (regular channel sequence length, 20 - 1 -> 19)
-    //                         -----                rank 28 -     0 (default/ignored)
-    //                              -----           rank 27 -     0 (default/ignored)
-    //                                   -----      rank 26 -     0 (default/ignored)
-    //                                        ----- rank 25 -     0 (default/ignored)
-    ADC1->SQR1 = 0b00000001001100000000000000000000;
+    // the following ranks are used in bank A only and these registers never change
+    // so we can set them only once
+
+    ADC1->SQR2 = ADC_SQR_RANK_1(24) |
+                 ADC_SQR_RANK_2(25) |
+                 ADC_SQR_RANK_3(18) |
+                 ADC_SQR_RANK_4(19) |
+                 ADC_SQR_RANK_5(20) |
+                 ADC_SQR_RANK_6(21);
+
+    ADC1->SQR3 = ADC_SQR_RANK_1(14) |
+                 ADC_SQR_RANK_2(15) |
+                 ADC_SQR_RANK_3(8)  |
+                 ADC_SQR_RANK_4(9)  |
+                 ADC_SQR_RANK_5(22) |
+                 ADC_SQR_RANK_6(23);
+
+    ADC1->SQR4 = ADC_SQR_RANK_1(2) |
+                 ADC_SQR_RANK_2(3) |
+                 ADC_SQR_RANK_3(4) |
+                 ADC_SQR_RANK_4(5) |
+                 ADC_SQR_RANK_5(6) |
+                 ADC_SQR_RANK_6(7);
 
     // SMPR0, SMPR1, SMPR2, SMPR3 are all set for 4 cycles which is a reset state so no need to do anything.
 
@@ -75,87 +91,50 @@ void configureBankA()
 {
     LL_ADC_SetChannelsBank(ADC1, LL_ADC_CHANNELS_BANK_A);
 
-    //             --                               reserved
-    //               -----                          rank 24 -     0 (default/ignored)
-    //                    -----                     rank 23 -     0 (default/ignored)
-    //                         -----                rank 22 -     0 (default/ignored) 
-    //                              -----           rank 21 -     0 (default/ignored) 
-    //                                   -----      rank 20 - 01011 (channel 11)
-    //                                        ----- rank 19 - 01100 (channel 12)
-    ADC1->SQR2 = 0b00000000000000000000000101101100;
-    //             --                               reserved
-    //               -----                          rank 18 - 01101 (channel 13)
-    //                    -----                     rank 17 - 00000 (channel  0)
-    //                         -----                rank 16 - 00001 (channel  1)
-    //                              -----           rank 15 - 00010 (channel  2)
-    //                                   -----      rank 14 - 00011 (channel  3)
-    //                                        ----- rank 13 - 00100 (channel  4)
-    ADC1->SQR3 = 0b00011010000000001000100001100100;
-    //             --                               reserved
-    //               -----                          rank 12 - 00101 (channel  5)
-    //                    -----                     rank 11 - 00110 (channel  6)
-    //                         -----                rank 10 - 00111 (channel  7)
-    //                              -----           rank  9 - 01110 (channel 14)
-    //                                   -----      rank  8 - 01111 (channel 15)
-    //                                        ----- rank  7 - 01000 (channel  8)
-    ADC1->SQR4 = 0b00001010011000111011100111101000;
-    //             --                               reserved
-    //               -----                          rank  6 - 01001 (channel  9)
-    //                    -----                     rank  5 - 10110 (channel 22)
-    //                         -----                rank  4 - 10111 (channel 23)
-    //                              -----           rank  3 - 11000 (channel 24)
-    //                                   -----      rank  2 - 11001 (channel 25)
-    //                                        ----- rank  1 - 01010 (channel 10)
-    ADC1->SQR5 = 0b00010011011010111110001100101010;
+    //             -------                          reserved
+    //                    -----                     L       - 10111 (regular channel sequence length, 24 (channels to convert) - 1 -> 23)
+    //                         -----                rank 28 -     0 (default/ignored)
+    //                              -----           rank 27 -     0 (default/ignored)
+    //                                   -----      rank 26 -     0 (default/ignored)
+    //                                        ----- rank 25 -     0 (default/ignored)
+    ADC1->SQR1 = 0b00000001011100000000000000000000;
+
+    ADC1->SQR5 = ADC_SQR_RANK_1(10) |
+                 ADC_SQR_RANK_2(11) |
+                 ADC_SQR_RANK_3(12) |
+                 ADC_SQR_RANK_4(13) |
+                 ADC_SQR_RANK_5(0)  |
+                 ADC_SQR_RANK_6(1);
 }
 
 void configureBankB()
 {
     LL_ADC_SetChannelsBank(ADC1, LL_ADC_CHANNELS_BANK_B);
 
-    //             --                               reserved
-    //               -----                          rank 24 -     0 (default/ignored)
-    //                    -----                     rank 23 -     0 (default/ignored)
-    //                         -----                rank 22 -     0 (default/ignored) 
-    //                              -----           rank 21 -     0 (default/ignored) 
-    //                                   -----      rank 20 - 00000 (channel  0b)
-    //                                        ----- rank 19 - 00001 (channel  1b)
-    ADC1->SQR2 = 0b00000000000000000000000000000001;
-    //             --                               reserved
-    //               -----                          rank 18 - 00010 (channel  2b)
-    //                    -----                     rank 17 - 00011 (channel  3b)
-    //                         -----                rank 16 - 00110 (channel  6b)
-    //                              -----           rank 15 - 00111 (channel  7b)
-    //                                   -----      rank 14 - 01000 (channel  8b)
-    //                                        ----- rank 13 - 01001 (channel  9b)
-    ADC1->SQR3 = 0b00000100001100110001110100001001;
-    //             --                               reserved
-    //               -----                          rank 12 - 10010 (channel 18b)
-    //                    -----                     rank 11 - 10011 (channel 19b)
-    //                         -----                rank 10 - 10100 (channel 20b)
-    //                              -----           rank  9 - 10101 (channel 21b)
-    //                                   -----      rank  8 - 01010 (channel 10b)
-    //                                        ----- rank  7 - 01011 (channel 11b)
-    ADC1->SQR4 = 0b00100101001110100101010101001011;
-    //             --                               reserved
-    //               -----                          rank  6 - 01100 (channel 12b)
-    //                    -----                     rank  5 - 11011 (channel 27b)
-    //                         -----                rank  4 - 11100 (channel 28b)
-    //                              -----           rank  3 - 11101 (channel 29b)
-    //                                   -----      rank  2 - 11110 (channel 30b)
-    //                                        ----- rank  1 - 11111 (channel 31b)
-    ADC1->SQR5 = 0b00011001101111100111011111011111;
+    //             -------                          reserved
+    //                    -----                     L       - 00000 (regular channel sequence length, 1 (channel to convert) - 1 -> 0)
+    //                         -----                rank 28 -     0 (default/ignored)
+    //                              -----           rank 27 -     0 (default/ignored)
+    //                                   -----      rank 26 -     0 (default/ignored)
+    //                                        ----- rank 25 -     0 (default/ignored)
+    ADC1->SQR1 = 0b00000000000000000000000000000000;
+
+    ADC1->SQR5 = ADC_SQR_RANK_1(0);
 }
 
 void startQueryingAdc()
 {
     configureBankA();
     const bufferIndex_t bufferIndex = getCurrentProducerIndex();
+
+    LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_1,
                            LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
                            (uint32_t) &g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[0],
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, 24);
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
     LL_ADC_REG_StartConversionSWStart(ADC1);
 }
 
@@ -163,7 +142,7 @@ void DMA1_Channel1_IRQHandler()
 {
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
-        for (;;);
+        // TODO handle error
     }
     if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
     {
@@ -173,50 +152,18 @@ void DMA1_Channel1_IRQHandler()
         {
             configureBankB();
             const bufferIndex_t bufferIndex = getCurrentProducerIndex();
+            LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
             LL_DMA_ConfigAddresses(DMA1,
                                    LL_DMA_CHANNEL_1,
                                    LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
-                                   (uint32_t)&g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[20],
+                                   (uint32_t) &g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[24],
                                    LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+            LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, 1);
+            LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
             LL_ADC_REG_StartConversionSWStart(ADC1);
         }
         else
         {
-            const bufferIndex_t bufferIndex = getCurrentProducerIndex();
-
-            if (g_isCalibrated)
-            {
-                for (sensorIndex_t i = 0; i < NUMBER_OF_SENSORS; ++i)
-                {
-                    if (g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] > g_calibrationData.maxSensorUnitValues[i])
-                    {
-                        g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] = g_calibrationData.maxSensorUnitValues[i];
-                    }
-
-                    if (g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] < g_calibrationData.minSensorUnitValues[i])
-                    {
-                        g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] = 0;
-                    }
-                    else
-                    {
-                        g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] -= g_calibrationData.minSensorUnitValues[i];
-                    }
-
-                    g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i] = 
-                        convertValueToUQ1_15(g_dataBuffers[bufferIndex].data.sensorData.sensorUnitValues[i],
-                                             g_calibrationData.maxSensorUnitValues[i]);
-                }
-
-                g_dataBuffers[bufferIndex].header.status = 0;
-            }
-            else
-            {
-                g_dataBuffers[bufferIndex].header.status = LSS_SENSOR_NOT_CALIBRATED;
-            }
-
-            g_dataBuffers[bufferIndex].header.status |= LSS_FLAG_NEW_DATA_AVAILABLE;
-
-            moveProducerIndexToNextOne();
             startQueryingAdc();
         }
     }

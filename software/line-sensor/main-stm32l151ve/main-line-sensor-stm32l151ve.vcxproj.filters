@@ -38,12 +38,6 @@
     <ClCompile Include="..\src\dma.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\i2c.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\spi.c">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\usart.c">
       <Filter>src</Filter>
     </ClCompile>
@@ -62,12 +56,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\gpio.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\i2c.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\spi.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\system_clocks.h">

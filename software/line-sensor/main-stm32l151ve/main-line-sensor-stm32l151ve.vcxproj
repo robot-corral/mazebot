@@ -66,9 +66,7 @@
     <ClCompile Include="..\src\dma.c" />
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\gpio.c" />
-    <ClCompile Include="..\src\i2c.c" />
     <ClCompile Include="..\src\main.c" />
-    <ClCompile Include="..\src\spi.c" />
     <ClCompile Include="..\src\system_clocks.c" />
     <ClCompile Include="..\src\usart.c" />
   </ItemGroup>
@@ -85,9 +83,7 @@
     <ClInclude Include="..\src\dma.h" />
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\gpio.h" />
-    <ClInclude Include="..\src\i2c.h" />
     <ClInclude Include="..\src\qmath.h" />
-    <ClInclude Include="..\src\spi.h" />
     <ClInclude Include="..\src\system_clocks.h" />
     <ClInclude Include="..\src\types.h" />
     <ClInclude Include="..\src\usart.h" />
