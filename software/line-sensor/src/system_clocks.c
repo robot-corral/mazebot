@@ -17,8 +17,26 @@ static void initializeClockTimer();
 
 void initializeSystemClocks()
 {
-    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA |
+                             LL_AHB1_GRP1_PERIPH_GPIOB |
+                             LL_AHB1_GRP1_PERIPH_GPIOC |
+                             LL_AHB1_GRP1_PERIPH_GPIOD |
+                             LL_AHB1_GRP1_PERIPH_GPIOE |
+                             LL_AHB1_GRP1_PERIPH_DMA1);
+
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5 |
+                             LL_APB1_GRP1_PERIPH_COMP |
+#ifdef ACTIVE_COMMUNICATION_I2C
+    #error not implemented
+#elif defined ACTIVE_COMMUNICATION_SPI
+    #error not implemented
+#elif defined ACTIVE_COMMUNICATION_USART
+                             LL_APB1_GRP1_PERIPH_USART2 |
+#endif
+                             LL_APB1_GRP1_PERIPH_PWR);
+
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG | 
+                             LL_APB2_GRP1_PERIPH_ADC1);
 
     LL_FLASH_Enable64bitAccess();
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);
@@ -46,24 +64,6 @@ void initializeSystemClocks()
 
     LL_Init1msTick(32000000);
     LL_SetSystemCoreClock(32000000);
-
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA |
-                             LL_AHB1_GRP1_PERIPH_GPIOB |
-                             LL_AHB1_GRP1_PERIPH_GPIOC |
-                             LL_AHB1_GRP1_PERIPH_GPIOD |
-                             LL_AHB1_GRP1_PERIPH_GPIOE |
-                             LL_APB1_GRP1_PERIPH_TIM5 |
-                             LL_AHB1_GRP1_PERIPH_DMA1);
-
-#ifdef ACTIVE_COMMUNICATION_I2C
-    #error not implemented
-#elif defined ACTIVE_COMMUNICATION_SPI
-    #error not implemented
-#elif defined ACTIVE_COMMUNICATION_USART
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
-#endif
-
-    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC1);
 
     initializeClockTimer();
 }

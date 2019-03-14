@@ -169,11 +169,4 @@ void initializeGpio()
         // PE15 - UNUSED
         GPIOE->MODER = 0b11111111111111111111111111111111;
     }
-
-    {
-        // PH0  - UNUSED
-        // PH1  - UNUSED
-        // PH2  - UNUSED
-        GPIOH->MODER = 0b00000000000000000000000000111111;
-    }
 }

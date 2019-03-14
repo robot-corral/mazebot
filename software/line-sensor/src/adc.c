@@ -15,6 +15,7 @@
 
 static void configureBankA();
 static void configureBankB();
+static void processAdcData();
 
 void initializeAdc()
 {
@@ -112,6 +113,10 @@ void initializeAdc()
                   ADC_SMPR_RANK_9(LL_ADC_SAMPLINGTIME_48CYCLES) |
                   ADC_SMPR_RANK_10(LL_ADC_SAMPLINGTIME_48CYCLES);
 
+    //                -                             FCH8: Select GPIO port PB0 as fast ADC input channel CH8
+    //                 -                            FCH3: Select GPIO port PA3 as fast ADC input channel CH3.
+    COMP->CSR = 0b00001100000000000000000000000000;
+
     LL_ADC_Enable(ADC1);
 }
 
@@ -146,7 +151,6 @@ void configureBankB()
 void startQueryingAdc()
 {
     configureBankA();
-    const bufferIndex_t bufferIndex = getCurrentProducerIndex();
 
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_ConfigAddresses(DMA1,
@@ -185,7 +189,12 @@ void DMA1_Channel1_IRQHandler()
         }
         else
         {
+            processAdcData();
             startQueryingAdc();
         }
     }
+}
+
+static void processAdcData()
+{
 }
