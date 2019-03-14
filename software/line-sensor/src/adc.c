@@ -7,6 +7,7 @@
 #include "qmath.h"
 #include "global_data.h"
 #include "buffer_index.h"
+#include "system_clocks.h"
 
 #include <stm32/stm32l1xx_ll_adc.h>
 #include <stm32/stm32l1xx_ll_bus.h>
@@ -82,7 +83,34 @@ void initializeAdc()
                  ADC_SQR_RANK_5(5) |
                  ADC_SQR_RANK_6(6);
 
-    // SMPR0, SMPR1, SMPR2, SMPR3 are all set for 4 cycles which is a reset state so no need to do anything.
+    // 48 improves ADC accuracy and on release this is enough for 10'000 scans per second
+    // (one scan is reading all sensor values)
+
+    ADC1->SMPR1 = ADC_SMPR_RANK_1(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_2(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_3(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_4(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_5(LL_ADC_SAMPLINGTIME_48CYCLES);
+    ADC1->SMPR2 = ADC_SMPR_RANK_1(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_2(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_3(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_4(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_5(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_6(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_7(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_8(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_9(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_10(LL_ADC_SAMPLINGTIME_48CYCLES);
+    ADC1->SMPR2 = ADC_SMPR_RANK_1(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_2(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_3(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_4(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_5(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_6(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_7(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_8(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_9(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_10(LL_ADC_SAMPLINGTIME_48CYCLES);
 
     LL_ADC_Enable(ADC1);
 }
@@ -91,8 +119,10 @@ void configureBankA()
 {
     LL_ADC_SetChannelsBank(ADC1, LL_ADC_CHANNELS_BANK_A);
 
-    ADC1->SQR1 = ADC_SQR_RANKS_COUNT(25) | ADC_SQR_RANK_1(21);
+    ADC1->SQR1 = ADC_SQR_RANKS_COUNT(ADC_BUFFER_1_LENGTH) | ADC_SQR_RANK_1(21);
 
+    // 1st channel in sequence has higher than normal value
+    // reading the same channel twice fixes this issue
     ADC1->SQR5 = ADC_SQR_RANK_1(10) |
                  ADC_SQR_RANK_2(10) |
                  ADC_SQR_RANK_3(11) |
@@ -105,8 +135,10 @@ void configureBankB()
 {
     LL_ADC_SetChannelsBank(ADC1, LL_ADC_CHANNELS_BANK_B);
 
-    ADC1->SQR1 = ADC_SQR_RANKS_COUNT(2);
+    ADC1->SQR1 = ADC_SQR_RANKS_COUNT(ADC_BUFFER_2_LENGTH);
 
+    // 1st channel in sequence has higher than normal value
+    // reading the same channel twice fixes this issue
     ADC1->SQR5 = ADC_SQR_RANK_1(0) |
                  ADC_SQR_RANK_2(0);
 }

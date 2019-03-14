@@ -73,6 +73,7 @@
     <ClInclude Include="..\stm32\stm32l1xx_ll_rcc.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_spi.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_system.h" />
+    <ClInclude Include="..\stm32\stm32l1xx_ll_tim.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_usart.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_utils.h" />
   </ItemGroup>
