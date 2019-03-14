@@ -69,6 +69,7 @@
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\system_clocks.c" />
     <ClCompile Include="..\src\usart.c" />
+    <ClCompile Include="..\src\watchdog.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\lib-stm32l1\lib-stm32l151ve\lib-stm32l151ve.vcxproj">
@@ -87,5 +88,6 @@
     <ClInclude Include="..\src\system_clocks.h" />
     <ClInclude Include="..\src\types.h" />
     <ClInclude Include="..\src\usart.h" />
+    <ClInclude Include="..\src\watchdog.h" />
   </ItemGroup>
 </Project>

@@ -14,3 +14,9 @@ volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
 volatile lineSensorData_t g_dataBuffers[NUMBER_OF_DATA_BUFFERS];
 
 lineSensorCommandResponseFinishCalibration_t g_calibrationData;
+
+/*******************************************************************************
+ * Errors
+ *******************************************************************************/
+
+bool g_resetByWatchdog;

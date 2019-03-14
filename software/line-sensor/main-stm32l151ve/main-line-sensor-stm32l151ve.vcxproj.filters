@@ -44,6 +44,9 @@
     <ClCompile Include="..\src\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\watchdog.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\adc.h">
@@ -77,6 +80,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\qmath.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\watchdog.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

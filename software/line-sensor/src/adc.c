@@ -5,9 +5,9 @@
 #include "adc.h"
 
 #include "qmath.h"
+#include "watchdog.h"
 #include "global_data.h"
 #include "buffer_index.h"
-#include "system_clocks.h"
 
 #include <stm32/stm32l1xx_ll_adc.h>
 #include <stm32/stm32l1xx_ll_bus.h>
@@ -191,6 +191,7 @@ void DMA1_Channel1_IRQHandler()
         {
             processAdcData();
             startQueryingAdc();
+            resetWatchdog();
         }
     }
 }

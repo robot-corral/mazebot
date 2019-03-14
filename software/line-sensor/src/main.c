@@ -6,6 +6,7 @@
 #include "dma.h"
 #include "gpio.h"
 #include "usart.h"
+#include "watchdog.h"
 #include "system_clocks.h"
 
 void main()
@@ -21,6 +22,7 @@ void main()
     initializeUsart();
 #endif
     initializeDma();
+    initializeAndStartWatchdog();
     startQueryingAdc();
     for (;;) ;
 }

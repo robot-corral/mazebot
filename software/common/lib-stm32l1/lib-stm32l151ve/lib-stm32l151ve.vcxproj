@@ -69,6 +69,7 @@
     <ClInclude Include="..\stm32\stm32l1xx_ll_dma.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_gpio.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_i2c.h" />
+    <ClInclude Include="..\stm32\stm32l1xx_ll_iwdg.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_pwr.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_rcc.h" />
     <ClInclude Include="..\stm32\stm32l1xx_ll_spi.h" />
