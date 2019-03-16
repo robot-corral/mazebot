@@ -8,12 +8,14 @@
 #include "usart.h"
 #include "watchdog.h"
 #include "system_clocks.h"
+#include "line_sensor_defs.h"
 
 void main()
 {
     initializeAndStartWatchdog();
     initializeSystemClocks();
     initializeGpio();
+    initializeDma();
     initializeAdc();
 #ifdef ACTIVE_COMMUNICATION_I2C
     #error not implemented
@@ -22,7 +24,6 @@ void main()
 #elif defined ACTIVE_COMMUNICATION_USART
     initializeUsart();
 #endif
-    initializeDma();
     startQueryingAdc();
     for (;;) ;
 }

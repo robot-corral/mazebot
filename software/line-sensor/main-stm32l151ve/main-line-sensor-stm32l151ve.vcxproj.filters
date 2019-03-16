@@ -73,9 +73,6 @@
     <ClInclude Include="..\inc\line_sensor_defs.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\types.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\buffer_index.h">
       <Filter>src</Filter>
     </ClInclude>

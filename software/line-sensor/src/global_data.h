@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "types.h"
+#include "line_sensor.h"
 
 #define NUMBER_OF_DATA_BUFFERS 3
 
@@ -23,7 +23,7 @@ extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
 
 extern volatile uint32_t g_dataBufferIndexes;
 
-extern volatile lineSensorData_t g_dataBuffers[NUMBER_OF_DATA_BUFFERS];
+extern volatile lineSensorCommandResponse_t g_dataBuffers[NUMBER_OF_DATA_BUFFERS];
 
 extern uint16_t g_calibrationDataMaxMinusMin[NUMBER_OF_SENSORS];
 extern lineSensorCommandResponseFinishCalibration_t g_calibrationData;

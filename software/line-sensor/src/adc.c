@@ -188,7 +188,7 @@ static bool processAdcData()
         return false;
     }
 
-    volatile lineSensorCommandResponseSendSensorData_t* const sensorData = &g_dataBuffers[producerBufferIndex].data.sensorData;
+    volatile lineSensorCommandResponseSendSensorData_t* const sensorData = &g_dataBuffers[producerBufferIndex].sensorData;
 
     if (g_isCalibrated)
     {

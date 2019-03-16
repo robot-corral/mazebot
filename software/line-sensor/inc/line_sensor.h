@@ -6,11 +6,11 @@
 
 typedef uint8_t sensorIndex_t;
 typedef uint8_t lineSensorStatus_t;
-typedef uint8_t lineSensorCommand_t;
+typedef uint8_t lineSensorCommandCode_t;
 
 typedef struct
 {
-    lineSensorCommand_t commandCode;
+    lineSensorCommandCode_t commandCode;
     lineSensorStatus_t  status;
 } lineSensorCommandResponseHeader_t;
 
@@ -26,3 +26,22 @@ typedef struct
 } lineSensorCommandResponseFinishCalibration_t;
 
 typedef lineSensorCommandResponseFinishCalibration_t lineSensorCommandDataUseCalibrationData_t;
+
+typedef struct
+{
+    lineSensorCommandCode_t commandCode;
+    lineSensorCommandDataUseCalibrationData_t calibrationData;
+} lineSensorCommand_t;
+
+typedef struct
+{
+    lineSensorCommandResponseHeader_t header;
+    union
+    {
+        lineSensorCommandResponseSendSensorData_t sensorData;
+        lineSensorCommandResponseFinishCalibration_t calibrationData;
+    };
+} lineSensorCommandResponse_t;
+
+#define LSC_LENGTH_SEND_SENSOR_DATA sizeof(lineSensorCommandCode_t)
+#define LSCR_LENGTH_SEND_SENSOR_DATA (sizeof(lineSensorCommandResponseHeader_t) + sizeof(lineSensorCommandResponseSendSensorData_t))
