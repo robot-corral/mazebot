@@ -11,6 +11,7 @@
 
 void main()
 {
+    initializeAndStartWatchdog();
     initializeSystemClocks();
     initializeGpio();
     initializeAdc();
@@ -22,7 +23,6 @@ void main()
     initializeUsart();
 #endif
     initializeDma();
-    initializeAndStartWatchdog();
     startQueryingAdc();
     for (;;) ;
 }

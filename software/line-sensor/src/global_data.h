@@ -18,8 +18,6 @@
 
 extern bool g_isCalibrated;
 
-extern volatile uint32_t g_currentProducerConsumerIndex;
-
 extern volatile uint16_t g_adcBuffer1[ADC_BUFFER_1_LENGTH];
 extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
 
@@ -31,4 +29,5 @@ extern lineSensorCommandResponseFinishCalibration_t g_calibrationData;
  * Errors
  *******************************************************************************/
 
-extern bool g_resetByWatchdog;
+extern uint8_t g_adcStatus;
+extern uint8_t g_watchdogResetStatus;

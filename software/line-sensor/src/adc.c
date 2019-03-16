@@ -19,46 +19,10 @@ static void processAdcData();
 
 void initializeAdc()
 {
-    //            -----                            reserved
-    //                 -                           OVRIE   - 0 (overrun interrupt enable, disabled)
-    //                  --                         RES     - 0 (resolution, 12 bit)
-    //                    -                        AWDEN   - 0 (analog watchdog enable on regular channels, disabled)
-    //                     -                       JAWDEN  - 0 (analog watchdog enable on injected channels, disabled)
-    //                      ----                   reserved
-    //                          -                  PDI     - 0 (power down during the idle phase, disabled)
-    //                           -                 PDD     - 0 (power down during the delay phase, disabled)
-    //                            ---              DISCNUM - 0 (discontinuous mode channel count, default/ignored)
-    //                               -             JDISCEN - 0 (discontinuous mode on injected channels, disabled)
-    //                                -            DISCEN  - 0 (discontinuous mode on regular channels, disabled)
-    //                                 -           JAUTO   - 0 (automatic injected group conversion, disabled)
-    //                                  -          AWDSGL  - 0 (enable the watchdog on a single channel in scan mode, disabled)
-    //                                   -         SCAN    - 1 (scan mode, enabled)
-    //                                    -        JEOCIE  - 0 (interrupt enable for injected channels, disabled)
-    //                                     -       AWDIE   - 0 (analog watchdog interrupt, disabled)
-    //                                      -      EOCIE   - 0 (end of conversation interrupt, enabled)
-    //                                       ----- AWDCH   - 0 (analog watchdog channel selector, default/ignored)
-    ADC1->CR1 = 0b00000000000000100000000100000000;
+    // ADC clock is by default with prescaler DIV1
 
-    //            -                                reserved
-    //             -                               SWSTART  - 0 (start conversion of regular channels, default/ignored)
-    //              --                             EXTEN    - 0 (external trigger enable for regular channels, disabled)
-    //                ----                         EXTSEL   - 0 (external event select for regular group, default/ignored)
-    //                    -                        reserved
-    //                     -                       JSWSTART - 0 (start conversion of injected channels, default/ignored)
-    //                      --                     JEXTEN   - 0 (external trigger enable for injected channels, disabled)
-    //                        ----                 JEXTSEL  - 0 (external event select for injected group, default/ignored)
-    //                            ----             reserved
-    //                                -            ALIGN    - 0 (data alignment, right alignment)
-    //                                 -           EOCS     - 0 (end of conversion selection, the eoc bit is set at the end of each sequence of regular conversions)
-    //                                  -          DDS      - 1 (dma disable selection, enabled)
-    //                                   -         DMA      - 1 (direct memory access mode, enabled)
-    //                                    -        reserved
-    //                                     ---     DELS     - 0 (delay selection, no delay)
-    //                                        -    reserved
-    //                                         -   ADC_CFG  - 0 (adc configuration, bank A is selected on startup)
-    //                                          -  CONT     - 0 (continuous conversion, disabled)
-    //                                           - ADON     - 0 (a/d converter on / off, disabled)
-    ADC1->CR2 = 0b00000000000000000000001100000000;
+    ADC1->CR1 = ADC_CR1_SCAN;
+    ADC1->CR2 = ADC_CR2_DMA | ADC_CR2_DDS;
 
     // the following ranks are used in bank A only and these registers never change
     // so we can set them only once
@@ -113,9 +77,7 @@ void initializeAdc()
                   ADC_SMPR_RANK_9(LL_ADC_SAMPLINGTIME_48CYCLES) |
                   ADC_SMPR_RANK_10(LL_ADC_SAMPLINGTIME_48CYCLES);
 
-    //                -                             FCH8: Select GPIO port PB0 as fast ADC input channel CH8
-    //                 -                            FCH3: Select GPIO port PA3 as fast ADC input channel CH3.
-    COMP->CSR = 0b00001100000000000000000000000000;
+    COMP->CSR = COMP_CSR_FCH3 | COMP_CSR_FCH8;
 
     LL_ADC_Enable(ADC1);
 }
@@ -151,7 +113,7 @@ void configureBankB()
 void startQueryingAdc()
 {
     configureBankA();
-
+    // DMA must be disabled before calling LL_DMA_ConfigAddresses / LL_DMA_SetDataLength
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_1,
@@ -167,16 +129,18 @@ void DMA1_Channel1_IRQHandler()
 {
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
-        // TODO handle error
+        LL_DMA_ClearFlag_TE1(DMA1);
+        g_adcStatus = LSS_ERR_ADC_FAILURE;
+        startQueryingAdc();
     }
-    if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
+    else if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
     {
         LL_DMA_ClearFlag_TC1(DMA1);
 
         if (LL_ADC_GetChannelsBank(ADC1) == LL_ADC_CHANNELS_BANK_A)
         {
             configureBankB();
-            const bufferIndex_t bufferIndex = getCurrentProducerIndex();
+            // DMA must be disabled before calling LL_DMA_ConfigAddresses / LL_DMA_SetDataLength
             LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
             LL_DMA_ConfigAddresses(DMA1,
                                    LL_DMA_CHANNEL_1,
@@ -189,6 +153,7 @@ void DMA1_Channel1_IRQHandler()
         }
         else
         {
+            g_adcStatus = LSS_OK;
             processAdcData();
             startQueryingAdc();
             resetWatchdog();
