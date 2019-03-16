@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-line-sensor-stm32l151v
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l151ve", "common\lib-stm32l1\lib-stm32l151ve\lib-stm32l151ve.vcxproj", "{3E06D10A-43C7-40B0-90C8-E35BB970AA0E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32l151ve", "common\lib-utils\lib-stm32l151ve\lib-utils-stm32l151ve.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|VisualGDB = Debug|VisualGDB
@@ -21,6 +23,10 @@ Global
 		{3E06D10A-43C7-40B0-90C8-E35BB970AA0E}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
 		{3E06D10A-43C7-40B0-90C8-E35BB970AA0E}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
 		{3E06D10A-43C7-40B0-90C8-E35BB970AA0E}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.Build.0 = Release|VisualGDB
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

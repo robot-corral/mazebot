@@ -70,7 +70,6 @@ void initializeSystemClocks()
 
 static void initializeClockTimer()
 {
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5);
     LL_TIM_SetPrescaler(TIM5, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
     LL_TIM_SetAutoReload(TIM5, 0xFFFFFFFF); // reload 32 bit value (TIM5 is 32 bit)
     LL_TIM_EnableCounter(TIM5);

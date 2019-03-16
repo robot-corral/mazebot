@@ -21,8 +21,11 @@ extern bool g_isCalibrated;
 extern volatile uint16_t g_adcBuffer1[ADC_BUFFER_1_LENGTH];
 extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
 
+extern volatile uint32_t g_dataBufferIndexes;
+
 extern volatile lineSensorData_t g_dataBuffers[NUMBER_OF_DATA_BUFFERS];
 
+extern uint16_t g_calibrationDataMaxMinusMin[NUMBER_OF_SENSORS];
 extern lineSensorCommandResponseFinishCalibration_t g_calibrationData;
 
 /*******************************************************************************

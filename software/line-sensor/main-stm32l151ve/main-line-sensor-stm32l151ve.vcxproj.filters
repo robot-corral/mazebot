@@ -79,9 +79,6 @@
     <ClInclude Include="..\src\buffer_index.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\qmath.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\watchdog.h">
       <Filter>src</Filter>
     </ClInclude>
