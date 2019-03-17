@@ -11,7 +11,7 @@ void initializeAndStartWatchdog()
     if (LL_RCC_IsActiveFlag_IWDGRST())
     {
         LL_RCC_ClearResetFlags();
-        g_watchdogResetStatus = LSS_ERR_WATCHDOG_RESET_DETECTED;
+        g_watchdogResetStatus = LSS_ERR_FLAG_WATCHDOG_RESET_DETECTED;
     }
 
 #ifdef DEBUG

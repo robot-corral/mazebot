@@ -133,7 +133,7 @@ void DMA1_Channel1_IRQHandler()
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
         LL_DMA_ClearFlag_TE1(DMA1);
-        g_adcStatus |= LSS_ERR_ADC_FAILURE;
+        g_adcStatus |= LSS_ERR_FLAG_ADC_DMA_FAILURE;
         startQueryingAdc();
     }
     else if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
@@ -164,7 +164,7 @@ void DMA1_Channel1_IRQHandler()
             }
             else
             {
-                g_adcStatus |= LSS_ERR_DATA_BUFFER_CORRUPTED;
+                g_adcStatus |= LSS_ERR_FLAG_DATA_BUFFER_CORRUPTED;
                 consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
                 startQueryingAdc();
             }
@@ -224,7 +224,7 @@ static bool processAdcData()
         sensorData->sensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
     }
 
-    g_txSendSensorDataBuffers[producerBufferIndex].header.status = LSS_FLAG_NEW_DATA_AVAILABLE;
+    g_txSendSensorDataBuffers[producerBufferIndex].header.status = LSS_OK_FLAG_NEW_DATA_AVAILABLE;
 
     return consumerProducerBufferSetLastReadIndexInterruptSafe(&g_txDataBufferIndexes, producerBufferIndex);
 }

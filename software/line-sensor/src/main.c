@@ -7,11 +7,13 @@
 #include "gpio.h"
 #include "usart.h"
 #include "watchdog.h"
+#include "global_data.h"
 #include "system_clocks.h"
 #include "line_sensor_defs.h"
 
 void main()
 {
+    initializeGlobalData();
     initializeAndStartWatchdog();
     initializeSystemClocks();
     initializeGpio();

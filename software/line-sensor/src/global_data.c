@@ -10,9 +10,10 @@ bool g_isCalibrated;
 volatile uint16_t g_adcBuffer1[ADC_BUFFER_1_LENGTH] __attribute__((aligned(2)));
 volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH] __attribute__((aligned(2)));
 
+volatile uint16_t g_rxBuffer[RX_BUFFER_LENGTH];
+
 volatile uint32_t g_txDataBufferIndexes;
 
-volatile lineSensorCommand_t g_rxBuffer;
 volatile lineSensorCommandResponse_t g_txBuffer;
 volatile lineSensorCommandResponse_t g_txSendSensorDataBuffers[NUMBER_OF_TX_DATA_BUFFERS];
 
@@ -25,3 +26,13 @@ lineSensorCommandResponseFinishCalibration_t g_calibrationData;
 
 uint8_t g_adcStatus;
 uint8_t g_watchdogResetStatus;
+uint8_t g_communicationDeviceStatus;
+
+void initializeGlobalData()
+{
+    g_txBuffer.header.prefix = COMMAND_RESPONSE_PREFIX;
+    for (uint8_t i = 0; i < NUMBER_OF_TX_DATA_BUFFERS; ++i)
+    {
+        g_txSendSensorDataBuffers[i].header.prefix = COMMAND_RESPONSE_PREFIX;
+    }
+}

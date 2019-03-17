@@ -135,6 +135,8 @@ void initializeUsart()
     LL_USART_EnableDMAReq_RX(USART3);
     LL_USART_EnableDMAReq_TX(USART3);
 
+    // USART should be enabled after everything is configured otherwise extra garbage can be transmitted (usually 0xFF)
+
     LL_USART_Enable(USART3);
 
     while (!LL_USART_IsActiveFlag_REACK(USART3) || !LL_USART_IsActiveFlag_TEACK(USART3));
@@ -199,13 +201,14 @@ void EXTI15_10_IRQHandler()
     {
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
 
-        g_txBuffer.commandCode = LSC_SEND_SENSOR_DATA;
+        g_txBuffer.header.prefix = COMMAND_PREFIX;
+        g_txBuffer.header.commandCode = LSC_SEND_SENSOR_DATA;
 
         LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
         LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
 
         LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_RX, LSCR_LENGTH_SEND_SENSOR_DATA);
-        LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_TX, LSC_LENGTH_SEND_SENSOR_DATA);
+        LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_TX, LSC_LENGTH_SIMPLE_COMMAND);
 
         LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
         LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);

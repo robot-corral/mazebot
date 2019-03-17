@@ -5,13 +5,15 @@
 #include <stdint.h>
 
 typedef uint8_t sensorIndex_t;
-typedef uint8_t lineSensorStatus_t;
+typedef uint16_t headerPrefix_t;
+typedef uint16_t lineSensorStatus_t;
 typedef uint8_t lineSensorCommandCode_t;
 
-typedef struct
+typedef struct __attribute__((packed))
 {
-    lineSensorCommandCode_t commandCode;
-    lineSensorStatus_t  status;
+    // must be COMMAND_RESPONSE_PREFIX
+    headerPrefix_t     prefix;
+    lineSensorStatus_t status;
 } lineSensorCommandResponseHeader_t;
 
 typedef struct
@@ -27,13 +29,20 @@ typedef struct
 
 typedef lineSensorCommandResponseFinishCalibration_t lineSensorCommandDataUseCalibrationData_t;
 
-typedef struct
+typedef struct __attribute__((packed))
 {
+    // must be COMMAND_PREFIX
+    headerPrefix_t          prefix;
     lineSensorCommandCode_t commandCode;
+} lineSensorCommandHeader_t;
+
+typedef struct __attribute__((packed))
+{
+    lineSensorCommandHeader_t header;
     lineSensorCommandDataUseCalibrationData_t calibrationData;
 } lineSensorCommand_t;
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     lineSensorCommandResponseHeader_t header;
     union
@@ -43,5 +52,8 @@ typedef struct
     };
 } lineSensorCommandResponse_t;
 
-#define LSC_LENGTH_SEND_SENSOR_DATA sizeof(lineSensorCommandCode_t)
+#define LSC_LENGTH_SIMPLE_COMMAND sizeof(lineSensorCommandHeader_t)
+
+#define LSCR_TRANSMISSION_ERROR sizeof(lineSensorCommandHeader_t)
+
 #define LSCR_LENGTH_SEND_SENSOR_DATA (sizeof(lineSensorCommandResponseHeader_t) + sizeof(lineSensorCommandResponseSendSensorData_t))
