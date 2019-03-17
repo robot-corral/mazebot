@@ -9,17 +9,18 @@
 #define DATA_BUFFER_LENGTH               0x03
 #define DATA_BUFFER_CONSUMER_INDEX_SHIFT 0x02
 
-#define DATA_BUFFER_INDEX_MASK                 0b11
-#define DATA_BUFFER_LAST_INDEX_COMPLEMENT_MASK (~(DATA_BUFFER_INDEX_MASK))
+#define DATA_BUFFER_INDEX_MASK                     0b11
+#define DATA_BUFFER_LAST_INDEX_COMPLEMENT_MASK     (~(DATA_BUFFER_INDEX_MASK))
+#define DATA_BUFFER_CONSUMER_INDEX_COMPLEMENT_MASK (~(DATA_BUFFER_INDEX_MASK << DATA_BUFFER_CONSUMER_INDEX_SHIFT))
 
 static void resetDataBufferInterruptSafe()
 {
-    atomic_store(&g_dataBufferIndexes, DATA_BUFFER_EMPTY_INDEXES);
+    atomic_store(&g_txDataBufferIndexes, DATA_BUFFER_EMPTY_INDEXES);
 }
 
-static uint32_t getFirstAvailableProducerIndexInterruptSafe()
+static uint8_t getFirstAvailableProducerIndexInterruptSafe()
 {
-    const uint32_t oldDataBufferIndexes = atomic_load(&g_dataBufferIndexes);
+    const uint32_t oldDataBufferIndexes = atomic_load(&g_txDataBufferIndexes);
 
     const uint8_t lastReadIndex = oldDataBufferIndexes & DATA_BUFFER_INDEX_MASK;
     const uint8_t consumerIndex = (oldDataBufferIndexes >> DATA_BUFFER_CONSUMER_INDEX_SHIFT) & DATA_BUFFER_INDEX_MASK;
@@ -35,7 +36,7 @@ static uint32_t getFirstAvailableProducerIndexInterruptSafe()
     return DATA_BUFFER_LENGTH;
 }
 
-static bool setLastReadIndexInterruptSafe(uint32_t index)
+static bool setLastReadIndexInterruptSafe(uint8_t index)
 {
     if (index > DATA_BUFFER_LENGTH)
     {
@@ -47,10 +48,20 @@ static bool setLastReadIndexInterruptSafe(uint32_t index)
 
     do
     {
-        oldDataBufferIndexes = atomic_load(&g_dataBufferIndexes);
+        oldDataBufferIndexes = atomic_load(&g_txDataBufferIndexes);
         newDataBufferIndexes = (oldDataBufferIndexes & DATA_BUFFER_LAST_INDEX_COMPLEMENT_MASK) | index;
     }
-    while (!atomic_compare_exchange_weak(&g_dataBufferIndexes, &oldDataBufferIndexes, newDataBufferIndexes));
+    while (!atomic_compare_exchange_weak(&g_txDataBufferIndexes, &oldDataBufferIndexes, newDataBufferIndexes));
 
     return true;
+}
+
+static uint8_t moveConsumerIndexToLastRead()
+{
+    const uint32_t oldDataBufferIndexes = atomic_load(&g_txDataBufferIndexes);
+    const uint8_t lastReadIndex = oldDataBufferIndexes & DATA_BUFFER_INDEX_MASK;
+
+    atomic_store(&g_txDataBufferIndexes, (oldDataBufferIndexes & DATA_BUFFER_CONSUMER_INDEX_COMPLEMENT_MASK) | (lastReadIndex << DATA_BUFFER_CONSUMER_INDEX_SHIFT));
+
+    return lastReadIndex;
 }

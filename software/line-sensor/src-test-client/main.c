@@ -14,6 +14,9 @@
 lineSensorCommand_t g_txBuffer;
 lineSensorCommandResponse_t g_rxBuffer;
 
+#define LL_USART3_DMA_CHANNEL_TX LL_DMA_CHANNEL_2
+#define LL_USART3_DMA_CHANNEL_RX LL_DMA_CHANNEL_3
+
 void SystemClock_Config()
 {
     LL_AHB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
@@ -74,10 +77,7 @@ void initializeUsart()
 
     LL_USART_SetTransferDirection(USART3, LL_USART_DIRECTION_TX_RX);
     LL_USART_ConfigCharacter(USART3, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
-    LL_USART_SetBaudRate(USART3, SystemCoreClock, LL_USART_OVERSAMPLING_8, USART_BAUDRATE);
-    LL_USART_Enable(USART3);
-
-    while (!LL_USART_IsActiveFlag_REACK(USART3) || !LL_USART_IsActiveFlag_TEACK(USART3)) ;
+    LL_USART_SetBaudRate(USART3, SystemCoreClock, LL_USART_OVERSAMPLING_16, USART_BAUDRATE);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
 
@@ -87,47 +87,57 @@ void initializeUsart()
     NVIC_SetPriority(DMA1_Channel3_IRQn, 2);
     NVIC_EnableIRQ(DMA1_Channel3_IRQn);
 
-    // rx
+    // RX
 
-    LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_3, LL_DMA_DIRECTION_PERIPH_TO_MEMORY |
-                                                  LL_DMA_PRIORITY_HIGH              |
-                                                  LL_DMA_MODE_NORMAL                |
-                                                  LL_DMA_PERIPH_NOINCREMENT         |
-                                                  LL_DMA_MEMORY_INCREMENT           |
-                                                  LL_DMA_PDATAALIGN_BYTE            |
-                                                  LL_DMA_MDATAALIGN_BYTE);
+    LL_DMA_ConfigTransfer(DMA1,
+                          LL_USART3_DMA_CHANNEL_RX,
+                          LL_DMA_DIRECTION_PERIPH_TO_MEMORY |
+                          LL_DMA_PRIORITY_HIGH              |
+                          LL_DMA_MODE_NORMAL                |
+                          LL_DMA_PERIPH_NOINCREMENT         |
+                          LL_DMA_MEMORY_INCREMENT           |
+                          LL_DMA_PDATAALIGN_BYTE            |
+                          LL_DMA_MDATAALIGN_BYTE);
 
-    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_3,
+    LL_DMA_ConfigAddresses(DMA1,
+                           LL_USART3_DMA_CHANNEL_RX,
                            LL_USART_DMA_GetRegAddr(USART3, LL_USART_DMA_REG_DATA_RECEIVE),
                            (uint32_t) &g_rxBuffer,
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
 
-    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_3, LL_DMA_REQUEST_2);
+    LL_DMA_SetPeriphRequest(DMA1, LL_USART3_DMA_CHANNEL_RX, LL_DMA_REQUEST_2);
 
-    // tx
+    // TX
 
-    LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_2, LL_DMA_DIRECTION_MEMORY_TO_PERIPH |
-                                                  LL_DMA_PRIORITY_HIGH              |
-                                                  LL_DMA_MODE_NORMAL                |
-                                                  LL_DMA_PERIPH_NOINCREMENT         |
-                                                  LL_DMA_MEMORY_INCREMENT           |
-                                                  LL_DMA_PDATAALIGN_BYTE            |
-                                                  LL_DMA_MDATAALIGN_BYTE);
+    LL_DMA_ConfigTransfer(DMA1,
+                          LL_USART3_DMA_CHANNEL_TX,
+                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH |
+                          LL_DMA_PRIORITY_HIGH              |
+                          LL_DMA_MODE_NORMAL                |
+                          LL_DMA_PERIPH_NOINCREMENT         |
+                          LL_DMA_MEMORY_INCREMENT           |
+                          LL_DMA_PDATAALIGN_BYTE            |
+                          LL_DMA_MDATAALIGN_BYTE);
 
-    LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_2,
+    LL_DMA_ConfigAddresses(DMA1,
+                           LL_USART3_DMA_CHANNEL_TX,
                            (uint32_t) &g_txBuffer,
                            LL_USART_DMA_GetRegAddr(USART3, LL_USART_DMA_REG_DATA_TRANSMIT),
                            LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
-    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_2, LL_DMA_REQUEST_2);
+    LL_DMA_SetPeriphRequest(DMA1, LL_USART3_DMA_CHANNEL_TX, LL_DMA_REQUEST_2);
 
-    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
-    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
-    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_3);
-    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_3);
+    LL_DMA_EnableIT_TC(DMA1, LL_USART3_DMA_CHANNEL_TX);
+    LL_DMA_EnableIT_TE(DMA1, LL_USART3_DMA_CHANNEL_TX);
+    LL_DMA_EnableIT_TC(DMA1, LL_USART3_DMA_CHANNEL_RX);
+    LL_DMA_EnableIT_TE(DMA1, LL_USART3_DMA_CHANNEL_RX);
 
     LL_USART_EnableDMAReq_RX(USART3);
     LL_USART_EnableDMAReq_TX(USART3);
+
+    LL_USART_Enable(USART3);
+
+    while (!LL_USART_IsActiveFlag_REACK(USART3) || !LL_USART_IsActiveFlag_TEACK(USART3));
 }
 
 void initializeButton()
@@ -157,6 +167,8 @@ void main()
 
 void DMA1_Channel2_IRQHandler(void)
 {
+    // TX
+
     if (LL_DMA_IsActiveFlag_TC2(DMA1))
     {
         LL_DMA_ClearFlag_TC2(DMA1);
@@ -169,6 +181,8 @@ void DMA1_Channel2_IRQHandler(void)
 
 void DMA1_Channel3_IRQHandler(void)
 {
+    // RX
+
     if (LL_DMA_IsActiveFlag_TC3(DMA1))
     {
         LL_DMA_ClearFlag_TC3(DMA1);
@@ -187,13 +201,13 @@ void EXTI15_10_IRQHandler()
 
         g_txBuffer.commandCode = LSC_SEND_SENSOR_DATA;
 
-        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_3);
-        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
+        LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
+        LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
 
-        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_3, LSC_LENGTH_SEND_SENSOR_DATA);
-        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, LSCR_LENGTH_SEND_SENSOR_DATA);
+        LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_RX, LSCR_LENGTH_SEND_SENSOR_DATA);
+        LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_TX, LSC_LENGTH_SEND_SENSOR_DATA);
 
-        LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_3);
-        LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+        LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
+        LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
     }
 }

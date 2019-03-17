@@ -2,7 +2,7 @@
 
 #define NUMBER_OF_SENSORS 25
 
-#define USART_BAUDRATE 1152000
+#define USART_BAUDRATE 2000000
 
 // Line sensor commands
 

@@ -181,14 +181,14 @@ static bool processAdcData()
     #define ADC_BUFFER_2_START_IDX    1
     #define ADC_BUFFER_2_SENSOR_INDEX 16
 
-    const uint32_t producerBufferIndex = getFirstAvailableProducerIndexInterruptSafe();
+    const uint8_t producerBufferIndex = getFirstAvailableProducerIndexInterruptSafe();
 
     if (producerBufferIndex == DATA_BUFFER_LENGTH)
     {
         return false;
     }
 
-    volatile lineSensorCommandResponseSendSensorData_t* const sensorData = &g_dataBuffers[producerBufferIndex].sensorData;
+    volatile lineSensorCommandResponseSendSensorData_t* const sensorData = &g_txSendSensorDataBuffers[producerBufferIndex].sensorData;
 
     if (g_isCalibrated)
     {
@@ -224,7 +224,7 @@ static bool processAdcData()
         sensorData->sensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
     }
 
-    g_dataBuffers[producerBufferIndex].header.status = LSS_FLAG_NEW_DATA_AVAILABLE;
+    g_txSendSensorDataBuffers[producerBufferIndex].header.status = LSS_FLAG_NEW_DATA_AVAILABLE;
 
     return setLastReadIndexInterruptSafe(producerBufferIndex);
 }
