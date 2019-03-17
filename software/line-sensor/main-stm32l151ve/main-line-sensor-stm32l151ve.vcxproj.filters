@@ -73,10 +73,10 @@
     <ClInclude Include="..\inc\line_sensor_defs.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\buffer_index.h">
+    <ClInclude Include="..\src\watchdog.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\watchdog.h">
+    <ClInclude Include="..\src\consumer_producer_buffer.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

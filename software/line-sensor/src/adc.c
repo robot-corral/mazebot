@@ -6,7 +6,7 @@
 
 #include "watchdog.h"
 #include "global_data.h"
-#include "buffer_index.h"
+#include "consumer_producer_buffer.h"
 
 #include <math_utils.h>
 
@@ -82,7 +82,7 @@ void initializeAdc()
 
     LL_ADC_Enable(ADC1);
 
-    resetDataBufferInterruptSafe();
+    consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
 }
 
 void configureBankA()
@@ -165,7 +165,7 @@ void DMA1_Channel1_IRQHandler()
             else
             {
                 g_adcStatus |= LSS_ERR_DATA_BUFFER_CORRUPTED;
-                resetDataBufferInterruptSafe();
+                consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
                 startQueryingAdc();
             }
         }
@@ -181,7 +181,7 @@ static bool processAdcData()
     #define ADC_BUFFER_2_START_IDX    1
     #define ADC_BUFFER_2_SENSOR_INDEX 16
 
-    const uint8_t producerBufferIndex = getFirstAvailableProducerIndexInterruptSafe();
+    const uint8_t producerBufferIndex = consumerProducerBufferGetProducerIndexInterruptSafe(&g_txDataBufferIndexes);
 
     if (producerBufferIndex == DATA_BUFFER_LENGTH)
     {
@@ -226,5 +226,5 @@ static bool processAdcData()
 
     g_txSendSensorDataBuffers[producerBufferIndex].header.status = LSS_FLAG_NEW_DATA_AVAILABLE;
 
-    return setLastReadIndexInterruptSafe(producerBufferIndex);
+    return consumerProducerBufferSetLastReadIndexInterruptSafe(&g_txDataBufferIndexes, producerBufferIndex);
 }

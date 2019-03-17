@@ -6,7 +6,7 @@
 
 #include "dma.h"
 #include "global_data.h"
-#include "buffer_index.h"
+#include "consumer_producer_buffer.h"
 
 #include <stm32/stm32l1xx_ll_bus.h>
 #include <stm32/stm32l1xx_ll_dma.h>
@@ -97,7 +97,7 @@ static void handleCommand()
     {
         if (!LL_DMA_IsEnabledChannel(DMA1, LL_USART2_DMA_CHANNEL_TX))
         {
-            const uint8_t consumerIndex = moveConsumerIndexToLastRead();
+            const uint8_t consumerIndex = consumerProducerBufferMoveConsumerIndexToLastReadIndex(&g_txDataBufferIndexes);
 
             if (consumerIndex == NUMBER_OF_TX_DATA_BUFFERS)
             {
