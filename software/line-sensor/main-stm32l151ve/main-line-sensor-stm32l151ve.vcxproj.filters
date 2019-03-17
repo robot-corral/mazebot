@@ -79,5 +79,8 @@
     <ClInclude Include="..\src\consumer_producer_buffer.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\interrupt_priorities.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -87,6 +87,7 @@
     <ClInclude Include="..\src\dma.h" />
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\gpio.h" />
+    <ClInclude Include="..\src\interrupt_priorities.h" />
     <ClInclude Include="..\src\system_clocks.h" />
     <ClInclude Include="..\src\usart.h" />
     <ClInclude Include="..\src\watchdog.h" />

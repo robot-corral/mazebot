@@ -30,6 +30,8 @@ extern volatile uint16_t g_rxBuffer[RX_BUFFER_LENGTH];
 
 extern volatile uint32_t g_txDataBufferIndexes;
 
+extern volatile lineSensorCommandCode_t g_txResponseForSensorCommand;
+
 extern volatile lineSensorCommandResponse_t g_txBuffer;
 extern volatile lineSensorCommandResponse_t g_txSendSensorDataBuffers[NUMBER_OF_TX_DATA_BUFFERS];
 

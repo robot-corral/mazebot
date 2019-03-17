@@ -17,6 +17,12 @@ static void consumerProducerBufferResetInterruptSafe(volatile uint32_t* bufferIn
     atomic_store(bufferIndexes, DATA_BUFFER_EMPTY_INDEXES);
 }
 
+static uint8_t consumerProducerBufferGetConsumerIndex(volatile uint32_t* bufferIndexes)
+{
+    const uint32_t oldDataBufferIndexes = atomic_load(bufferIndexes);
+    return (oldDataBufferIndexes >> DATA_BUFFER_CONSUMER_INDEX_SHIFT) & DATA_BUFFER_INDEX_MASK;
+}
+
 static uint8_t consumerProducerBufferGetProducerIndexInterruptSafe(volatile uint32_t* bufferIndexes)
 {
     const uint32_t oldDataBufferIndexes = atomic_load(bufferIndexes);

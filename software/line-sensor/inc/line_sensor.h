@@ -54,6 +54,6 @@ typedef struct __attribute__((packed))
 
 #define LSC_LENGTH_SIMPLE_COMMAND sizeof(lineSensorCommandHeader_t)
 
-#define LSCR_TRANSMISSION_ERROR sizeof(lineSensorCommandHeader_t)
+#define LSCR_LENGTH_SIMPLE_COMMAND sizeof(lineSensorCommandHeader_t)
 
 #define LSCR_LENGTH_SEND_SENSOR_DATA (sizeof(lineSensorCommandResponseHeader_t) + sizeof(lineSensorCommandResponseSendSensorData_t))

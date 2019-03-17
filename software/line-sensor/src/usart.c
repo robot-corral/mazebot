@@ -6,21 +6,26 @@
 
 #include "dma.h"
 #include "global_data.h"
+#include "interrupt_priorities.h"
 #include "consumer_producer_buffer.h"
 
 #include <stm32/stm32l1xx_ll_bus.h>
 #include <stm32/stm32l1xx_ll_dma.h>
 #include <stm32/stm32l1xx_ll_usart.h>
 
+static void resetUsartRxBuffer();
+
 static void handleCommand();
+
+static void registerErrorsAndResetUsart(lineSensorStatus_t usartErrors);
 
 static void respondTransmissionError();
 static void respondSendSensorDataCommand();
-static void respondToCommand(const lineSensorCommand_t* pCommand);
+static void respondToCommand(const lineSensorCommand_t* pCommand, uint32_t numberOfReceivedBytes);
 
 void initializeUsart()
 {
-    NVIC_SetPriority(USART2_IRQn, 0);
+    NVIC_SetPriority(USART2_IRQn, INTERRUPT_PRIORITY_COMMUNICATION);
     NVIC_EnableIRQ(USART2_IRQn);
 
     LL_USART_EnableIT_IDLE(USART2);
@@ -30,13 +35,7 @@ void initializeUsart()
     LL_USART_ConfigCharacter(USART2, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
     LL_USART_SetBaudRate(USART2, SystemCoreClock, LL_USART_OVERSAMPLING_16, USART_BAUDRATE);
 
-    LL_DMA_ConfigAddresses(DMA1,
-                           LL_USART2_DMA_CHANNEL_RX,
-                           LL_USART_DMA_GetRegAddr(USART2),
-                           (uint32_t) g_rxBuffer,
-                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-    LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_RX, RX_BUFFER_LENGTH);
-    LL_DMA_EnableChannel(DMA1, LL_USART2_DMA_CHANNEL_RX);
+    resetUsartRxBuffer();
 
     LL_USART_EnableDMAReq_RX(USART2);
     LL_USART_EnableDMAReq_TX(USART2);
@@ -52,7 +51,8 @@ void DMA1_Channel6_IRQHandler(void)
 
     if (LL_DMA_IsActiveFlag_TE6(DMA1))
     {
-        // TODO handle error
+        LL_DMA_ClearFlag_TE6(DMA1);
+        registerErrorsAndResetUsart(LSS_ERR_FLAG_USART_DMA_FAILURE);
     }
 }
 
@@ -63,34 +63,74 @@ void DMA1_Channel7_IRQHandler(void)
     if (LL_DMA_IsActiveFlag_TC7(DMA1))
     {
         LL_DMA_ClearFlag_TC7(DMA1);
-        // TODO clear LSS_FLAG_NEW_DATA_AVAILABLE flag on consumer index
+        if (g_txResponseForSensorCommand)
+        {
+            // we successfully rx/tx command/response so we can clear all errors
+            g_communicationDeviceStatus = 0;
+        }
+        if (g_txResponseForSensorCommand = LSC_SEND_SENSOR_DATA)
+        {
+            const uint8_t consumerIndex = consumerProducerBufferGetConsumerIndex(&g_txDataBufferIndexes);
+            if (consumerIndex < NUMBER_OF_TX_DATA_BUFFERS)
+            {
+                // as we already sent this data, clear new data flag
+                g_txSendSensorDataBuffers[consumerIndex].header.status &= ~LSS_OK_FLAG_NEW_DATA_AVAILABLE;
+            }
+        }
+        g_txResponseForSensorCommand = 0;
         LL_DMA_DisableChannel(DMA1, LL_USART2_DMA_CHANNEL_TX);
     }
     if (LL_DMA_IsActiveFlag_TE7(DMA1))
     {
-        // TODO handle error
+        LL_DMA_ClearFlag_TE7(DMA1);
+        registerErrorsAndResetUsart(LSS_ERR_FLAG_USART_DMA_FAILURE);
     }
 }
 
 void USART2_IRQHandler()
 {
-    if (LL_USART_IsActiveFlag_IDLE(USART2))
-    {
-        LL_USART_ClearFlag_IDLE(USART2);
-        handleCommand();
-    }
+    lineSensorStatus_t errors = 0;
+
     if (LL_USART_IsActiveFlag_FE(USART2))
     {
-        // TODO handle error
+        LL_USART_ClearFlag_FE(USART2);
+        errors = LSS_ERR_FLAG_USART_FRAMING_ERROR;
     }
     if (LL_USART_IsActiveFlag_NE(USART2))
     {
-        // TODO handle error
+        LL_USART_ClearFlag_NE(USART2);
+        errors |= LSS_ERR_FLAG_USART_NOISE_ERROR;
     }
     if (LL_USART_IsActiveFlag_ORE(USART2))
     {
-        // TODO handle error
+        LL_USART_ClearFlag_ORE(USART2);
+        errors |= LSS_ERR_FLAG_USART_OVERRUN_ERROR;
     }
+
+    if (errors == 0)
+    {
+        if (LL_USART_IsActiveFlag_IDLE(USART2))
+        {
+            LL_USART_ClearFlag_IDLE(USART2);
+            handleCommand();
+        }
+    }
+    else
+    {
+        registerErrorsAndResetUsart(errors);
+    }
+}
+
+static void resetUsartRxBuffer()
+{
+    LL_DMA_DisableChannel(DMA1, LL_USART2_DMA_CHANNEL_RX);
+    LL_DMA_ConfigAddresses(DMA1,
+                           LL_USART2_DMA_CHANNEL_RX,
+                           LL_USART_DMA_GetRegAddr(USART2),
+                           (uint32_t) g_rxBuffer,
+                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+    LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_RX, RX_BUFFER_LENGTH);
+    LL_DMA_EnableChannel(DMA1, LL_USART2_DMA_CHANNEL_RX);
 }
 
 static void handleCommand()
@@ -111,16 +151,17 @@ static void handleCommand()
             }
             else
             {
-                respondToCommand(pCommand);
+                respondToCommand(pCommand, numberOfReceivedBytes);
             }
         }
         else if (numberOfReceivedBytes > LSC_LENGTH_SIMPLE_COMMAND)
         {
+            uint8_t commandStartIndex = 0;
             const lineSensorCommand_t* pCommand = 0;
 
-            for (uint8_t i = 0; i < numberOfReceivedBytes - LSC_LENGTH_SIMPLE_COMMAND; ++i)
+            for (; commandStartIndex < numberOfReceivedBytes - LSC_LENGTH_SIMPLE_COMMAND; ++commandStartIndex)
             {
-                const lineSensorCommand_t* const pTempCommand = (lineSensorCommand_t*) &g_rxBuffer[i];
+                const lineSensorCommand_t* const pTempCommand = (lineSensorCommand_t*) &g_rxBuffer[commandStartIndex];
 
                 if (pTempCommand->header.prefix == COMMAND_PREFIX)
                 {
@@ -131,7 +172,7 @@ static void handleCommand()
 
             if (pCommand)
             {
-                respondToCommand(pCommand);
+                respondToCommand(pCommand, numberOfReceivedBytes + commandStartIndex);
             }
             else
             {
@@ -144,19 +185,21 @@ static void handleCommand()
         }
     }
 
-    LL_DMA_DisableChannel(DMA1, LL_USART2_DMA_CHANNEL_RX);
-    LL_DMA_ConfigAddresses(DMA1,
-                           LL_USART2_DMA_CHANNEL_RX,
-                           LL_USART_DMA_GetRegAddr(USART2),
-                           (uint32_t) g_rxBuffer,
-                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-    LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_RX, RX_BUFFER_LENGTH);
-    LL_DMA_EnableChannel(DMA1, LL_USART2_DMA_CHANNEL_RX);
+    resetUsartRxBuffer();
 }
 
-static void respondToCommand(const lineSensorCommand_t* pCommand)
+static void registerErrorsAndResetUsart(lineSensorStatus_t usartErrors)
+{
+    g_communicationDeviceStatus |= usartErrors;
+    LL_DMA_DisableChannel(DMA1, LL_USART2_DMA_CHANNEL_TX);
+    resetUsartRxBuffer();
+}
+
+static void respondToCommand(const lineSensorCommand_t* pCommand, uint32_t numberOfReceivedBytes)
 {
     const lineSensorCommandCode_t commandCode = pCommand->header.commandCode;
+
+    g_txResponseForSensorCommand = commandCode;
 
     if (commandCode == LSC_SEND_SENSOR_DATA)
     {
@@ -168,6 +211,8 @@ static void respondToCommand(const lineSensorCommand_t* pCommand)
     }
     else
     {
+        // unknown command
+        g_txResponseForSensorCommand = 0;
         // unknown command code
         respondTransmissionError();
     }
@@ -182,7 +227,7 @@ static void respondTransmissionError()
                             (uint32_t) &g_txBuffer,
                             LL_USART_DMA_GetRegAddr(USART2),
                             LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-    LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_TX, LSCR_TRANSMISSION_ERROR);
+    LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_TX, LSCR_LENGTH_SIMPLE_COMMAND);
     LL_DMA_EnableChannel(DMA1, LL_USART2_DMA_CHANNEL_TX);
 }
 
@@ -190,13 +235,13 @@ static void respondSendSensorDataCommand()
 {
     const uint8_t consumerIndex = consumerProducerBufferMoveConsumerIndexToLastReadIndex(&g_txDataBufferIndexes);
 
-    if (consumerIndex == NUMBER_OF_TX_DATA_BUFFERS)
+    if (consumerIndex < NUMBER_OF_TX_DATA_BUFFERS)
     {
-        g_txBuffer.header.status = g_adcStatus | g_watchdogResetStatus | g_communicationDeviceStatus | LSS_ERR_FLAG_NOT_READY;
+        g_txSendSensorDataBuffers[consumerIndex].header.status |= g_adcStatus | g_watchdogResetStatus | g_communicationDeviceStatus;
 
         LL_DMA_ConfigAddresses(DMA1,
                                LL_USART2_DMA_CHANNEL_TX,
-                               (uint32_t) &g_txBuffer,
+                               (uint32_t) &g_txSendSensorDataBuffers[consumerIndex],
                                LL_USART_DMA_GetRegAddr(USART2),
                                LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
         LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_TX, LSCR_LENGTH_SEND_SENSOR_DATA);
@@ -204,11 +249,13 @@ static void respondSendSensorDataCommand()
     }
     else
     {
-        g_txSendSensorDataBuffers[consumerIndex].header.status |= g_adcStatus | g_watchdogResetStatus | g_communicationDeviceStatus;
+        // still no data from ADC
+
+        g_txBuffer.header.status = g_adcStatus | g_watchdogResetStatus | g_communicationDeviceStatus | LSS_ERR_FLAG_NOT_READY;
 
         LL_DMA_ConfigAddresses(DMA1,
                                LL_USART2_DMA_CHANNEL_TX,
-                               (uint32_t) &g_txSendSensorDataBuffers[consumerIndex],
+                               (uint32_t) &g_txBuffer,
                                LL_USART_DMA_GetRegAddr(USART2),
                                LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
         LL_DMA_SetDataLength(DMA1, LL_USART2_DMA_CHANNEL_TX, LSCR_LENGTH_SEND_SENSOR_DATA);

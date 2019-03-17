@@ -5,6 +5,7 @@
 #include "dma.h"
 
 #include "global_data.h"
+#include "interrupt_priorities.h"
 
 #include <stm32/stm32l1xx_ll_adc.h>
 #include <stm32/stm32l1xx_ll_dma.h>
@@ -28,7 +29,7 @@ void initializeDma()
 
 void initializeAdcDma()
 {
-    NVIC_SetPriority(DMA1_Channel1_IRQn, 2);
+    NVIC_SetPriority(DMA1_Channel1_IRQn, INTERRUPT_PRIORITY_ADC);
     NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1, LL_DMA_CHANNEL_1, LL_DMA_DIRECTION_PERIPH_TO_MEMORY |
@@ -47,7 +48,7 @@ void initializeUsartDma()
 {
     // RX
 
-    NVIC_SetPriority(DMA1_Channel6_IRQn, 0);
+    NVIC_SetPriority(DMA1_Channel6_IRQn, INTERRUPT_PRIORITY_COMMUNICATION);
     NVIC_EnableIRQ(DMA1_Channel6_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1,
@@ -64,7 +65,7 @@ void initializeUsartDma()
 
     // TX
 
-    NVIC_SetPriority(DMA1_Channel7_IRQn, 0);
+    NVIC_SetPriority(DMA1_Channel7_IRQn, INTERRUPT_PRIORITY_COMMUNICATION);
     NVIC_EnableIRQ(DMA1_Channel7_IRQn);
 
     LL_DMA_ConfigTransfer(DMA1,
