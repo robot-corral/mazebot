@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="main-robot-Debug.vgdbsettings">
+    <None Include="controller-motors-sensors-stm32l496ze-Debug.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
-    <None Include="main-robot-Release.vgdbsettings">
+    <None Include="controller-motors-sensors-stm32l496ze-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
     <None Include="stm32.xml">

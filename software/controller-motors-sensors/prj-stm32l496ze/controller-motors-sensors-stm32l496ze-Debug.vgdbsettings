@@ -18,7 +18,7 @@
         <Revision>3</Revision>
       </Version>
     </ToolchainID>
-    <ProjectFile>main-robot.vcxproj</ProjectFile>
+    <ProjectFile>controller-motors-sensors-stm32l496ze.vcxproj</ProjectFile>
     <RemoteBuildEnvironment>
       <Records />
       <EnvironmentSetupFiles />
