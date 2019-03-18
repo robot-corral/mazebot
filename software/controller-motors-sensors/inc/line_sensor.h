@@ -6,7 +6,7 @@
 
 #include <stdbool.h>
 
-void calibrateLineSensor();
+void calibrateLineSensor(void* pTaskParameter);
 
 void startQueryingLineSensor();
 

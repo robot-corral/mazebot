@@ -8,6 +8,4 @@
 
 void initializeDriver();
 
-void initializeDebugDriver(bool enable);
-
 void shutdown();

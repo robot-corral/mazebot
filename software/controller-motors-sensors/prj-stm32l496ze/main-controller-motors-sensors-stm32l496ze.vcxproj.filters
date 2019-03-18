@@ -32,9 +32,6 @@
     <ClInclude Include="..\inc\clock.h">
       <Filter>inc</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\debug.h">
-      <Filter>inc</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\driver.h">
       <Filter>inc</Filter>
     </ClInclude>
@@ -89,9 +86,6 @@
     <ClInclude Include="..\src-stm32l496ze\timers.h">
       <Filter>src-stm32l496ze</Filter>
     </ClInclude>
-    <ClInclude Include="..\src-stm32l496ze\usart.h">
-      <Filter>src-stm32l496ze</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\clock.c">
@@ -140,9 +134,6 @@
       <Filter>src-stm32l496ze</Filter>
     </ClCompile>
     <ClCompile Include="..\src-stm32l496ze\timing.c">
-      <Filter>src-stm32l496ze</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src-stm32l496ze\usart.c">
       <Filter>src-stm32l496ze</Filter>
     </ClCompile>
   </ItemGroup>

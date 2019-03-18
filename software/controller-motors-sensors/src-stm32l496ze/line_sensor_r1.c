@@ -280,7 +280,7 @@ void startQueryingLineSensor()
     LL_ADC_REG_StartConversion(ADC2);
 }
 
-void calibrateLineSensor()
+void calibrateLineSensor(void* pTaskParameter)
 {
 #ifndef USE_HARDCODED_CALIBRATION_VALUES
     for (;;)

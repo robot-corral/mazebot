@@ -5,7 +5,6 @@
 #include "spi.h"
 #include "exti.h"
 #include "gpio.h"
-#include "usart.h"
 #include "timers.h"
 #include "sd_impl.h"
 #include "system_clock.h"
@@ -23,21 +22,10 @@ void initializeDriver()
     initializeExti();
     initializeTimers();
     initializeMotorControllerMc33926();
-    initializeUsart();
     initializeLineSensorR1();
     initializeSpi();
     initializeImuLsm6ds3h();
     initializeSd();
-}
-
-void initializeDebugDriver(bool enable)
-{
-    initializeSystemClock();
-    initializeDebugGpio(enable);
-    if (enable)
-    {
-        initializeDebugUsart();
-    }
 }
 
 void shutdown()

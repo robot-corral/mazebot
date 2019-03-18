@@ -42,13 +42,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(SolutionDir)\common\lib-det-os\inc;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(SolutionDir)\common\lib-det-os\inc;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -62,7 +62,6 @@
   <ItemGroup>
     <ClInclude Include="..\inc\buttons.h" />
     <ClInclude Include="..\inc\clock.h" />
-    <ClInclude Include="..\inc\debug.h" />
     <ClInclude Include="..\inc\driver.h" />
     <ClInclude Include="..\inc\imu.h" />
     <ClInclude Include="..\inc\line_sensor.h" />
@@ -81,7 +80,6 @@
     <ClInclude Include="..\src-stm32l496ze\spi.h" />
     <ClInclude Include="..\src-stm32l496ze\system_clock.h" />
     <ClInclude Include="..\src-stm32l496ze\timers.h" />
-    <ClInclude Include="..\src-stm32l496ze\usart.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src-stm32l496ze\driver.c" />
@@ -98,7 +96,6 @@
     <ClCompile Include="..\src-stm32l496ze\system_clock.c" />
     <ClCompile Include="..\src-stm32l496ze\timers.c" />
     <ClCompile Include="..\src-stm32l496ze\timing.c" />
-    <ClCompile Include="..\src-stm32l496ze\usart.c" />
     <ClCompile Include="..\src\clock.c" />
     <ClCompile Include="..\src\main.c" />
   </ItemGroup>

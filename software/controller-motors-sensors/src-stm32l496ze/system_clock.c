@@ -12,18 +12,11 @@
 #include "global_data.h"
 #include "system_clock.h"
 
-static void initializeTaskTimer();
+static void initializeOsTimer();
 static void initializeClockTimer();
 
 void initializeSystemClock()
 {
-    if (g_isSystemClockInitialized)
-    {
-        return;
-    }
-
-    g_isSystemClockInitialized = true;
-
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
 
@@ -59,7 +52,7 @@ void initializeSystemClock()
     LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 
     initializeClockTimer();
-    initializeTaskTimer();
+    initializeOsTimer();
 }
 
 void initializeClockTimer()
@@ -76,30 +69,15 @@ uint32_t getCurrentTimeInMicroseconds()
     return LL_TIM_GetCounter(TIM5);
 }
 
-void initializeTaskTimer()
+void initializeOsTimer()
 {
-    NVIC_SetPriority(TIM2_IRQn, 4);
+    NVIC_SetPriority(TIM2_IRQn, 15);
     NVIC_EnableIRQ(TIM2_IRQn);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
-    LL_TIM_SetPrescaler(TIM2, 0); // use max resolution for task scheduling
-    LL_TIM_SetAutoReload(TIM2, 0); // call immediately once task scheduler is up
+
+    LL_TIM_SetPrescaler(TIM2, 0); // use highest resolution
+    LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 100));
+
     LL_TIM_EnableIT_UPDATE(TIM2);
-    LL_TIM_EnableCounter(TIM2);
-}
-
-void startTaskScheduler()
-{
-    LL_TIM_GenerateEvent_UPDATE(TIM2);
-}
-
-void TIM2_IRQHandler()
-{
-    if (LL_TIM_IsActiveFlag_UPDATE(TIM2) == 1)
-    {
-        LL_TIM_ClearFlag_UPDATE(TIM2);
-        // TODO will be removed when we move to DET-OS
-        // uint32_t frequency = asyncTaskCallback();
-        // LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, 0, frequency));
-    }
 }
