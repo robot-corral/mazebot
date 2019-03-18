@@ -42,13 +42,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\lib-robot\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\lib-robot\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

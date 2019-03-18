@@ -9,8 +9,6 @@
 #include "stm32/stm32l4xx_ll_dma.h"
 #include "stm32/stm32l4xx_ll_rcc.h"
 
-#include "../global_defs.h"
-
 #include "clock.h"
 #include "status.h"
 #include "timing.h"

@@ -9,9 +9,7 @@
 #include "stm32/stm32l4xx_ll_utils.h"
 #include "stm32/stm32l4xx_ll_system.h"
 
-#include "tasks.h"
 #include "global_data.h"
-
 #include "system_clock.h"
 
 static void initializeTaskTimer();
@@ -100,7 +98,8 @@ void TIM2_IRQHandler()
     if (LL_TIM_IsActiveFlag_UPDATE(TIM2) == 1)
     {
         LL_TIM_ClearFlag_UPDATE(TIM2);
-        uint32_t frequency = asyncTaskCallback();
-        LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, 0, frequency));
+        // TODO will be removed when we move to DET-OS
+        // uint32_t frequency = asyncTaskCallback();
+        // LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, 0, frequency));
     }
 }

@@ -2,8 +2,6 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
-#include "../global_defs.h"
-
 #include "stm32/stm32l4xx_ll_bus.h"
 #include "stm32/stm32l4xx_ll_pwr.h"
 #include "stm32/stm32l4xx_ll_gpio.h"
