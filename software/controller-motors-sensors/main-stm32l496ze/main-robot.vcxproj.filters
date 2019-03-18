@@ -7,6 +7,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{913ce143-e5a6-47eb-bf7f-4bd89d87649f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc">
+      <UniqueIdentifier>{517399ed-bb17-44cb-a3ea-b2802520f071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-stm32l496ze">
+      <UniqueIdentifier>{ea2220e0-41c2-4a6b-bc78-1343b3f2411e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="main-robot-Debug.vgdbsettings">
@@ -18,10 +24,5 @@
     <None Include="stm32.xml">
       <Filter>VisualGDB settings</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.c">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
