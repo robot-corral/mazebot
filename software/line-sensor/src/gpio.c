@@ -132,7 +132,7 @@ void initializeGpio()
         //
         // mode               -   10 (alternate)
         // port pull up/down  -   00 (no)
-        // output speed       -   11 (very high)
+        // output speed       -   10 (high <= 10 MHz)
         // output type        -    0 (push-pull)
         // alternate function - 0111 (AF7)
 
@@ -141,7 +141,7 @@ void initializeGpio()
         // pin           15  13  11  09  07  05  03  01
 
         // pin               14  12  10  08  06  04  02  00
-        GPIOD->OSPEEDR = 0b00000000000000000011110000000000;
+        GPIOD->OSPEEDR = 0b00000000000000000010100000000000;
         // pin             15  13  11  09  07  05  03  01
 
         // pin                0006    0004    0002    0000

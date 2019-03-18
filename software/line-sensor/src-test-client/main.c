@@ -4,6 +4,7 @@
 #include <stm32\stm32l4xx_ll_dma.h>
 #include <stm32\stm32l4xx_ll_pwr.h>
 #include <stm32\stm32l4xx_ll_rcc.h>
+#include <stm32\stm32l4xx_ll_tim.h>
 #include <stm32\stm32l4xx_ll_exti.h>
 #include <stm32\stm32l4xx_ll_gpio.h>
 #include <stm32\stm32l4xx_ll_utils.h>
@@ -12,10 +13,15 @@
 #include <stm32\stm32l4xx_ll_system.h>
 
 lineSensorCommand_t g_txBuffer;
-lineSensorCommandResponse_t g_rxBuffer;
+
+#define RX_BUFFER_LENGTH (sizeof(lineSensorCommandResponse_t) + 10)
+
+uint8_t g_rxBuffer[RX_BUFFER_LENGTH];
 
 #define LL_USART3_DMA_CHANNEL_TX LL_DMA_CHANNEL_2
 #define LL_USART3_DMA_CHANNEL_RX LL_DMA_CHANNEL_3
+
+static void sendCommand();
 
 void SystemClock_Config()
 {
@@ -51,6 +57,13 @@ void SystemClock_Config()
     LL_SetSystemCoreClock(80000000);
 
     LL_RCC_SetUSARTClockSource(LL_RCC_USART3_CLKSOURCE_PCLK1);
+
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5);
+
+    LL_TIM_SetPrescaler(TIM5, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
+    LL_TIM_SetAutoReload(TIM5, 0xFFFFFFFF); // reload 32 bit value (TIM5 is 32 bit)
+    LL_TIM_EnableCounter(TIM5);
+    LL_TIM_GenerateEvent_UPDATE(TIM5);
 }
 
 void initializeUsart()
@@ -60,7 +73,7 @@ void initializeUsart()
     // USART3_TX
 
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_8, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinSpeed(GPIOD, LL_GPIO_PIN_8, LL_GPIO_SPEED_FREQ_VERY_HIGH);
+    LL_GPIO_SetPinSpeed(GPIOD, LL_GPIO_PIN_8, LL_GPIO_SPEED_FREQ_HIGH);
     LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_8, LL_GPIO_OUTPUT_PUSHPULL);
     LL_GPIO_SetPinPull(GPIOD, LL_GPIO_PIN_8, LL_GPIO_PULL_UP);
     LL_GPIO_SetAFPin_8_15(GPIOD, LL_GPIO_PIN_8, LL_GPIO_AF_7);
@@ -68,7 +81,7 @@ void initializeUsart()
     // USART3_RX
 
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_9, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinSpeed(GPIOD, LL_GPIO_PIN_9, LL_GPIO_SPEED_FREQ_VERY_HIGH);
+    LL_GPIO_SetPinSpeed(GPIOD, LL_GPIO_PIN_9, LL_GPIO_SPEED_FREQ_HIGH);
     LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_9, LL_GPIO_OUTPUT_PUSHPULL);
     LL_GPIO_SetPinPull(GPIOD, LL_GPIO_PIN_9, LL_GPIO_PULL_UP);
     LL_GPIO_SetAFPin_8_15(GPIOD, LL_GPIO_PIN_9, LL_GPIO_AF_7);
@@ -102,7 +115,7 @@ void initializeUsart()
     LL_DMA_ConfigAddresses(DMA1,
                            LL_USART3_DMA_CHANNEL_RX,
                            LL_USART_DMA_GetRegAddr(USART3, LL_USART_DMA_REG_DATA_RECEIVE),
-                           (uint32_t) &g_rxBuffer,
+                           (uint32_t) g_rxBuffer,
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
 
     LL_DMA_SetPeriphRequest(DMA1, LL_USART3_DMA_CHANNEL_RX, LL_DMA_REQUEST_2);
@@ -134,6 +147,17 @@ void initializeUsart()
 
     LL_USART_EnableDMAReq_RX(USART3);
     LL_USART_EnableDMAReq_TX(USART3);
+
+    //
+    // uncomment to check USART problems
+    //
+    //NVIC_SetPriority(USART3_IRQn, 2);
+    //NVIC_EnableIRQ(USART3_IRQn);
+
+    //LL_USART_EnableIT_PE(USART3);
+    //LL_USART_EnableIT_RTO(USART3);
+    //LL_USART_EnableIT_IDLE(USART3);
+    //LL_USART_EnableIT_ERROR(USART3);
 
     // USART should be enabled after everything is configured otherwise extra garbage can be transmitted (usually 0xFF)
 
@@ -195,22 +219,54 @@ void DMA1_Channel3_IRQHandler(void)
     }
 }
 
+void USART3_IRQHandler()
+{
+    if (LL_USART_IsActiveFlag_IDLE(USART3))
+    {
+        // TODO
+    }
+    if (LL_USART_IsActiveFlag_PE(USART3))
+    {
+        // TODO
+    }
+    if (LL_USART_IsActiveFlag_RTO(USART3))
+    {
+        // TODO
+    }
+    if (LL_USART_IsActiveFlag_FE(USART3))
+    {
+        // TODO
+    }
+    if (LL_USART_IsActiveFlag_NE(USART3))
+    {
+        // TODO
+    }
+    if (LL_USART_IsActiveFlag_ORE(USART3))
+    {
+        // TODO
+    }
+}
+
 void EXTI15_10_IRQHandler()
 {
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_13) != RESET)
     {
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
-
-        g_txBuffer.header.prefix = COMMAND_PREFIX;
-        g_txBuffer.header.commandCode = LSC_SEND_SENSOR_DATA;
-
-        LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
-        LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
-
-        LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_RX, LSCR_LENGTH_SEND_SENSOR_DATA);
-        LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_TX, LSC_LENGTH_SIMPLE_COMMAND);
-
-        LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
-        LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
+        sendCommand();
     }
+}
+
+void sendCommand()
+{
+    g_txBuffer.header.prefix = COMMAND_PREFIX;
+    g_txBuffer.header.commandCode = LSC_SEND_SENSOR_DATA;
+
+    LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
+    LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
+
+    LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_RX, RX_BUFFER_LENGTH);
+    LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_TX, LSC_LENGTH_SIMPLE_COMMAND);
+
+    LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
+    LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
 }
