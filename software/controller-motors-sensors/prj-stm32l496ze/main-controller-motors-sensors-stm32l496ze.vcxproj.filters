@@ -25,4 +25,125 @@
       <Filter>VisualGDB settings</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\buttons.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\clock.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\debug.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\driver.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\imu.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\line_sensor.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\motor_controller.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\parameters.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\sd.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\status.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\timing.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\exti.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\global_data.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\gpio.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\imu_lsm6ds3h.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\line_sensor_r1.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\motor_controller_mc33926.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\sd_impl.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\spi.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\system_clock.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\timers.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-stm32l496ze\usart.h">
+      <Filter>src-stm32l496ze</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\clock.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\driver.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\exti.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\global_data.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\gpio.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\imu_lsm6ds3h.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\line_sensor_r1.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\motor_controller_mc33926.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\sd_impl.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\sd_impl_cmd.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\spi.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\status.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\system_clock.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\timers.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\timing.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\usart.c">
+      <Filter>src-stm32l496ze</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

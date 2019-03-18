@@ -60,5 +60,46 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\buttons.h" />
+    <ClInclude Include="..\inc\clock.h" />
+    <ClInclude Include="..\inc\debug.h" />
+    <ClInclude Include="..\inc\driver.h" />
+    <ClInclude Include="..\inc\imu.h" />
+    <ClInclude Include="..\inc\line_sensor.h" />
+    <ClInclude Include="..\inc\motor_controller.h" />
+    <ClInclude Include="..\inc\parameters.h" />
+    <ClInclude Include="..\inc\sd.h" />
+    <ClInclude Include="..\inc\status.h" />
+    <ClInclude Include="..\inc\timing.h" />
+    <ClInclude Include="..\src-stm32l496ze\exti.h" />
+    <ClInclude Include="..\src-stm32l496ze\global_data.h" />
+    <ClInclude Include="..\src-stm32l496ze\gpio.h" />
+    <ClInclude Include="..\src-stm32l496ze\imu_lsm6ds3h.h" />
+    <ClInclude Include="..\src-stm32l496ze\line_sensor_r1.h" />
+    <ClInclude Include="..\src-stm32l496ze\motor_controller_mc33926.h" />
+    <ClInclude Include="..\src-stm32l496ze\sd_impl.h" />
+    <ClInclude Include="..\src-stm32l496ze\spi.h" />
+    <ClInclude Include="..\src-stm32l496ze\system_clock.h" />
+    <ClInclude Include="..\src-stm32l496ze\timers.h" />
+    <ClInclude Include="..\src-stm32l496ze\usart.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src-stm32l496ze\driver.c" />
+    <ClCompile Include="..\src-stm32l496ze\exti.c" />
+    <ClCompile Include="..\src-stm32l496ze\global_data.c" />
+    <ClCompile Include="..\src-stm32l496ze\gpio.c" />
+    <ClCompile Include="..\src-stm32l496ze\imu_lsm6ds3h.c" />
+    <ClCompile Include="..\src-stm32l496ze\line_sensor_r1.c" />
+    <ClCompile Include="..\src-stm32l496ze\motor_controller_mc33926.c" />
+    <ClCompile Include="..\src-stm32l496ze\sd_impl.c" />
+    <ClCompile Include="..\src-stm32l496ze\sd_impl_cmd.c" />
+    <ClCompile Include="..\src-stm32l496ze\spi.c" />
+    <ClCompile Include="..\src-stm32l496ze\status.c" />
+    <ClCompile Include="..\src-stm32l496ze\system_clock.c" />
+    <ClCompile Include="..\src-stm32l496ze\timers.c" />
+    <ClCompile Include="..\src-stm32l496ze\timing.c" />
+    <ClCompile Include="..\src-stm32l496ze\usart.c" />
+    <ClCompile Include="..\src\clock.c" />
+    <ClCompile Include="..\src\main.c" />
   </ItemGroup>
 </Project>
