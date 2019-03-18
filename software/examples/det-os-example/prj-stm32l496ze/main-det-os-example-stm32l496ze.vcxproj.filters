@@ -2,17 +2,17 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="VisualGDB settings">
-      <UniqueIdentifier>{c8435c81-3c16-4ca4-9907-73fc7d2e959f}</UniqueIdentifier>
+      <UniqueIdentifier>{00114143-2c9c-40f6-ac07-6ae6f413dc10}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{e32e2da6-3681-49a4-a020-8a9b7a8fb619}</UniqueIdentifier>
+      <UniqueIdentifier>{8566adb8-0251-446c-acda-b63efc48d713}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="main-test-client-stm32l496ze-Debug.vgdbsettings">
+    <None Include="main-det-os-example-stm32l496ze-Debug.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
-    <None Include="main-test-client-stm32l496ze-Release.vgdbsettings">
+    <None Include="main-det-os-example-stm32l496ze-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
     <None Include="stm32.xml">
@@ -20,7 +20,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-test-client\main.c">
+    <ClCompile Include="..\src\main.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

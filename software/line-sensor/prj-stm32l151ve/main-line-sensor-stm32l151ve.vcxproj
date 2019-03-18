@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{8D721BB8-9200-41CC-9EEE-BC5125E89409}</ProjectGuid>
+    <ProjectGuid>{B321BAA2-AD22-41E2-892D-AB7B8FE85114}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
     <BSP_VERSION>2018.12R2</BSP_VERSION>
     <InPlaceBSPSubdir />
@@ -34,63 +34,62 @@
     <GNUConfigurationType>Debug</GNUConfigurationType>
     <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
     <ToolchainVersion>7.2.0/8.0.1/r3</ToolchainVersion>
-    <GNUTargetType>StaticLibrary</GNUTargetType>
-    <ExportedPreprocessorDefinitions>
-    </ExportedPreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
     <ToolchainVersion>7.2.0/8.0.1/r3</ToolchainVersion>
-    <GNUTargetType>StaticLibrary</GNUTargetType>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>MAX_SCHEDULED_TASKS=8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;$(SolutionDir)\common\lib-utils\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\inc;$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>MAX_SCHEDULED_TASKS=8;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;$(SolutionDir)\common\lib-utils\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctions>true</InlineFunctions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\inc\det_os.h" />
-    <ClInclude Include="..\inc\det_os_implementation.h" />
-    <ClInclude Include="..\inc\result_codes.h" />
-    <ClInclude Include="..\src\global_data.h" />
-    <ClInclude Include="..\src\schedule_tasks.h" />
-    <ClInclude Include="..\src\schedule_tasks_defs.h" />
-    <ClInclude Include="..\src\svc_defs.h" />
-    <ClInclude Include="..\src\types.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="lib-det-os-stm32l496ze-Debug.vgdbsettings" />
-    <None Include="lib-det-os-stm32l496ze-Release.vgdbsettings" />
+    <None Include="main-line-sensor-stm32l151ve-Debug.vgdbsettings" />
+    <None Include="main-line-sensor-stm32l151ve-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-asm\det_os_idle.S" />
-    <ClCompile Include="..\src-asm\execute_tasks.S" />
-    <ClCompile Include="..\src-asm\schedule_task_svc.S" />
-    <ClCompile Include="..\src-asm\stark_new_task.S" />
-    <ClCompile Include="..\src-asm\svc_handler.S" />
-    <ClCompile Include="..\src-asm\tim2_irq_handler.S" />
-    <ClCompile Include="..\src\det_os_implementation.c" />
+    <ClCompile Include="..\src\adc.c" />
+    <ClCompile Include="..\src\dma.c" />
     <ClCompile Include="..\src\global_data.c" />
-    <ClCompile Include="..\src\schedule_tasks.c" />
+    <ClCompile Include="..\src\gpio.c" />
+    <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\system_clocks.c" />
+    <ClCompile Include="..\src\usart.c" />
+    <ClCompile Include="..\src\watchdog.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj">
-      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
+    <ProjectReference Include="..\..\common\lib-stm32l1\prj-stm32l151ve\lib-stm32l151ve.vcxproj">
+      <Project>{3e06d10a-43c7-40b0-90c8-e35bb970aa0e}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\common\lib-utils\prj-stm32l151ve\lib-utils-stm32l151ve.vcxproj">
+      <Project>{aa910249-4820-4f9b-b6bb-f2859e96845a}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\line_sensor.h" />
+    <ClInclude Include="..\inc\line_sensor_defs.h" />
+    <ClInclude Include="..\src\adc.h" />
+    <ClInclude Include="..\src\consumer_producer_buffer.h" />
+    <ClInclude Include="..\src\dma.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\gpio.h" />
+    <ClInclude Include="..\src\interrupt_priorities.h" />
+    <ClInclude Include="..\src\system_clocks.h" />
+    <ClInclude Include="..\src\usart.h" />
+    <ClInclude Include="..\src\watchdog.h" />
   </ItemGroup>
 </Project>

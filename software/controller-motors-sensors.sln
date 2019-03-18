@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32l496ze", "common\lib-utils\lib-stm32l496ze\lib-utils-stm32l496ze.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32l496ze", "common\lib-utils\prj-stm32l496ze\lib-utils-stm32l496ze.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-det-os-stm32l496ze", "common\lib-det-os\lib-stm32l496ze\lib-det-os-stm32l496ze.vcxproj", "{8D721BB8-9200-41CC-9EEE-BC5125E89409}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-det-os-stm32l496ze", "common\lib-det-os\prj-stm32l496ze\lib-det-os-stm32l496ze.vcxproj", "{8D721BB8-9200-41CC-9EEE-BC5125E89409}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "controller-motors-sensors-stm32l496ze", "controller-motors-sensors\prj-stm32l496ze\controller-motors-sensors-stm32l496ze.vcxproj", "{2C740AC9-C988-4102-AF56-78DA516B963B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "controller-motors-sensors-stm32l496ze", "controller-motors-sensors\prj-stm32l496ze\main-controller-motors-sensors-stm32l496ze.vcxproj", "{2C740AC9-C988-4102-AF56-78DA516B963B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

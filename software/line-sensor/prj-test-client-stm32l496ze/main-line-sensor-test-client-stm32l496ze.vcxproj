@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B321BAA2-AD22-41E2-892D-AB7B8FE85114}</ProjectGuid>
+    <ProjectGuid>{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
     <BSP_VERSION>2018.12R2</BSP_VERSION>
     <InPlaceBSPSubdir />
@@ -41,55 +41,30 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;$(SolutionDir)\common\lib-utils\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <InlineFunctions>true</InlineFunctions>
+      <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
-      <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32l1;$(SolutionDir)\common\lib-utils\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <InlineFunctions>true</InlineFunctions>
+      <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="main-line-sensor-stm32l151ve-Debug.vgdbsettings" />
-    <None Include="main-line-sensor-stm32l151ve-Release.vgdbsettings" />
+    <None Include="main-line-sensor-test-client-stm32l496ze-Debug.vgdbsettings" />
+    <None Include="main-line-sensor-test-client-stm32l496ze-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\adc.c" />
-    <ClCompile Include="..\src\dma.c" />
-    <ClCompile Include="..\src\global_data.c" />
-    <ClCompile Include="..\src\gpio.c" />
-    <ClCompile Include="..\src\main.c" />
-    <ClCompile Include="..\src\system_clocks.c" />
-    <ClCompile Include="..\src\usart.c" />
-    <ClCompile Include="..\src\watchdog.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\common\lib-stm32l1\lib-stm32l151ve\lib-stm32l151ve.vcxproj">
-      <Project>{3e06d10a-43c7-40b0-90c8-e35bb970aa0e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\common\lib-utils\lib-stm32l151ve\lib-utils-stm32l151ve.vcxproj">
-      <Project>{aa910249-4820-4f9b-b6bb-f2859e96845a}</Project>
+    <ProjectReference Include="..\..\common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj">
+      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\line_sensor.h" />
-    <ClInclude Include="..\inc\line_sensor_defs.h" />
-    <ClInclude Include="..\src\adc.h" />
-    <ClInclude Include="..\src\consumer_producer_buffer.h" />
-    <ClInclude Include="..\src\dma.h" />
-    <ClInclude Include="..\src\global_data.h" />
-    <ClInclude Include="..\src\gpio.h" />
-    <ClInclude Include="..\src\interrupt_priorities.h" />
-    <ClInclude Include="..\src\system_clocks.h" />
-    <ClInclude Include="..\src\usart.h" />
-    <ClInclude Include="..\src\watchdog.h" />
+    <ClCompile Include="..\src-test-client\main.c" />
   </ItemGroup>
 </Project>

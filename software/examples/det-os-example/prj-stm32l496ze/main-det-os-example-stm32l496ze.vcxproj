@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{21C4DB7F-21FC-47A3-9DD0-C82FF3E6D8F9}</ProjectGuid>
+    <ProjectGuid>{C19D5768-DDEA-4D98-A339-ADB8669501E9}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
     <BSP_VERSION>2018.12R2</BSP_VERSION>
     <InPlaceBSPSubdir />
@@ -41,34 +41,33 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <CLanguageStandard>C11</CLanguageStandard>
+      <CLanguageStandard>GNU11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-det-os\inc;$(SolutionDir)\common\lib-stm32l4</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
-      <CLanguageStandard>C11</CLanguageStandard>
+      <CLanguageStandard>GNU11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-det-os\inc;$(SolutionDir)\common\lib-stm32l4</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj">
-      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\lib-test\lib-stm32l496ze\lib-test-stm32l496ze.vcxproj">
-      <Project>{c5dd5c38-ee4f-4736-86ac-ab980d90cbb2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\lib-stm32l496ze\lib-det-os-stm32l496ze.vcxproj">
-      <Project>{8d721bb8-9200-41cc-9eee-bc5125e89409}</Project>
-    </ProjectReference>
+    <ClCompile Include="..\src\main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="lib-det-os-test-stm32l496ze-Debug.vgdbsettings" />
-    <None Include="lib-det-os-test-stm32l496ze-Release.vgdbsettings" />
+    <None Include="main-det-os-example-stm32l496ze-Debug.vgdbsettings" />
+    <None Include="main-det-os-example-stm32l496ze-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-test\main.c" />
+    <ProjectReference Include="..\..\..\common\lib-det-os\prj-stm32l496ze\lib-det-os-stm32l496ze.vcxproj">
+      <Project>{8d721bb8-9200-41cc-9eee-bc5125e89409}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj">
+      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
+    </ProjectReference>
   </ItemGroup>
 </Project>

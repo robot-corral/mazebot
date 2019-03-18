@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.438
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-test-stm32l496ze", "common\lib-test\lib-stm32l496ze\lib-test-stm32l496ze.vcxproj", "{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-test-stm32l496ze", "common\lib-test\prj-stm32l496ze\lib-test-stm32l496ze.vcxproj", "{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\lib-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32l496ze", "common\lib-utils\lib-stm32l496ze\lib-utils-stm32l496ze.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32l496ze", "common\lib-utils\prj-stm32l496ze\lib-utils-stm32l496ze.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-test-stm32l496ze", "common\lib-utils\lib-test-stm32l496ze\lib-utils-test-stm32l496ze.vcxproj", "{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-test-stm32l496ze", "common\lib-utils\prj-test-stm32l496ze\test-utils-stm32l496ze.vcxproj", "{CD118854-7FE9-4B26-A795-D4D85E5FFDAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
