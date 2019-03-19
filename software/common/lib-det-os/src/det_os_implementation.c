@@ -10,6 +10,12 @@
 
 #include <stm32/stm32l4xx_ll_tim.h>
 
+extern void SVC_Handler(void);
+void(*SVC_Handler_fp)(void) = &SVC_Handler;
+
+extern void TIM2_IRQHandler(void);
+void(*TIM2_IRQHandler_fp)(void) = &TIM2_IRQHandler;
+
 void runDetOs(task_t startTask)
 {
     g_scheduledTasks[0].pTaskParameter = 0;

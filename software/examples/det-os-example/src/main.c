@@ -63,22 +63,6 @@ static void initializeGpio()
 
     LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOG);
 
-    if (LL_PWR_IsEnabledVddIO2())
-    {
-        return;
-    }
-
-    LL_PWR_EnablePVM(LL_PWR_PVM_VDDIO2_0_9V);
-
-    while (LL_PWR_IsActiveFlag_PVMO2());
-
-    do
-    {
-        LL_PWR_EnableVddIO2();
-    } while (!LL_PWR_IsEnabledVddIO2());
-
-    LL_PWR_DisablePVM(LL_PWR_PVM_VDDIO2_0_9V);
-
     LL_GPIO_ResetOutputPin(GPIOG, LL_GPIO_PIN_3 | LL_GPIO_PIN_4 | LL_GPIO_PIN_5 | LL_GPIO_PIN_6 | LL_GPIO_PIN_7 | LL_GPIO_PIN_8 | LL_GPIO_PIN_0 | LL_GPIO_PIN_1);
     LL_GPIO_SetPinMode(GPIOG, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinSpeed(GPIOG, LL_GPIO_PIN_0, LL_GPIO_SPEED_FREQ_VERY_HIGH);
