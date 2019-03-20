@@ -10,6 +10,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{23c18ea3-601e-4ec8-831f-0bddf8b357ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src-stm32l496ze">
+      <UniqueIdentifier>{e293efdf-8999-4240-8145-65770de3fb0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib-test-Debug.vgdbsettings">
@@ -45,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="..\src\output.c">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-stm32l496ze\initialize.c">
+      <Filter>src-stm32l496ze</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -44,11 +44,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -66,6 +68,7 @@
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src-stm32l496ze\initialize.c" />
     <ClCompile Include="..\src\assert.c" />
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\output.c" />

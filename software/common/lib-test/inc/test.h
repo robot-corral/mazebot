@@ -35,3 +35,5 @@
 
 #define END_TEST_SUITE() \
     reportTestSuiteResult(__test_suite_name, __tests_succeeded, __tests_failed);
+
+void initializeHardware();

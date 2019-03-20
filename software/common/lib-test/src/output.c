@@ -58,8 +58,3 @@ void __attribute__((weak)) reportTestRunSummary()
                                     g_testsSucceeded);
     printString(g_testOutputBuffer, messageLength);
 }
-
-void __attribute__((weak)) printString(const char* pMessage, size_t messageLength)
-{
-    printf("%s", pMessage);
-}
