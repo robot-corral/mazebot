@@ -77,7 +77,7 @@ void initializeOsTimer()
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
 
     LL_TIM_SetPrescaler(TIM2, 0); // use highest resolution
-    LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 100));
+    LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 3200));
 
     LL_TIM_EnableIT_UPDATE(TIM2);
 }
