@@ -28,12 +28,12 @@ static inline result_t executeRootScheduledTask(volatile void** ppOutParam1, vol
         *ppOutParam1 = g_scheduledTaskPointers.pRootTask->pTaskParameter;
         *ppOutParam2 = g_scheduledTaskPointers.pRootTask->task;
         *ppOutParam3 = g_scheduledTaskPointers.pRootTask->pTaskStackStartAddress;
-        result = R_START_NEW_TASK;
+        result = R_START_NEXT_TASK;
     }
     else if (oldStatus == STS_SUSPENDED)
     {
         *ppOutParam1 = g_scheduledTaskPointers.pRootTask->pRegisterStorage;
-        result = R_RESUME_TASK;
+        result = R_RESUME_NEXT_TASK;
     }
     else
     {
@@ -97,14 +97,14 @@ static inline result_t suspendCurrentlyRunningTaskAndExecuteRootTask(scheduledTa
             *ppOutParam2 = g_scheduledTaskPointers.pRootTask->pTaskParameter;
             *ppOutParam3 = g_scheduledTaskPointers.pRootTask->task;
             *ppOutParam4 = g_scheduledTaskPointers.pRootTask->pTaskStackStartAddress;
-            result = R_SUSPEND_OLD_TASK_START_NEW_TASK;
+            result = R_SUSPEND_PREVIOUS_TASK_AND_START_NEXT_TASK;
             break;
         }
         case STS_SUSPENDED:
         {
             *ppOutParam1 = oldTask->pRegisterStorage;
             *ppOutParam2 = g_scheduledTaskPointers.pRootTask->pRegisterStorage;
-            result = R_SUSPEND_OLD_TASK_RESUME_NEW_TASK;
+            result = R_SUSPEND_PREVIOUS_TASK_AND_RESUME_NEXT_TASK;
             break;
         }
         default:
@@ -184,7 +184,7 @@ result_t suspendCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatil
             }
             else
             {
-                return R_OLD_TASK_CONTINUES_EXECUTION;
+                return R_PREVIOUS_TASK_CONTINUES_EXECUTION;
             }
         }
     }
@@ -196,7 +196,7 @@ result_t suspendCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatil
         }
         else
         {
-            return R_OLD_TASK_CONTINUES_EXECUTION;
+            return R_PREVIOUS_TASK_CONTINUES_EXECUTION;
         }
     }
 }

@@ -73,8 +73,8 @@ labelFinishCurrentAndMoveToNextTaskSvc:
     ADDLE       SP, 12
     # go to the end as error occured and we are done
     BLE         labelError
-    # compare result stored in R0 to R_RESUME_TASK
-    CMP         R0, R_RESUME_TASK
+    # compare result stored in R0 to R_RESUME_NEXT_TASK
+    CMP         R0, R_RESUME_NEXT_TASK
     # restore output parameters from stack to R0, R1, R2
     POP         {R0-R2}
     # R14 not equal to 3 go to labelStartNewTask

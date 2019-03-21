@@ -17,16 +17,15 @@
     .section    .text.starkNewTask
     .type       starkNewTask, %function
 starkNewTask:
-    # load previous task stack address from PSP to R3
-    MRS         R3, PSP
     # occupy 8 words (4-byte) on the task specific stack
     SUB         R2, 32
     # store next task stack address from R2 to PSP
     MSR         PSP, R2
     # save task parameter from R0 on next task stack (at location where R0 is stored by exception handler)
     STR         R0, [R2]
-    # load previous task xPSR register to R3
-    LDR         R3, [R3, 28]
+    # load reset value of xPSR register to R3
+    # (for now we only set thumb instructions bit, might need to make this code more versatile)
+    MOV         R3, 0b00000001000000000000000000000000
     # load address of SVC 0 to R0
     LDR         R0, =executeTasksOnPsp
     # make R2 point to LR on the new process stack

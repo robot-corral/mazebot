@@ -34,18 +34,18 @@ PendSV_Handler:
     # call SVC C function
     BL          suspendCurrentAndMoveToNextTaskSvc
 
-    # compare result store in R0 to R_OLD_TASK_CONTINUES_EXECUTION == 1
-    CMP         R0, R_OLD_TASK_CONTINUES_EXECUTION
-    # R0 is less than R_OLD_TASK_CONTINUES_EXECUTION then go to labelError
+    # compare result store in R0 to R_PREVIOUS_TASK_CONTINUES_EXECUTION
+    CMP         R0, R_PREVIOUS_TASK_CONTINUES_EXECUTION
+    # R0 is less than R_PREVIOUS_TASK_CONTINUES_EXECUTION then go to labelError
     BLT         labelError
-    # R0 equals R_OLD_TASK_CONTINUES_EXECUTION then go to labelOldTaskContinuesExecution
-    BEQ         labelOldTaskContinuesExecution
-    # comare result stored in R0 to R_RESUME_NEW_TASK == 3
-    CMP         R0, R_RESUME_TASK
-    # R0 is less than R_RESUME_NEW_TASK then go to labelStartNewTask
-    BLO         labelStartNewTask
-    # R0 equals R_RESUME_NEW_TASK then go to labelResumeNewTask
-    BEQ         labelResumeNewTask
+    # R0 equals R_PREVIOUS_TASK_CONTINUES_EXECUTION then go to labelPreviousTaskContinuesExecution
+    BEQ         labelPreviousTaskContinuesExecution
+    # comare result stored in R0 to R_RESUME_NEXT_TASK
+    CMP         R0, R_RESUME_NEXT_TASK
+    # R0 is less than R_RESUME_NEXT_TASK then go to labelStartNextTask
+    BLO         labelStartNextTask
+    # R0 equals R_RESUME_NEXT_TASK then go to labelResumeNextTask
+    BEQ         labelResumeNextTask
 
     # remaining results require storing previous task registers first
 
@@ -56,18 +56,18 @@ PendSV_Handler:
     # store all general registers into task register storage
     STM         R1, {R4, R5, R6, R7, R8, R9, R10, R11, R12}
 
-    # compare result stored in R0 to R_SUSPEND_OLD_TASK_START_NEW_TASK == 4
-    CMP         R0, R_SUSPEND_OLD_TASK_START_NEW_TASK
-    # R0 is equal to R_SUSPEND_OLD_TASK_START_NEW_TASK then go to labelSuspendOldTaskStartNewTask
-    BEQ         labelSuspendOldTaskStartNewTask
-    # R0 is greater than R_SUSPEND_OLD_TASK_START_NEW_TASK (equals to R_SUSPEND_OLD_TASK_RESUME_NEW_TASK == 5) then go to labelSuspendOldTaskResumeNewTask
-    BHI         labelSuspendOldTaskResumeNewTask
+    # compare result stored in R0 to R_SUSPEND_PREVIOUS_TASK_AND_START_NEXT_TASK
+    CMP         R0, R_SUSPEND_PREVIOUS_TASK_AND_START_NEXT_TASK
+    # R0 is equal to R_SUSPEND_PREVIOUS_TASK_AND_START_NEXT_TASK then go to labelSuspendPreviousTaskAndStartNextTask
+    BEQ         labelSuspendPreviousTaskAndStartNextTask
+    # R0 is greater than R_SUSPEND_PREVIOUS_TASK_AND_START_NEXT_TASK (equals to R_SUSPEND_PREVIOUS_TASK_AND_RESUME_NEXT_TASK) then go to labelSuspendPreviousTaskAndResumeNextTask
+    BHI         labelSuspendPreviousTaskAndResumeNextTask
 
 labelError:
     # loop forever
     B           labelError
 
-labelStartNewTask:
+labelStartNextTask:
     # load startNewTask parameters into R0, R1, R2
     POP         {R0, R1, R2}
     # skip last parameter as it's not used
@@ -77,7 +77,7 @@ labelStartNewTask:
     # we are done go to the end of the function
     B           labelEndFunction
 
-labelResumeNewTask:
+labelResumeNextTask:
     # load resumeTask parameter into R0
     POP         {R0}
     # skip last parameter as it's not used
@@ -89,7 +89,7 @@ labelResumeNewTask:
     # we are done go to the end of the function
     B           labelEndFunction
 
-labelSuspendOldTaskStartNewTask:
+labelSuspendPreviousTaskAndStartNextTask:
     # load startNewTask parameters into R0, R1, R2
     POP         {R0, R1, R2}
     # call starkNewTask
@@ -97,7 +97,7 @@ labelSuspendOldTaskStartNewTask:
     # we are done go to the end of the function
     B           labelEndFunction
 
-labelSuspendOldTaskResumeNewTask:
+labelSuspendPreviousTaskAndResumeNextTask:
     # load resumeTask parameters into R0, R1
     POP         {R0}
     # skip last parameter as it's not used
@@ -109,7 +109,7 @@ labelSuspendOldTaskResumeNewTask:
     # we are done go to the end of the function
     B           labelEndFunction
 
-labelOldTaskContinuesExecution:
+labelPreviousTaskContinuesExecution:
     # free 4 * 4 bytes from the stack (discard values)
     ADD         SP, SP, 16
 
