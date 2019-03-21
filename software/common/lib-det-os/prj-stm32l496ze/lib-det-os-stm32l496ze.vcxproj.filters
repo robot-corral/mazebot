@@ -10,9 +10,6 @@
     <ClCompile Include="..\src\schedule_tasks.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src-asm\tim2_irq_handler.S">
-      <Filter>src-asm</Filter>
-    </ClCompile>
     <ClCompile Include="..\src-asm\det_os_idle.S">
       <Filter>src-asm</Filter>
     </ClCompile>
@@ -26,6 +23,9 @@
       <Filter>src-asm</Filter>
     </ClCompile>
     <ClCompile Include="..\src-asm\svc_handler.S">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\pendsv_handler.S">
       <Filter>src-asm</Filter>
     </ClCompile>
   </ItemGroup>

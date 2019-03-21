@@ -13,8 +13,8 @@
 extern void SVC_Handler(void);
 void(*SVC_Handler_fp)(void) = &SVC_Handler;
 
-extern void TIM2_IRQHandler(void);
-void(*TIM2_IRQHandler_fp)(void) = &TIM2_IRQHandler;
+extern void PendSV_Handler(void);
+void(*PendSV_Handler_fp)(void) = &PendSV_Handler;
 
 void runDetOs(task_t startTask)
 {

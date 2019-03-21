@@ -45,6 +45,9 @@ static void initializeSystemClock()
 
     LL_Init1msTick(80000000);
     LL_SetSystemCoreClock(80000000);
+
+    NVIC_SetPriority(SVCall_IRQn, DET_OS_SVC_INTERRUT_PRIORITY);
+    NVIC_SetPriority(PendSV_IRQn, DET_OS_SVC_INTERRUT_PRIORITY);
 }
 
 static void initializeGpio()
@@ -71,7 +74,7 @@ static void initializeGpio()
 
 static void initializeOsTimer()
 {
-    NVIC_SetPriority(TIM2_IRQn, 15);
+    NVIC_SetPriority(TIM2_IRQn, DET_OS_SVC_INTERRUT_PRIORITY);
     NVIC_EnableIRQ(TIM2_IRQn);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
@@ -99,13 +102,13 @@ void initializeHardware()
     initializeTestTimer();
 }
 
-void TIM5_IRQHandler()
+void TIM2_IRQHandler()
 {
-    if (LL_TIM_IsActiveFlag_UPDATE(TIM5) == 1)
+    if (LL_TIM_IsActiveFlag_UPDATE(TIM2) == 1)
     {
-        LL_TIM_ClearFlag_UPDATE(TIM5);
+        LL_TIM_ClearFlag_UPDATE(TIM2);
+        runDetOsTaskScheduler();
     }
-    for (;;) ;
 }
 
 void anotherTask1(void* pTaskParameter)

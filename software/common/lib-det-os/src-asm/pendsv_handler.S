@@ -13,20 +13,13 @@
     .fpu        vfpv2
     .thumb
 
-    .globl      TIM2_IRQHandler
-    .section    .text.TIM2_IRQHandler
-    .type       TIM2_IRQHandler, %function
-TIM2_IRQHandler:
+    .globl      PendSV_Handler
+    .section    .text.PendSV_Handler
+    .type       PendSV_Handler, %function
+PendSV_Handler:
     # store original LR so we can return later
     # R12 is stored to keep stack 8 bytes align
     PUSH        {R12, LR}
-
-    # store TIM2 base address to R0
-    MOV         R0, 0x40000000
-    # store ~0x1 into R1
-    MVN         R1, 0x1
-    # clear bit 1 (flag UIF) in TIM2_SR register
-    STR         R1, [R0, 0x10]
 
     # allocate memory for return parameters from moveToNextTaskSvc function
     SUB         SP, SP, 16
@@ -123,6 +116,6 @@ labelOldTaskContinuesExecution:
 labelEndFunction:
     # return to calling function
     POP         {R12, PC}
-    .size       TIM2_IRQHandler, .-TIM2_IRQHandler
+    .size       PendSV_Handler, .-PendSV_Handler
 
 .end
