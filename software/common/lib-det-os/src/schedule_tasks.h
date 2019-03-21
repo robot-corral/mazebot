@@ -9,12 +9,10 @@
 
 extern void detOsIdle();
 
-extern void executeTasks(void* pStackStartAddress);
+extern void executeTasks(volatile void* pStackStartAddress);
 
 extern void starkNewTask(void* pTaskParameter, task_t task, void* pStackStartAddress);
 
-extern void resumeTask(void* pStackStartAddress, void* pRegisterStorage);
+result_t finishCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3);
 
-result_t finishCurrentAndMoveToNextTaskSvc(void** ppOutParam1, void** ppOutParam2, void** ppOutParam3);
-
-result_t suspendCurrentAndMoveToNextTaskSvc(void** ppOutParam1, void** ppOutParam2, void** ppOutParam3, void** ppOutParam4);
+result_t suspendCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4);

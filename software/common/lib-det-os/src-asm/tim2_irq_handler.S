@@ -44,11 +44,11 @@ TIM2_IRQHandler:
     # compare result store in R0 to R_OLD_TASK_CONTINUES_EXECUTION == 1
     CMP         R0, R_OLD_TASK_CONTINUES_EXECUTION
     # R0 is less than R_OLD_TASK_CONTINUES_EXECUTION then go to labelError
-    BLO         labelError
+    BLT         labelError
     # R0 equals R_OLD_TASK_CONTINUES_EXECUTION then go to labelOldTaskContinuesExecution
     BEQ         labelOldTaskContinuesExecution
     # comare result stored in R0 to R_RESUME_NEW_TASK == 3
-    CMP         R0, R_RESUME_NEW_TASK
+    CMP         R0, R_RESUME_TASK
     # R0 is less than R_RESUME_NEW_TASK then go to labelStartNewTask
     BLO         labelStartNewTask
     # R0 equals R_RESUME_NEW_TASK then go to labelResumeNewTask

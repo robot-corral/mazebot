@@ -4,13 +4,10 @@
 
 #include "global_data.h"
 
-scheduledTaskIndex_t g_scheduledTaskRootIndex;
+volatile scheduledTasksPointers_t g_scheduledTaskPointers __attribute__((aligned(4)));
 
-scheduledTaskIndex_t g_currentlyRunningTaskIndex;
-scheduledTaskIndex_t g_currentlyRunningParentTaskIndex;
+volatile scheduledTaskNode_t g_scheduledTasks[MAX_NUMBER_OF_SCHEDULED_TASKS] __attribute__((aligned(4)));
 
-scheduledTaskNode_t g_scheduledTasks[MAX_NUMBER_OF_SCHEDULED_TASKS];
+volatile inProgressTaskStack_t g_inProgressTasksStacks[MAX_NUMBER_OF_SCHEDULED_TASKS] __attribute__((aligned(8)));
 
-inProgressTaskStack_t g_inProgressTasksStacks[MAX_NUMBER_OF_SCHEDULED_TASKS] __attribute__((aligned(8)));
-
-uint8_t g_detOsIdleStack[IDLE_TASK_STACK_SIZE] __attribute__((aligned(8)));
+volatile uint8_t g_detOsIdleStack[IDLE_TASK_STACK_SIZE] __attribute__((aligned(8)));

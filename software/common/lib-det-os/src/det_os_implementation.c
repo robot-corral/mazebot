@@ -18,15 +18,22 @@ void(*TIM2_IRQHandler_fp)(void) = &TIM2_IRQHandler;
 
 void runDetOs(task_t startTask)
 {
+    for (uint32_t i = 0; i < MAX_NUMBER_OF_SCHEDULED_TASKS; ++i)
+    {
+        g_scheduledTasks[i].pTaskStackStartAddress = GET_TASK_STACK_START_ADDRESS(g_inProgressTasksStacks, i);
+    }
+
     g_scheduledTasks[0].pTaskParameter = 0;
-    g_scheduledTasks[0].nextTaskIdx = NULL_SCHEDULED_TASK_INDEX;
+    g_scheduledTasks[0].pNextTask = nullptr;
     g_scheduledTasks[0].priority = TP_NORMAL_PRIORITY;
     g_scheduledTasks[0].status = STS_SCHEDULED;
     g_scheduledTasks[0].task = startTask;
 
-    g_scheduledTaskRootIndex = 0;
-    g_currentlyRunningTaskIndex = NULL_SCHEDULED_TASK_INDEX;
-    g_currentlyRunningParentTaskIndex = NULL_SCHEDULED_TASK_INDEX;
+    g_scheduledTaskPointers.pRootTask = &g_scheduledTasks[0];
+    g_scheduledTaskPointers.pLastTaskInRootGroup = &g_scheduledTasks[0];
+    g_scheduledTaskPointers.pLastTaskInCurrentlyRunningGroup = &g_scheduledTasks[0];
+    g_scheduledTaskPointers.pCurrentlyRunningTask = nullptr;
+    g_scheduledTaskPointers.pCurrentlyRunningParentTask = nullptr;
 
     LL_TIM_EnableCounter(TIM2); // start OS timer
 

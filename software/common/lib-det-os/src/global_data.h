@@ -6,13 +6,10 @@
 
 #include "types.h"
 
-extern scheduledTaskIndex_t g_scheduledTaskRootIndex;
+extern volatile scheduledTasksPointers_t g_scheduledTaskPointers;
 
-extern scheduledTaskIndex_t g_currentlyRunningTaskIndex;
-extern scheduledTaskIndex_t g_currentlyRunningParentTaskIndex;
+extern volatile scheduledTaskNode_t g_scheduledTasks[MAX_NUMBER_OF_SCHEDULED_TASKS];
 
-extern scheduledTaskNode_t g_scheduledTasks[MAX_NUMBER_OF_SCHEDULED_TASKS];
+extern volatile inProgressTaskStack_t g_inProgressTasksStacks[MAX_NUMBER_OF_SCHEDULED_TASKS];
 
-extern inProgressTaskStack_t g_inProgressTasksStacks[MAX_NUMBER_OF_SCHEDULED_TASKS];
-
-extern uint8_t g_detOsIdleStack[IDLE_TASK_STACK_SIZE];
+extern volatile uint8_t g_detOsIdleStack[IDLE_TASK_STACK_SIZE];

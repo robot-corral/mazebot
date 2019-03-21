@@ -108,8 +108,22 @@ void TIM5_IRQHandler()
     for (;;) ;
 }
 
+void anotherTask1(void* pTaskParameter)
+{
+    volatile uint32_t counter = 0;
+    for (;;) counter++;
+}
+
+void anotherTask2(void* pTaskParameter)
+{
+    volatile uint32_t counter = 0;
+    for (;;) counter++;
+}
+
 void startTask(void* pTaskParameter)
 {
+    scheduleTask(anotherTask1, TP_NORMAL_PRIORITY, 0);
+    scheduleTask(anotherTask2, TP_NORMAL_PRIORITY, 0);
     volatile uint32_t counter = 0;
     for (;;) counter++;
 }
