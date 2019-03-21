@@ -2,6 +2,8 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+#include "det_os_implementation.h"
+
 #include "stm32/stm32l4xx_ll_bus.h"
 #include "stm32/stm32l4xx_ll_pwr.h"
 #include "stm32/stm32l4xx_ll_rcc.h"
@@ -51,6 +53,9 @@ void initializeSystemClock()
 
     LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 
+    NVIC_SetPriority(SVCall_IRQn, DET_OS_SVC_INTERRUT_PRIORITY);
+    NVIC_SetPriority(PendSV_IRQn, DET_OS_SVC_INTERRUT_PRIORITY);
+
     initializeClockTimer();
     initializeOsTimer();
 }
@@ -71,7 +76,7 @@ uint32_t getCurrentTimeInMicroseconds()
 
 void initializeOsTimer()
 {
-    NVIC_SetPriority(TIM2_IRQn, 15);
+    NVIC_SetPriority(TIM2_IRQn, DET_OS_SVC_INTERRUT_PRIORITY);
     NVIC_EnableIRQ(TIM2_IRQn);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
@@ -80,4 +85,13 @@ void initializeOsTimer()
     LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 3200));
 
     LL_TIM_EnableIT_UPDATE(TIM2);
+}
+
+void TIM2_IRQHandler()
+{
+    if (LL_TIM_IsActiveFlag_UPDATE(TIM2) == 1)
+    {
+        LL_TIM_ClearFlag_UPDATE(TIM2);
+        runDetOsTaskScheduler();
+    }
 }

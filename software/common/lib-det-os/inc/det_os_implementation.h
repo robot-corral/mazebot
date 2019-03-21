@@ -8,6 +8,10 @@
 
 #include <stm32l496xx.h>
 
+// make sure the following interrupts all have this (same) priority:
+//   - SVCall_IRQn
+//   - PendSV_IRQn
+//   - timer interrupt handler (for timer 2 it is TIM2_IRQn)
 #define DET_OS_SVC_INTERRUT_PRIORITY 15
 
 void runDetOs(task_t startTask);
