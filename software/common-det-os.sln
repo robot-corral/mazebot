@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\l
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-det-os-stm32l496ze", "common\lib-det-os\prj-stm32l496ze\lib-det-os-stm32l496ze.vcxproj", "{8D721BB8-9200-41CC-9EEE-BC5125E89409}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-det-os-example-stm32l496ze", "examples\det-os-example\prj-stm32l496ze\main-det-os-example-stm32l496ze.vcxproj", "{C19D5768-DDEA-4D98-A339-ADB8669501E9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-det-os-example-stm32l496ze", "common\lib-det-os\prj-example-stm32l496ze\main-det-os-example-stm32l496ze.vcxproj", "{C19D5768-DDEA-4D98-A339-ADB8669501E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-test-stm32l496ze", "common\lib-test\prj-stm32l496ze\lib-test-stm32l496ze.vcxproj", "{C5DD5C38-EE4F-4736-86AC-AB980D90CBB2}"
 EndProject

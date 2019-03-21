@@ -51,9 +51,6 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-det-os\inc;$(SolutionDir)\common\lib-stm32l4</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\main.c" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
@@ -69,5 +66,8 @@
     <ProjectReference Include="..\..\..\common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj">
       <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src-example\main.c" />
   </ItemGroup>
 </Project>
