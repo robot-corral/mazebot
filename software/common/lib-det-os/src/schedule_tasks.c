@@ -123,7 +123,7 @@ static inline result_t suspendCurrentlyRunningTaskAndExecuteRootTask(scheduledTa
     return result;
 }
 
-result_t finishCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3)
+result_t finishCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4)
 {
     // this function can be called if:
     //   * no tasks are running at all (not even idle)
@@ -201,6 +201,16 @@ result_t suspendCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatil
     }
 }
 
+result_t delayCurrentAndMoveToNextTaskSvc(volatile void** ppInOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4)
+{
+    return R_ERR_NOT_IMPLEMENTED; // TODO
+}
+
+result_t currentTaskYieldsAndMoveToNextTaskSvc(volatile void** ppInOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4)
+{
+    return R_ERR_NOT_IMPLEMENTED; // TODO
+}
+
 result_t scheduleTaskSvc(task_t task, taskPriority_t priority, void* pTaskParameter)
 {
     if (task == nullptr)
@@ -275,4 +285,9 @@ result_t scheduleTaskSvc(task_t task, taskPriority_t priority, void* pTaskParame
     }
 
     return R_ERR_STORAGE_FULL;
+}
+
+result_t scheduleSuspendedTaskSvc(task_t task, taskPriority_t priority, uint32_t suspendedDuration, void* pTaskParameter)
+{
+    return R_ERR_NOT_IMPLEMENTED; // TODO
 }

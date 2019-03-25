@@ -16,16 +16,22 @@
     <ClCompile Include="..\src-asm\execute_tasks.S">
       <Filter>src-asm</Filter>
     </ClCompile>
-    <ClCompile Include="..\src-asm\schedule_task_svc.S">
-      <Filter>src-asm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src-asm\stark_new_task.S">
-      <Filter>src-asm</Filter>
-    </ClCompile>
     <ClCompile Include="..\src-asm\svc_handler.S">
       <Filter>src-asm</Filter>
     </ClCompile>
     <ClCompile Include="..\src-asm\pendsv_handler.S">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\svc_schedule_task.S">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\svc_yield.S">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\svc_suspend.S">
+      <Filter>src-asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-asm\svc_schedule_suspended_task.S">
       <Filter>src-asm</Filter>
     </ClCompile>
   </ItemGroup>

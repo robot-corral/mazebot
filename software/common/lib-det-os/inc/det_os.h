@@ -20,3 +20,15 @@ typedef uint8_t taskPriority_t;
 typedef void (*task_t)(void* pTaskParameter);
 
 extern result_t scheduleTask(task_t task, taskPriority_t priority, void* pTaskParameter);
+
+extern result_t scheduleSuspendedTask(task_t task, taskPriority_t priority, uint32_t suspendedDuration, void* pTaskParameter);
+
+/*
+ * suspend calling tasks for specified duration.
+ */
+extern result_t suspend(uint32_t suspendDuration);
+
+/*
+ * surrender remaining part of your time slice so other tasks can execute.
+ */
+extern result_t yield();

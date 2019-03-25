@@ -80,10 +80,12 @@
   <ItemGroup>
     <ClCompile Include="..\src-asm\det_os_idle.S" />
     <ClCompile Include="..\src-asm\execute_tasks.S" />
-    <ClCompile Include="..\src-asm\schedule_task_svc.S" />
-    <ClCompile Include="..\src-asm\stark_new_task.S" />
     <ClCompile Include="..\src-asm\svc_handler.S" />
     <ClCompile Include="..\src-asm\pendsv_handler.S" />
+    <ClCompile Include="..\src-asm\svc_schedule_suspended_task.S" />
+    <ClCompile Include="..\src-asm\svc_schedule_task.S" />
+    <ClCompile Include="..\src-asm\svc_suspend.S" />
+    <ClCompile Include="..\src-asm\svc_yield.S" />
     <ClCompile Include="..\src\det_os_implementation.c" />
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\schedule_tasks.c" />
