@@ -72,6 +72,7 @@ typedef struct __attribute__((packed))
     scheduledTaskNodePtr_t pCurrentlyRunningTask;
     scheduledTaskNodePtr_t pCurrentlyRunningParentTask;
     scheduledTaskNodePtr_t pLastTaskInCurrentlyRunningGroup;
+    scheduledTaskNodePtr_t pRootDelayedTask;
 } scheduledTasksPointers_t;
 
 /*

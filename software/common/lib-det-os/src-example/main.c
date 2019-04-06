@@ -94,6 +94,11 @@ void initializeTestTimer()
     LL_TIM_GenerateEvent_UPDATE(TIM5);
 }
 
+uint32_t getCurrentTime()
+{
+    return LL_TIM_GetCounter(TIM5);
+}
+
 void initializeHardware()
 {
     initializeSystemClock();

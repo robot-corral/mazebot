@@ -19,6 +19,8 @@ void runDetOs(task_t startTask);
 #define runDetOsTaskScheduler() \
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
 
+uint32_t getCurrentTime();
+
 // we need these 2 declarations as linker otherwise ignores
 // the following det-os functions:
 //  * SVC_Handler

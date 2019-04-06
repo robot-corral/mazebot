@@ -32,6 +32,7 @@ void runDetOs(task_t startTask)
     g_scheduledTaskPointers.pRootTask = &g_scheduledTasks[0];
     g_scheduledTaskPointers.pLastTaskInRootGroup = &g_scheduledTasks[0];
     g_scheduledTaskPointers.pLastTaskInCurrentlyRunningGroup = &g_scheduledTasks[0];
+    g_scheduledTaskPointers.pRootDelayedTask = nullptr;
     g_scheduledTaskPointers.pCurrentlyRunningTask = nullptr;
     g_scheduledTaskPointers.pCurrentlyRunningParentTask = nullptr;
 

@@ -19,6 +19,6 @@ result_t finishCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile
 
 result_t suspendCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4);
 
-result_t currentTaskYieldsAndMoveToNextTaskSvc(volatile void** ppInOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4);
+result_t currentTaskYieldsAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4);
 
 result_t delayCurrentAndMoveToNextTaskSvc(volatile void** ppInOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4);

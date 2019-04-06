@@ -1,6 +1,5 @@
 #pragma once
 
-#define R_NO_TASKS_LEFT                              1
 #define R_PREVIOUS_TASK_CONTINUES_EXECUTION          1
 
 // the following constants values must not be changed without

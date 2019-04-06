@@ -4,7 +4,7 @@
 
 #include "schedule_tasks.h"
 
-#include "det_os.h"
+#include "det_os_implementation.h"
 
 #include "global_data.h"
 
@@ -17,7 +17,7 @@ static inline result_t executeRootScheduledTask(volatile void** ppOutParam1, vol
         g_scheduledTaskPointers.pCurrentlyRunningTask = nullptr;
         g_scheduledTaskPointers.pCurrentlyRunningParentTask = nullptr;
         g_scheduledTaskPointers.pLastTaskInCurrentlyRunningGroup = nullptr;
-        return R_NO_TASKS_LEFT;
+        return R_START_NEXT_TASK;
     }
 
     result_t result;
@@ -206,9 +206,94 @@ result_t delayCurrentAndMoveToNextTaskSvc(volatile void** ppInOutParam1, volatil
     return R_ERR_NOT_IMPLEMENTED; // TODO
 }
 
-result_t currentTaskYieldsAndMoveToNextTaskSvc(volatile void** ppInOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4)
+result_t currentTaskYieldsAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile void** ppOutParam2, volatile void** ppOutParam3, volatile void** ppOutParam4)
 {
-    return R_ERR_NOT_IMPLEMENTED; // TODO
+    // * if current task is the only one, then keep running it
+    // * if there is task which can be woken up with the same or higher priority then wake it up
+    // * if current task isn't a root task (not the task with highest priority), then execute root task
+    // * otherwise execute child of current task
+
+    if (g_scheduledTaskPointers.pRootTask == g_scheduledTaskPointers.pCurrentlyRunningTask)
+    {
+        const scheduledTaskNodePtr_t pPreviousTask = g_scheduledTaskPointers.pCurrentlyRunningTask;
+
+        if (pPreviousTask == nullptr)
+        {
+            return R_PREVIOUS_TASK_CONTINUES_EXECUTION;
+        }
+
+        const scheduledTaskNodePtr_t pNextTask = pPreviousTask->pNextTask;
+
+        if (pNextTask == nullptr)
+        {
+            return R_PREVIOUS_TASK_CONTINUES_EXECUTION;
+        }
+
+        if (pPreviousTask->priority == pNextTask->priority)
+        {
+            // need to move current group to the end of it's list
+
+            g_scheduledTaskPointers.pCurrentlyRunningParentTask->pNextTask = pNextTask;
+            pPreviousTask->pNextTask = g_scheduledTaskPointers.pLastTaskInCurrentlyRunningGroup->pNextTask;
+            g_scheduledTaskPointers.pLastTaskInCurrentlyRunningGroup->pNextTask = pPreviousTask;
+
+            // now we can execute next task which is now a root task
+
+            return suspendCurrentlyRunningTaskAndExecuteRootTask(pPreviousTask, ppOutParam1, ppOutParam2, ppOutParam3, ppOutParam4);
+        }
+        else
+        {
+            // currently running task is the only task in its priority group
+            // execute next task with lower priority for one time slice
+            // as next task is in different priority group so we need to update pLastTaskInCurrentlyRunningGroup
+
+            scheduledTaskNodePtr_t pLastTaskWithHigherOrEqualPriority = pNextTask;
+
+            const taskPriority_t nextTaskPriority = pLastTaskWithHigherOrEqualPriority->priority;
+
+            while (pLastTaskWithHigherOrEqualPriority->pNextTask && pLastTaskWithHigherOrEqualPriority->pNextTask->priority == nextTaskPriority)
+            {
+                pLastTaskWithHigherOrEqualPriority = pLastTaskWithHigherOrEqualPriority->pNextTask;
+            }
+
+            result_t result;
+
+            switch (pNextTask->status)
+            {
+                case STS_SCHEDULED:
+                {
+                    *ppOutParam1 = pPreviousTask->pRegisterStorage;
+                    *ppOutParam2 = pNextTask->pTaskParameter;
+                    *ppOutParam3 = pNextTask->task;
+                    *ppOutParam4 = pNextTask->pTaskStackStartAddress;
+                    result = R_SUSPEND_PREVIOUS_TASK_AND_START_NEXT_TASK;
+                    break;
+                }
+                case STS_SUSPENDED:
+                {
+                    *ppOutParam1 = pPreviousTask->pRegisterStorage;
+                    *ppOutParam2 = pNextTask->pRegisterStorage;
+                    result = R_SUSPEND_PREVIOUS_TASK_AND_RESUME_NEXT_TASK;
+                    break;
+                }
+                default:
+                {
+                    return R_ERR_STATE_CORRUPTED;
+                }
+            }
+
+            pNextTask->status = STS_RUNNING;
+            pPreviousTask->status = STS_SUSPENDED;
+
+            g_scheduledTaskPointers.pCurrentlyRunningTask = pNextTask;
+            g_scheduledTaskPointers.pCurrentlyRunningParentTask = pPreviousTask;
+            g_scheduledTaskPointers.pLastTaskInCurrentlyRunningGroup = pLastTaskWithHigherOrEqualPriority;
+        }
+    }
+    else
+    {
+        return suspendCurrentlyRunningTaskAndExecuteRootTask(g_scheduledTaskPointers.pCurrentlyRunningTask, ppOutParam1, ppOutParam2, ppOutParam3, ppOutParam4);
+    }
 }
 
 result_t scheduleTaskSvc(task_t task, taskPriority_t priority, void* pTaskParameter)

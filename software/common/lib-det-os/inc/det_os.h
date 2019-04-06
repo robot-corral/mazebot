@@ -17,6 +17,11 @@ typedef int32_t result_t;
 
 typedef uint8_t taskPriority_t;
 
+#define IS_FIRST_TASK_PRIORITY_LOWER_THAN_SECOND(firstTaskPriority, secondTaskPriority) ((firstTaskPriority) < (secondTaskPriority))
+#define IS_FIRST_TASK_PRIORITY_HIGHER_THAN_SECOND(firstTaskPriority, secondTaskPriority) ((firstTaskPriority) > (secondTaskPriority))
+#define IS_FIRST_TASK_PRIORITY_LOWER_THAN_OR_EQUAL_TO_SECOND(firstTaskPriority, secondTaskPriority) ((firstTaskPriority) <= (secondTaskPriority))
+#define IS_FIRST_TASK_PRIORITY_HIGHER_THAN_OR_EQUAL_TO_SECOND(firstTaskPriority, secondTaskPriority) ((firstTaskPriority) >= (secondTaskPriority))
+
 typedef void (*task_t)(void* pTaskParameter);
 
 extern result_t scheduleTask(task_t task, taskPriority_t priority, void* pTaskParameter);
