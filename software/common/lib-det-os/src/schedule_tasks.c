@@ -139,13 +139,13 @@ result_t finishCurrentAndMoveToNextTaskSvc(volatile void** ppOutParam1, volatile
     {
         g_scheduledTaskPointers.pCurrentlyRunningTask->status = STS_EMPTY;
 
-        if (g_scheduledTaskPointers.pCurrentlyRunningTask == g_scheduledTaskPointers.pRootTask)
+        if (g_scheduledTaskPointers.pCurrentlyRunningParentTask == nullptr)
         {
             g_scheduledTaskPointers.pRootTask = g_scheduledTaskPointers.pCurrentlyRunningTask->pNextTask;
         }
         else
         {
-            g_scheduledTaskPointers.pCurrentlyRunningParentTask = g_scheduledTaskPointers.pCurrentlyRunningTask->pNextTask;
+            g_scheduledTaskPointers.pCurrentlyRunningParentTask->pNextTask = g_scheduledTaskPointers.pCurrentlyRunningTask->pNextTask;
         }
     }
 
