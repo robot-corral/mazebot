@@ -10,7 +10,7 @@
 	<ItemDefinitionGroup>
 		<ClCompile>
 			<PreprocessorDefinitions>ARM_MATH_CM3;flash_layout;STM32L151VE;STM32L151xE;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
-			<AdditionalIncludeDirectories>$(ProjectDir);$(BSP_ROOT)/STM32L1xxxx/STM32L1xx_HAL_Driver/Inc;$(BSP_ROOT)/STM32L1xxxx/STM32L1xx_HAL_Driver/Inc/Legacy;$(BSP_ROOT)/STM32L1xxxx/CMSIS_HAL/Device/ST/STM32L1xx/Include;$(BSP_ROOT)/STM32L1xxxx/CMSIS_HAL/Include;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);$(ProjectDir);$(BSP_ROOT)/STM32L1xxxx/STM32L1xx_HAL_Driver/Inc;$(BSP_ROOT)/STM32L1xxxx/STM32L1xx_HAL_Driver/Inc/Legacy;$(BSP_ROOT)/STM32L1xxxx/CMSIS_HAL/Core/Include;$(BSP_ROOT)/STM32L1xxxx/CMSIS_HAL/Device/ST/STM32L1xx/Include;$(BSP_ROOT)/STM32L1xxxx/CMSIS_HAL/Include;$(BSP_ROOT)/STM32L1xxxx/CMSIS_HAL/RTOS2/Include</AdditionalIncludeDirectories>
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemDefinitionGroup>
@@ -25,8 +25,8 @@
 
 	<ItemDefinitionGroup>
 		<ToolchainSettingsContainer>
-			<ARMCPU>cortex-m3</ARMCPU>
-			<InstructionSet>THUMB</InstructionSet>
+			<ARMCPU  Condition="'%(ToolchainSettingsContainer.ARMCPU)' == ''">cortex-m3</ARMCPU>
+			<InstructionSet  Condition="'%(ToolchainSettingsContainer.InstructionSet)' == ''">THUMB</InstructionSet>
 		</ToolchainSettingsContainer>
 	</ItemDefinitionGroup>
 </Project>

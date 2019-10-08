@@ -7,7 +7,7 @@
     <Revision>3</Revision>
   </ToolchainVersion>
   <BspID>com.sysprogs.arm.stm32</BspID>
-  <BspVersion>2018.12R2</BspVersion>
+  <BspVersion>2019.06</BspVersion>
   <McuID>STM32L151VE</McuID>
   <MCUDefinitionFile>STM32L1xxxx/DeviceDefinitions/stm32l151xe.xml</MCUDefinitionFile>
   <MCUProperties>
@@ -34,9 +34,15 @@
   <MCUMakFile>stm32.mak</MCUMakFile>
   <ReferencedFrameworks>
     <string>com.sysprogs.arm.stm32.hal</string>
+    <string>com.sysprogs.arm.stm32.STM32L1_ll</string>
   </ReferencedFrameworks>
   <FrameworkProperties>
-    <Entries />
+    <Entries>
+      <KeyValue>
+        <Key>com.sysprogs.bspoptions.stm32.ll_driver</Key>
+        <Value />
+      </KeyValue>
+    </Entries>
   </FrameworkProperties>
   <TestFrameworkProperties>
     <Entries />
