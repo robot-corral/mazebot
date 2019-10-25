@@ -1,3 +1,5 @@
+#include "global_settings.h"
+
 #include "watchdog.h"
 
 #include "global_data.h"
@@ -18,9 +20,20 @@ void initializeAndStartWatchdog()
     LL_DBGMCU_APB1_GRP1_FreezePeriph(LL_DBGMCU_APB1_GRP1_IWDG_STOP);
 #endif
 
-    LL_RCC_LSI_Enable();
+//    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+//    LL_PWR_EnableBkUpAccess();
+//
+//    LL_RCC_ForceBackupDomainReset();
+//    LL_RCC_ReleaseBackupDomainReset();
+//    LL_RCC_LSE_Enable();
+//    while (LL_RCC_LSE_IsReady() != 1) ;
+//
+//    LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
 
+    LL_RCC_LSI_Enable();
     while (LL_RCC_LSI_IsReady() != 1) ;
+
+    LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSI);
 
     LL_IWDG_Enable(IWDG);
     LL_IWDG_EnableWriteAccess(IWDG);

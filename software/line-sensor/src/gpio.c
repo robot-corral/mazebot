@@ -33,16 +33,20 @@ void initializeGpio()
         // PA10 - UNUSED (ST_LINK_RX)
         // PA11 - UNUSED
         // PA12 - UNUSED
-        // PA13 - UNUSED (ST_LINK_TMS)
-        // PA14 - UNUSED (ST_LINK_TCK)
+        // PA13 - UNUSED (ST_LINK_JTMS_SWDIO)
+        // PA14 - UNUSED (ST_LINK_JTCK_SWCLK)
         // PA15 - UNUSED
+
+        // pin             14  12  10  08  06  04  02  00
+        GPIOA->MODER = 0b10101011111111111111111111111111;
+        // pin           15  13  11  09  07  05  03  01
     }
 
     {
         // PB0  - ADC
         // PB1  - ADC
         // PB2  - ADC
-        // PB3  - UNUSED (ST_LINK_SWO)
+        // PB3  - UNUSED (ST_LINK_JTDO_TRACESWO)
         // PB4  - UNUSED (SYS_JTRST)
         // PB5  - UNUSED
         // PB6  - UNUSED
@@ -55,6 +59,10 @@ void initializeGpio()
         // PB13 - ADC
         // PB14 - ADC
         // PB15 - ADC
+
+        // pin             14  12  10  08  06  04  02  00
+        GPIOB->MODER = 0b11111111111111111111111010111111;
+        // pin           15  13  11  09  07  05  03  01
     }
 
     {
@@ -72,17 +80,20 @@ void initializeGpio()
         // PC11 - UNUSED
         // PC12 - UNUSED
         // PC13 - UNUSED
-        // PC14 - UNUSED
-        // PC15 - UNUSED
+        // PC14 - UNUSED (RCC_OSC32_IN)
+        // PC15 - UNUSED (RCC_OSC32_OUT)
+
+        // pin             14  12  10  08  06  04  02  00
+        GPIOC->MODER = 0b00001111111111111111111111111111;
+        // pin           15  13  11  09  07  05  03  01
     }
 
     {
-#ifndef ACTIVE_COMMUNICATION_USART
-        // PD0  - UNUSED
-        // PD1  - UNUSED
+        // PD0  - SPI2_NSS
+        // PD1  - SPI2_SCK
         // PD2  - UNUSED
-        // PD3  - UNUSED
-        // PD4  - UNUSED
+        // PD3  - SPI2_MISO
+        // PD4  - SPI2_MOSI
         // PD5  - UNUSED
         // PD6  - UNUSED
         // PD7  - UNUSED
@@ -95,35 +106,26 @@ void initializeGpio()
         // PD14 - UNUSED
         // PD15 - UNUSED
 
-        // pin             14  12  10  08  06  04  02  00
-        GPIOC->MODER = 0b11111111111111111111111111111111;
-        // pin           15  13  11  09  07  05  03  01
-#else
-        // same as else block with the exception of:
         //
-        // PD6 - USART3_TX
-        // PD5 - USART3_RX
-        //
-        // for both pins:
+        // SPI2 pins
         //
         // mode               -   10 (alternate)
         // port pull up/down  -   00 (no)
         // output speed       -   10 (high <= 10 MHz)
         // output type        -    0 (push-pull)
-        // alternate function - 0111 (AF7)
+        // alternate function - 0101 (AF5)
 
         // pin             14  12  10  08  06  04  02  00
-        GPIOD->MODER = 0b11111111111111111110101111111111;
+        GPIOD->MODER = 0b11111111111111111111111010111010;
         // pin           15  13  11  09  07  05  03  01
 
         // pin               14  12  10  08  06  04  02  00
-        GPIOD->OSPEEDR = 0b00000000000000000010100000000000;
+        GPIOD->OSPEEDR = 0b00000000000000000000001010001010;
         // pin             15  13  11  09  07  05  03  01
 
         // pin                0006    0004    0002    0000
-        GPIOD->AFR[0] = 0b00000111011100000000000000000000;
+        GPIOD->AFR[0] = 0b00000000000001010101000001010101;
         // pin            0007    0005    0003    0001
-#endif
     }
 
     {
@@ -133,7 +135,7 @@ void initializeGpio()
         // PE3  - UNUSED
         // PE4  - UNUSED
         // PE5  - UNUSED
-        // PE6  - UNUSED
+        // PE6  - SYS_WKUP3
         // PE7  - ADC
         // PE8  - ADC
         // PE9  - ADC

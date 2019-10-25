@@ -2,6 +2,8 @@
  * Copyright (C) 2018 Pavel Krupets                                            *
  *******************************************************************************/
 
+#include "global_settings.h"
+
 #include "system_clocks.h"
 #include "line_sensor_defs.h"
 
@@ -38,18 +40,16 @@ void initializeSystemClocks()
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
     while (LL_PWR_IsActiveFlag_VOSF() != 0);
 
-    LL_RCC_HSE_Enable();
-    while (LL_RCC_HSE_IsReady() != 1);
+//    LL_RCC_HSE_Enable();
+//    while (LL_RCC_HSE_IsReady() != 1);
 
     LL_RCC_HSI_Enable();
     while (LL_RCC_HSI_IsReady() != 1);
 
     LL_RCC_HSI_SetCalibTrimming(16);
 
-    LL_RCC_LSI_Enable();
-    while (LL_RCC_LSI_IsReady() != 1) ;
-
-    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLL_MUL_4, LL_RCC_PLL_DIV_3);
+//    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLL_MUL_4, LL_RCC_PLL_DIV_3);
+    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLL_MUL_6, LL_RCC_PLL_DIV_3);
 
     LL_RCC_PLL_Enable();
     while (LL_RCC_PLL_IsReady() != 1);

@@ -2076,12 +2076,14 @@ Frequency: &amp;lt;= 600kHz&lt;br/&gt;</description>
 <part name="SUPPLY37" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="+3.3V" device=""/>
 <part name="FRAME5" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A4L-LOC" device=""/>
 <part name="Y1" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CRYSTAL" device="KYOCERA-CX3225GB24000D0HEQ" package3d_urn="urn:adsk.eagle:package:9990572/4"/>
-<part name="C8" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="4.3p"/>
-<part name="C9" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="4.3p"/>
+<part name="C8" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="6p"/>
+<part name="C9" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="6p"/>
 <part name="DGND15" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="DGND" device=""/>
 <part name="Y2" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CRYSTAL" device="NDK-NX3215SA" package3d_urn="urn:adsk.eagle:package:11610117/4"/>
-<part name="C10" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="2.7p"/>
-<part name="C11" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="2.7p"/>
+<part name="C10" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="2p"/>
+<part name="C11" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="2p">
+<attribute name="SPICEPREFIX" value="C"/>
+</part>
 <part name="DGND16" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="DGND" device=""/>
 <part name="C12" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0603" package3d_urn="urn:adsk.eagle:package:704999/4" value="1u 16V X7R"/>
 <part name="GND2" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="GND" device=""/>

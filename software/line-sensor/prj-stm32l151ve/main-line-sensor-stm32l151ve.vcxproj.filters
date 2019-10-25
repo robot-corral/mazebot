@@ -82,5 +82,8 @@
     <ClInclude Include="..\src\spi.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\global_settings.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
