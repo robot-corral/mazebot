@@ -36,14 +36,6 @@ void initializeGpio()
         // PA13 - UNUSED (ST_LINK_TMS)
         // PA14 - UNUSED (ST_LINK_TCK)
         // PA15 - UNUSED
-
-#ifndef ACTIVE_COMMUNICATION_SPI
-        // pin             14  12  10  08  06  04  02  00
-        GPIOA->MODER = 0b10101011111111111111111111111111;
-        // pin           15  13  11  09  07  05  03  01
-#else
-        #error not implemented
-#endif
     }
 
     {
@@ -63,14 +55,6 @@ void initializeGpio()
         // PB13 - ADC
         // PB14 - ADC
         // PB15 - ADC
-
-#ifndef ACTIVE_COMMUNICATION_I2C
-        // pin             14  12  10  08  06  04  02  00
-        GPIOB->MODER = 0b11111111111111111111111010111111;
-        // pin           15  13  11  09  07  05  03  01
-#else
-        #error not implemented
-#endif
     }
 
     {
@@ -90,14 +74,6 @@ void initializeGpio()
         // PC13 - UNUSED
         // PC14 - UNUSED
         // PC15 - UNUSED
-
-#ifndef ACTIVE_COMMUNICATION_SPI
-        // pin             14  12  10  08  06  04  02  00
-        GPIOC->MODER = 0b11111111111111111111111111111111;
-        // pin           15  13  11  09  07  05  03  01
-#else
-        #error not implemented
-#endif
     }
 
     {

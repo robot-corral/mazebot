@@ -38,13 +38,13 @@
     <ClCompile Include="..\src\dma.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\usart.c">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\src\watchdog.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\spi.c">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,9 +64,6 @@
     <ClInclude Include="..\src\system_clocks.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\usart.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\line_sensor.h">
       <Filter>inc</Filter>
     </ClInclude>
@@ -80,6 +77,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\interrupt_priorities.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\spi.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

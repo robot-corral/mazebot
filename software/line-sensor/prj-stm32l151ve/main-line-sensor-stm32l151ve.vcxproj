@@ -67,8 +67,8 @@
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\gpio.c" />
     <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\spi.c" />
     <ClCompile Include="..\src\system_clocks.c" />
-    <ClCompile Include="..\src\usart.c" />
     <ClCompile Include="..\src\watchdog.c" />
   </ItemGroup>
   <ItemGroup>
@@ -88,8 +88,8 @@
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\gpio.h" />
     <ClInclude Include="..\src\interrupt_priorities.h" />
+    <ClInclude Include="..\src\spi.h" />
     <ClInclude Include="..\src\system_clocks.h" />
-    <ClInclude Include="..\src\usart.h" />
     <ClInclude Include="..\src\watchdog.h" />
   </ItemGroup>
 </Project>

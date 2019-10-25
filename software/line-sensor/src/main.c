@@ -4,14 +4,14 @@
 
 #include "adc.h"
 #include "dma.h"
+#include "spi.h"
 #include "gpio.h"
-#include "usart.h"
 #include "watchdog.h"
 #include "global_data.h"
 #include "system_clocks.h"
 #include "line_sensor_defs.h"
 
-void main()
+int main()
 {
     initializeGlobalData();
     initializeAndStartWatchdog();
@@ -19,13 +19,7 @@ void main()
     initializeGpio();
     initializeDma();
     initializeAdc();
-#ifdef ACTIVE_COMMUNICATION_I2C
-    #error not implemented
-#elif defined ACTIVE_COMMUNICATION_SPI
-    #error not implemented
-#elif defined ACTIVE_COMMUNICATION_USART
-    initializeUsart();
-#endif
+    initializeSpi();
     startQueryingAdc();
     for (;;) ;
 }

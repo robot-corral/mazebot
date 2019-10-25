@@ -66,106 +66,6 @@ void SystemClock_Config()
     LL_TIM_GenerateEvent_UPDATE(TIM5);
 }
 
-void initializeUsart()
-{
-    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOD);
-
-    // USART3_TX
-
-    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_8, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinSpeed(GPIOD, LL_GPIO_PIN_8, LL_GPIO_SPEED_FREQ_HIGH);
-    LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_8, LL_GPIO_OUTPUT_PUSHPULL);
-    LL_GPIO_SetPinPull(GPIOD, LL_GPIO_PIN_8, LL_GPIO_PULL_UP);
-    LL_GPIO_SetAFPin_8_15(GPIOD, LL_GPIO_PIN_8, LL_GPIO_AF_7);
-
-    // USART3_RX
-
-    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_9, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinSpeed(GPIOD, LL_GPIO_PIN_9, LL_GPIO_SPEED_FREQ_HIGH);
-    LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_9, LL_GPIO_OUTPUT_PUSHPULL);
-    LL_GPIO_SetPinPull(GPIOD, LL_GPIO_PIN_9, LL_GPIO_PULL_UP);
-    LL_GPIO_SetAFPin_8_15(GPIOD, LL_GPIO_PIN_9, LL_GPIO_AF_7);
-
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
-
-    LL_USART_SetTransferDirection(USART3, LL_USART_DIRECTION_TX_RX);
-    LL_USART_ConfigCharacter(USART3, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
-    LL_USART_SetBaudRate(USART3, SystemCoreClock, LL_USART_OVERSAMPLING_16, USART_BAUDRATE);
-
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
-
-    NVIC_SetPriority(DMA1_Channel2_IRQn, 2);
-    NVIC_EnableIRQ(DMA1_Channel2_IRQn);
-
-    NVIC_SetPriority(DMA1_Channel3_IRQn, 2);
-    NVIC_EnableIRQ(DMA1_Channel3_IRQn);
-
-    // RX
-
-    LL_DMA_ConfigTransfer(DMA1,
-                          LL_USART3_DMA_CHANNEL_RX,
-                          LL_DMA_DIRECTION_PERIPH_TO_MEMORY |
-                          LL_DMA_PRIORITY_HIGH              |
-                          LL_DMA_MODE_NORMAL                |
-                          LL_DMA_PERIPH_NOINCREMENT         |
-                          LL_DMA_MEMORY_INCREMENT           |
-                          LL_DMA_PDATAALIGN_BYTE            |
-                          LL_DMA_MDATAALIGN_BYTE);
-
-    LL_DMA_ConfigAddresses(DMA1,
-                           LL_USART3_DMA_CHANNEL_RX,
-                           LL_USART_DMA_GetRegAddr(USART3, LL_USART_DMA_REG_DATA_RECEIVE),
-                           (uint32_t) g_rxBuffer,
-                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-
-    LL_DMA_SetPeriphRequest(DMA1, LL_USART3_DMA_CHANNEL_RX, LL_DMA_REQUEST_2);
-
-    // TX
-
-    LL_DMA_ConfigTransfer(DMA1,
-                          LL_USART3_DMA_CHANNEL_TX,
-                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH |
-                          LL_DMA_PRIORITY_HIGH              |
-                          LL_DMA_MODE_NORMAL                |
-                          LL_DMA_PERIPH_NOINCREMENT         |
-                          LL_DMA_MEMORY_INCREMENT           |
-                          LL_DMA_PDATAALIGN_BYTE            |
-                          LL_DMA_MDATAALIGN_BYTE);
-
-    LL_DMA_ConfigAddresses(DMA1,
-                           LL_USART3_DMA_CHANNEL_TX,
-                           (uint32_t) &g_txBuffer,
-                           LL_USART_DMA_GetRegAddr(USART3, LL_USART_DMA_REG_DATA_TRANSMIT),
-                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-
-    LL_DMA_SetPeriphRequest(DMA1, LL_USART3_DMA_CHANNEL_TX, LL_DMA_REQUEST_2);
-
-    LL_DMA_EnableIT_TC(DMA1, LL_USART3_DMA_CHANNEL_TX);
-    LL_DMA_EnableIT_TE(DMA1, LL_USART3_DMA_CHANNEL_TX);
-    LL_DMA_EnableIT_TC(DMA1, LL_USART3_DMA_CHANNEL_RX);
-    LL_DMA_EnableIT_TE(DMA1, LL_USART3_DMA_CHANNEL_RX);
-
-    LL_USART_EnableDMAReq_RX(USART3);
-    LL_USART_EnableDMAReq_TX(USART3);
-
-    //
-    // uncomment to check USART problems
-    //
-    //NVIC_SetPriority(USART3_IRQn, 2);
-    //NVIC_EnableIRQ(USART3_IRQn);
-
-    //LL_USART_EnableIT_PE(USART3);
-    //LL_USART_EnableIT_RTO(USART3);
-    //LL_USART_EnableIT_IDLE(USART3);
-    //LL_USART_EnableIT_ERROR(USART3);
-
-    // USART should be enabled after everything is configured otherwise extra garbage can be transmitted (usually 0xFF)
-
-    LL_USART_Enable(USART3);
-
-    while (!LL_USART_IsActiveFlag_REACK(USART3) || !LL_USART_IsActiveFlag_TEACK(USART3));
-}
-
 void initializeButton()
 {
     LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
@@ -182,10 +82,9 @@ void initializeButton()
     NVIC_SetPriority(EXTI15_10_IRQn, 0);
 }
 
-void main()
+int main()
 {
     SystemClock_Config();
-    initializeUsart();
     initializeButton();
 
     for (;;) ;

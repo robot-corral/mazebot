@@ -1,14 +1,10 @@
 #pragma once
 
-// uncomment one of the following (based on which resistors are installed on the board,
-// see schematics variants for more information)
-// #define ACTIVE_COMMUNICATION_I2C
-// #define ACTIVE_COMMUNICATION_SPI
-#define ACTIVE_COMMUNICATION_USART
+#define ACTIVE_COMMUNICATION_SPI
 
 #define NUMBER_OF_SENSORS 25
 
-#define USART_BAUDRATE 460800
+#define SPI_BAUDRATE 2097152
 
 #define COMMAND_PREFIX          0b0101010110101010
 #define COMMAND_RESPONSE_PREFIX 0b1010101001010101
