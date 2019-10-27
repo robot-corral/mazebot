@@ -1,52 +1,55 @@
 #include "line_sensor.h"
 
+#include <stdbool.h>
+
 #include <stm32\stm32l4xx_ll_bus.h>
 #include <stm32\stm32l4xx_ll_dma.h>
 #include <stm32\stm32l4xx_ll_pwr.h>
+#include <stm32\stm32l4xx_ll_spi.h>
 #include <stm32\stm32l4xx_ll_rcc.h>
 #include <stm32\stm32l4xx_ll_tim.h>
 #include <stm32\stm32l4xx_ll_exti.h>
 #include <stm32\stm32l4xx_ll_gpio.h>
 #include <stm32\stm32l4xx_ll_utils.h>
-#include <stm32\stm32l4xx_ll_usart.h>
 #include <stm32\stm32l4xx_ll_cortex.h>
 #include <stm32\stm32l4xx_ll_system.h>
 
-lineSensorCommand_t g_txBuffer;
+// lineSensorCommand_t g_txBuffer;
 
-#define RX_BUFFER_LENGTH (sizeof(lineSensorCommandResponse_t) + 10)
+// #define RX_BUFFER_LENGTH (sizeof(lineSensorCommandResponse_t) + 10)
+
+#define RX_BUFFER_LENGTH 10000
+#define TX_BUFFER_LENGTH 10000
 
 uint8_t g_rxBuffer[RX_BUFFER_LENGTH];
+uint8_t g_txBuffer[TX_BUFFER_LENGTH];
 
-#define LL_USART3_DMA_CHANNEL_TX LL_DMA_CHANNEL_2
-#define LL_USART3_DMA_CHANNEL_RX LL_DMA_CHANNEL_3
+bool g_isActive = false;
 
 static void sendCommand();
 
 void SystemClock_Config()
 {
-    LL_AHB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
 
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);
-
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+
+    LL_RCC_MSI_Enable();
+    while (LL_RCC_MSI_IsReady() != 1) ;
 
     LL_RCC_MSI_EnableRangeSelection();
     LL_RCC_MSI_SetRange(LL_RCC_MSIRANGE_6);
     LL_RCC_MSI_SetCalibTrimming(0);
-    LL_RCC_MSI_Enable();
-
-    while (LL_RCC_MSI_IsReady() != 1) ;
 
     LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_MSI, LL_RCC_PLLM_DIV_1, 40, LL_RCC_PLLR_DIV_2);
     LL_RCC_PLL_EnableDomain_SYS();
-    LL_RCC_PLL_Enable();
 
+    LL_RCC_PLL_Enable();
     while (LL_RCC_PLL_IsReady() != 1) ;
 
-    LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
-
     while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) ;
 
     LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
@@ -54,9 +57,8 @@ void SystemClock_Config()
     LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
 
     LL_Init1msTick(80000000);
+    LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_HCLK);
     LL_SetSystemCoreClock(80000000);
-
-    LL_RCC_SetUSARTClockSource(LL_RCC_USART3_CLKSOURCE_PCLK1);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5);
 
@@ -66,13 +68,176 @@ void SystemClock_Config()
     LL_TIM_GenerateEvent_UPDATE(TIM5);
 }
 
+void initializeLed()
+{
+    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
+
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+
+    LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
+
+    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
+
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
+
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_14);
+}
+
+void setGreenLedEnabled(bool isEnabled)
+{
+    if (isEnabled)
+    {
+        LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_7);
+    }
+    else
+    {
+        LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
+    }
+}
+
+void setBlueLedEnabled(bool isEnabled)
+{
+    if (isEnabled)
+    {
+        LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_7);
+    }
+    else
+    {
+        LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
+    }
+}
+
+void setRedLedEnabled(bool isEnabled)
+{
+    if (isEnabled)
+    {
+        LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_14);
+    }
+    else
+    {
+        LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_14);
+    }
+}
+
+void initializeControlPins()
+{
+    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOD);
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_5, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+
+    LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
+    LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_7);
+}
+
+void initializeSpi()
+{
+    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI3);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2);
+
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_10, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinOutputType(GPIOC, LL_GPIO_PIN_10, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_10, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetAFPin_8_15(GPIOC, LL_GPIO_PIN_10, LL_GPIO_AF_6);
+    LL_GPIO_SetPinSpeed(GPIOC, LL_GPIO_PIN_10, LL_GPIO_SPEED_FREQ_HIGH);
+
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_11, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinOutputType(GPIOC, LL_GPIO_PIN_11, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_11, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetAFPin_8_15(GPIOC, LL_GPIO_PIN_11, LL_GPIO_AF_6);
+    LL_GPIO_SetPinSpeed(GPIOC, LL_GPIO_PIN_11, LL_GPIO_SPEED_FREQ_HIGH);
+
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_12, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinOutputType(GPIOC, LL_GPIO_PIN_12, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_12, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetAFPin_8_15(GPIOC, LL_GPIO_PIN_12, LL_GPIO_AF_6);
+    LL_GPIO_SetPinSpeed(GPIOC, LL_GPIO_PIN_12, LL_GPIO_SPEED_FREQ_HIGH);
+
+    LL_SPI_EnableIT_ERR(SPI3);
+    LL_SPI_EnableIT_RXNE(SPI3);
+    LL_SPI_EnableIT_TXE(SPI3);
+
+    LL_SPI_SetBaudRatePrescaler(SPI3, LL_SPI_BAUDRATEPRESCALER_DIV256);
+    LL_SPI_SetTransferDirection(SPI3, LL_SPI_FULL_DUPLEX);
+    LL_SPI_SetClockPhase(SPI3, LL_SPI_PHASE_2EDGE);
+    LL_SPI_SetClockPolarity(SPI3, LL_SPI_POLARITY_HIGH);
+    LL_SPI_SetDataWidth(SPI3, LL_SPI_DATAWIDTH_8BIT);
+    LL_SPI_SetNSSMode(SPI3, LL_SPI_NSS_SOFT);
+    LL_SPI_SetTransferBitOrder(SPI3, LL_SPI_MSB_FIRST);
+    LL_SPI_SetRxFIFOThreshold(SPI3, LL_SPI_RX_FIFO_TH_QUARTER);
+    LL_SPI_SetStandard(SPI3, LL_SPI_PROTOCOL_MOTOROLA);
+    LL_SPI_EnableNSSPulseMgt(SPI3);
+    LL_SPI_SetMode(SPI3, LL_SPI_MODE_MASTER);
+
+    LL_SPI_EnableDMAReq_RX(SPI3);
+    LL_SPI_EnableDMAReq_TX(SPI3);
+
+    NVIC_SetPriority(DMA2_Channel1_IRQn, 0);
+    NVIC_EnableIRQ(DMA2_Channel1_IRQn);
+
+    NVIC_SetPriority(DMA2_Channel2_IRQn, 0);
+    NVIC_EnableIRQ(DMA2_Channel2_IRQn);
+
+    // RX
+
+    LL_DMA_ConfigTransfer(DMA2,
+                          LL_DMA_CHANNEL_1,
+                          LL_DMA_DIRECTION_PERIPH_TO_MEMORY |
+                          LL_DMA_PRIORITY_HIGH              |
+                          LL_DMA_MODE_NORMAL                |
+                          LL_DMA_PERIPH_NOINCREMENT         |
+                          LL_DMA_MEMORY_INCREMENT           |
+                          LL_DMA_PDATAALIGN_BYTE            |
+                          LL_DMA_MDATAALIGN_BYTE);
+
+    LL_DMA_ConfigAddresses(DMA2,
+                           LL_DMA_CHANNEL_1,
+                           LL_SPI_DMA_GetRegAddr(SPI3),
+                           (uint32_t) g_rxBuffer,
+                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+
+    LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_1, RX_BUFFER_LENGTH);
+    LL_DMA_SetPeriphRequest(DMA2, LL_DMA_CHANNEL_1, LL_DMA_REQUEST_3);
+
+    // TX
+
+    LL_DMA_ConfigTransfer(DMA2,
+                          LL_DMA_CHANNEL_2,
+                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH |
+                          LL_DMA_PRIORITY_HIGH              |
+                          LL_DMA_MODE_NORMAL                |
+                          LL_DMA_PERIPH_NOINCREMENT         |
+                          LL_DMA_MEMORY_INCREMENT           |
+                          LL_DMA_PDATAALIGN_BYTE            |
+                          LL_DMA_MDATAALIGN_BYTE);
+
+    LL_DMA_ConfigAddresses(DMA2,
+                           LL_DMA_CHANNEL_2,
+                           (uint32_t) g_txBuffer,
+                           LL_SPI_DMA_GetRegAddr(SPI3),
+                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+
+    LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_2, TX_BUFFER_LENGTH);
+    LL_DMA_SetPeriphRequest(DMA2, LL_DMA_CHANNEL_2, LL_DMA_REQUEST_3);
+
+    LL_DMA_EnableIT_TC(DMA2, LL_DMA_CHANNEL_1);
+    LL_DMA_EnableIT_TE(DMA2, LL_DMA_CHANNEL_1);
+
+    LL_DMA_EnableIT_TC(DMA2, LL_DMA_CHANNEL_2);
+    LL_DMA_EnableIT_TE(DMA2, LL_DMA_CHANNEL_2);
+
+    LL_SPI_Enable(SPI3);
+}
+
 void initializeButton()
 {
     LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_INPUT);
     LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_NO);
 
-    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC, LL_SYSCFG_EXTI_LINE13);
 
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_13);
@@ -85,65 +250,56 @@ void initializeButton()
 int main()
 {
     SystemClock_Config();
+    initializeLed();
+    initializeControlPins();
+    initializeSpi();
     initializeButton();
+
+    for (int i = 0; i < TX_BUFFER_LENGTH; ++i)
+    {
+        g_txBuffer[i] = i % 256;
+        g_rxBuffer[i] = i % 256;
+    }
 
     for (;;) ;
 }
 
-void DMA1_Channel2_IRQHandler(void)
+void DMA2_Channel1_IRQHandler(void)
 {
-    // TX
+    // RX
 
-    if (LL_DMA_IsActiveFlag_TC2(DMA1))
+    if (LL_DMA_IsActiveFlag_TC1(DMA2))
     {
-        LL_DMA_ClearFlag_TC2(DMA1);
+        LL_DMA_ClearFlag_TC1(DMA2);
+        setBlueLedEnabled(false);
+        LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
+        g_isActive = false;
     }
-    else if (LL_DMA_IsActiveFlag_TE2(DMA1))
+    else if (LL_DMA_IsActiveFlag_TE1(DMA2))
     {
+        setRedLedEnabled(true);
         for (;;);
     }
 }
 
-void DMA1_Channel3_IRQHandler(void)
+void DMA2_Channel2_IRQHandler(void)
 {
-    // RX
+    // TX
 
-    if (LL_DMA_IsActiveFlag_TC3(DMA1))
+    if (LL_DMA_IsActiveFlag_TC2(DMA2))
     {
-        LL_DMA_ClearFlag_TC3(DMA1);
+        LL_DMA_ClearFlag_TC2(DMA2);
+        setGreenLedEnabled(false);
     }
-    else if (LL_DMA_IsActiveFlag_TE3(DMA1))
+    else if (LL_DMA_IsActiveFlag_TE2(DMA2))
     {
+        setRedLedEnabled(true);
         for (;;) ;
     }
 }
 
-void USART3_IRQHandler()
+void SPI3_IRQHandler(void)
 {
-    if (LL_USART_IsActiveFlag_IDLE(USART3))
-    {
-        // TODO
-    }
-    if (LL_USART_IsActiveFlag_PE(USART3))
-    {
-        // TODO
-    }
-    if (LL_USART_IsActiveFlag_RTO(USART3))
-    {
-        // TODO
-    }
-    if (LL_USART_IsActiveFlag_FE(USART3))
-    {
-        // TODO
-    }
-    if (LL_USART_IsActiveFlag_NE(USART3))
-    {
-        // TODO
-    }
-    if (LL_USART_IsActiveFlag_ORE(USART3))
-    {
-        // TODO
-    }
 }
 
 void EXTI15_10_IRQHandler()
@@ -157,15 +313,25 @@ void EXTI15_10_IRQHandler()
 
 void sendCommand()
 {
-    g_txBuffer.header.prefix = COMMAND_PREFIX;
-    g_txBuffer.header.commandCode = LSC_SEND_SENSOR_DATA;
+    if (g_isActive)
+    {
+        return;
+    }
 
-    LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
-    LL_DMA_DisableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
+    g_isActive = true;
 
-    LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_RX, RX_BUFFER_LENGTH);
-    LL_DMA_SetDataLength(DMA1, LL_USART3_DMA_CHANNEL_TX, LSC_LENGTH_SIMPLE_COMMAND);
+    setBlueLedEnabled(true);
+    setGreenLedEnabled(true);
+    setRedLedEnabled(false);
 
-    LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_RX);
-    LL_DMA_EnableChannel(DMA1, LL_USART3_DMA_CHANNEL_TX);
+    LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_5);
+
+    LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
+    LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_2);
+    
+    LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_1, RX_BUFFER_LENGTH);
+    LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_2, TX_BUFFER_LENGTH);
+
+    LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_1);
+    LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_2);
 }

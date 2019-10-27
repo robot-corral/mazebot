@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.271
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "line-sensor-stm32l151ve", "line-sensor\prj-stm32l151ve\main-line-sensor-stm32l151ve.vcxproj", "{B321BAA2-AD22-41E2-892D-AB7B8FE85114}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-line-sensor-stm32l151ve", "line-sensor\prj-stm32l151ve\main-line-sensor-stm32l151ve.vcxproj", "{B321BAA2-AD22-41E2-892D-AB7B8FE85114}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l151ve", "common\lib-stm32l1\prj-stm32l151ve\lib-stm32l151ve.vcxproj", "{3E06D10A-43C7-40B0-90C8-E35BB970AA0E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32l151ve", "common\lib-utils\prj-stm32l151ve\lib-utils-stm32l151ve.vcxproj", "{AA910249-4820-4F9B-B6BB-F2859E96845A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "line-sensor-test-client-stm32l496ze", "line-sensor\prj-test-client-stm32l496ze\main-line-sensor-test-client-stm32l496ze.vcxproj", "{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496zg", "common\lib-stm32l4\prj-stm32l496zg\lib-stm32l496zg.vcxproj", "{28E807DD-CE7B-4EEF-822D-E5873B182727}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496ze", "common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj", "{0BD90C29-1FE5-4F60-B90D-250EA8217C84}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-line-sensor-test-client-stm32l496zg", "line-sensor\prj-test-client-stm32l496zg\main-line-sensor-test-client-stm32l496zg.vcxproj", "{CE757F01-A018-4FA2-8462-5CBD6C704C2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +31,14 @@ Global
 		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
 		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
 		{AA910249-4820-4F9B-B6BB-F2859E96845A}.Release|VisualGDB.Build.0 = Release|VisualGDB
-		{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
-		{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
-		{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
-		{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}.Release|VisualGDB.Build.0 = Release|VisualGDB
-		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
-		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
-		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
-		{0BD90C29-1FE5-4F60-B90D-250EA8217C84}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Release|VisualGDB.Build.0 = Release|VisualGDB
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

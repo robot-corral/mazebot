@@ -174,12 +174,10 @@ void DMA1_Channel1_IRQHandler()
 
 static bool processAdcData()
 {
-    #define ADC_BUFFER_1_SUBSET_1_START_IDX 1
-    #define ADC_BUFFER_1_SUBSET_1_LENGTH    17
-    #define ADC_BUFFER_1_SUBSET_2_START_IDX ADC_BUFFER_1_SUBSET_1_LENGTH
+    #define ADC_BUFFER_1_START_IDX 1
 
     #define ADC_BUFFER_2_START_IDX    1
-    #define ADC_BUFFER_2_SENSOR_INDEX 16
+    #define ADC_BUFFER_2_SENSOR_INDEX (NUMBER_OF_SENSORS - 1)
 
     const uint8_t producerBufferIndex = consumerProducerBufferGetProducerIndexInterruptSafe(&g_txDataBufferIndexes);
 
@@ -192,31 +190,22 @@ static bool processAdcData()
 
     if (g_isCalibrated)
     {
-        for (uint8_t i = ADC_BUFFER_1_SUBSET_1_START_IDX; i < ADC_BUFFER_1_SUBSET_1_LENGTH; ++i)
+        for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
         {
             const uint16_t clampedValue = clampU16(g_adcBuffer1[i], g_calibrationData.minSensorUnitValues[i], g_calibrationData.maxSensorUnitValues[i]);
-            sensorData->sensorUnitValues[i - 1] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[i]);
-        }
 
-        for (uint8_t i = ADC_BUFFER_1_SUBSET_2_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
-        {
-            const uint16_t clampedValue = clampU16(g_adcBuffer1[i], g_calibrationData.minSensorUnitValues[i], g_calibrationData.maxSensorUnitValues[i]);
             sensorData->sensorUnitValues[i] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[i]);
         }
 
         const uint16_t clampedValue = clampU16(g_adcBuffer2[ADC_BUFFER_2_START_IDX],
                                                g_calibrationData.minSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX],
                                                g_calibrationData.maxSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX]);
+
         sensorData->sensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[ADC_BUFFER_2_SENSOR_INDEX]);
     }
     else
     {
-        for (uint8_t i = 1; i < ADC_BUFFER_1_SUBSET_1_LENGTH; ++i)
-        {
-            sensorData->sensorUnitValues[i - 1] = g_adcBuffer1[i];
-        }
-
-        for (uint8_t i = ADC_BUFFER_1_SUBSET_2_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
+        for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
         {
             sensorData->sensorUnitValues[i] = g_adcBuffer1[i];
         }

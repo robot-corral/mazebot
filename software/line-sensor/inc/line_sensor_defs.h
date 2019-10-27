@@ -1,5 +1,9 @@
 #pragma once
 
+/*******************************************************************************
+ * Hardware revision: line-sensor-var1a-r3-2019-10-06
+ ******************************************************************************/
+
 #define ACTIVE_COMMUNICATION_SPI
 
 #define NUMBER_OF_SENSORS 25
