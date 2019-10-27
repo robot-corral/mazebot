@@ -17,9 +17,10 @@ int main()
     initializeAndStartWatchdog();
     initializeSystemClocks();
     initializeGpio();
+    initializeSpi();
     initializeDma();
     initializeAdc();
-    initializeSpi();
     startQueryingAdc();
+    activateSpi();
     for (;;) ;
 }
