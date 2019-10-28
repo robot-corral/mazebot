@@ -73,6 +73,7 @@
     <ClInclude Include="..\stm32\stm32l4xx_ll_adc.h" />
     <ClInclude Include="..\stm32\stm32l4xx_ll_bus.h" />
     <ClInclude Include="..\stm32\stm32l4xx_ll_cortex.h" />
+    <ClInclude Include="..\stm32\stm32l4xx_ll_crc.h" />
     <ClInclude Include="..\stm32\stm32l4xx_ll_dma.h" />
     <ClInclude Include="..\stm32\stm32l4xx_ll_exti.h" />
     <ClInclude Include="..\stm32\stm32l4xx_ll_gpio.h" />
