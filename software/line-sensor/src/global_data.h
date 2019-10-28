@@ -31,6 +31,8 @@ extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
  * RX/TX data
  *******************************************************************************/
 
+extern bool g_receivingHeader;
+
 extern volatile lineSensorCommand_t g_rxBuffer;
 
 // current consumer and producer indexes
@@ -52,4 +54,5 @@ extern volatile lineSensorCommandResponseFinishCalibration_t g_calibrationData;
  * Errors
  *******************************************************************************/
 
-extern volatile lineSensorStatus_t g_sensorStatus;
+extern volatile lineSensorStatus_t g_sensorStatusInternal; // do not read directly
+                                                           // use getSensorStatus()

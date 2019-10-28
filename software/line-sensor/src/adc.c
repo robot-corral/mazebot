@@ -4,6 +4,7 @@
 
 #include "adc.h"
 
+#include "status.h"
 #include "watchdog.h"
 #include "global_data.h"
 #include "consumer_producer_buffer.h"
@@ -133,7 +134,7 @@ void DMA1_Channel1_IRQHandler()
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
         LL_DMA_ClearFlag_TE1(DMA1);
-        g_sensorStatus |= LSS_ERR_FLAG_ADC_DMA_FAILURE;
+        setSensorStatusFlags(LSS_ERR_FLAG_ADC_DMA_FAILURE);
         startQueryingAdc();
     }
     else if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
@@ -158,13 +159,13 @@ void DMA1_Channel1_IRQHandler()
         {
             if (processAdcData())
             {
-                g_sensorStatus &= ~(LSS_ERR_FLAG_ALL_ADC);
+                resetSensorStatusFlags(LSS_ERR_FLAG_ADC_ALL);
                 startQueryingAdc();
                 resetWatchdog();
             }
             else
             {
-                g_sensorStatus |= LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED;
+                setSensorStatusFlags(LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
                 consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
                 startQueryingAdc();
             }

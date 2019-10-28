@@ -17,6 +17,8 @@ volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH] __attribute__((aligned(2)));
  * RX/TX data
  *******************************************************************************/
 
+bool g_receivingHeader;
+
 volatile lineSensorCommand_t g_rxBuffer;
 
 volatile uint32_t g_txDataBufferIndexes;

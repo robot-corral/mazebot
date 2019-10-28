@@ -24,8 +24,7 @@ void initializeSystemClocks()
                              LL_AHB1_GRP1_PERIPH_GPIOC |
                              LL_AHB1_GRP1_PERIPH_GPIOD |
                              LL_AHB1_GRP1_PERIPH_GPIOE |
-                             LL_AHB1_GRP1_PERIPH_DMA1 |
-                             LL_AHB1_GRP1_PERIPH_CRC);
+                             LL_AHB1_GRP1_PERIPH_DMA1);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5 |
                              LL_APB1_GRP1_PERIPH_COMP |
