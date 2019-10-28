@@ -4,11 +4,7 @@
  * Hardware revision: line-sensor-var1a-r3-2019-10-06
  ******************************************************************************/
 
-#define ACTIVE_COMMUNICATION_SPI
-
 #define NUMBER_OF_SENSORS 25
-
-#define SPI_BAUDRATE 2097152
 
 #define COMMAND_PREFIX          0b0101010110101010
 #define COMMAND_RESPONSE_PREFIX 0b1010101001010101
@@ -28,23 +24,22 @@
  * Line sensor status
  ******************************************************************************/
 
-#define LSS_OK                               0x0000
+#define LSS_ZERO                               0x0000
 
-#define LSS_OK_FLAG_NEW_DATA_AVAILABLE       0x0001
+#define LSS_OK_FLAG_NEW_DATA_AVAILABLE         0x0001
 
-#define LSS_ERR_FLAG_NOT_READY               0x0002
-#define LSS_ERR_FLAG_CALIBRATION_ERROR       0x0002
+#define LSS_ERR_FLAG_NOT_READY                 0x0002
+#define LSS_ERR_FLAG_CALIBRATION_ERROR         0x0002
 
-#define LSS_ERR_FLAG_SENSOR_NOT_CALIBRATED   0x0004
+#define LSS_ERR_FLAG_SENSOR_NOT_CALIBRATED     0x0004
 
-#define LSS_ERR_FLAG_TRANSMISSION_ERROR      0x0008
-#define LSS_ERR_FLAG_WATCHDOG_RESET_DETECTED 0x0010
-#define LSS_ERR_FLAG_ADC_DMA_FAILURE         0x0020
-#define LSS_ERR_FLAG_DATA_BUFFER_CORRUPTED   0x0040
+#define LSS_ERR_FLAG_TRANSMISSION_ERROR        0x0008
+#define LSS_ERR_FLAG_WATCHDOG_RESET_DETECTED   0x0010
 
-// only used when USART is an active communication device
+#define LSS_ERR_FLAG_ADC_DMA_FAILURE           0x0020
+#define LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED 0x0040
 
-#define LSS_ERR_FLAG_USART_DMA_FAILURE       0x0080
-#define LSS_ERR_FLAG_USART_NOISE_ERROR       0x0100
-#define LSS_ERR_FLAG_USART_FRAMING_ERROR     0x0200
-#define LSS_ERR_FLAG_USART_OVERRUN_ERROR     0x0400
+#define LSS_ERR_FLAG_SPI_DMA_FAILURE           0x0080
+#define LSS_ERR_FLAG_SPI_ERROR                 0x0100
+
+#define LSS_ERR_FLAG_ALL_ADC                   ((LSS_ERR_FLAG_ADC_DMA_FAILURE) | (LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED))

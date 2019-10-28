@@ -133,7 +133,7 @@ void DMA1_Channel1_IRQHandler()
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
         LL_DMA_ClearFlag_TE1(DMA1);
-        g_adcStatus |= LSS_ERR_FLAG_ADC_DMA_FAILURE;
+        g_sensorStatus |= LSS_ERR_FLAG_ADC_DMA_FAILURE;
         startQueryingAdc();
     }
     else if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
@@ -158,13 +158,13 @@ void DMA1_Channel1_IRQHandler()
         {
             if (processAdcData())
             {
-                g_adcStatus = LSS_OK;
+                g_sensorStatus &= ~(LSS_ERR_FLAG_ALL_ADC);
                 startQueryingAdc();
                 resetWatchdog();
             }
             else
             {
-                g_adcStatus |= LSS_ERR_FLAG_DATA_BUFFER_CORRUPTED;
+                g_sensorStatus |= LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED;
                 consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
                 startQueryingAdc();
             }
@@ -186,20 +186,20 @@ static bool processAdcData()
         return false;
     }
 
-    volatile lineSensorCommandResponseSendSensorData_t* const sensorData = &g_txSendSensorDataBuffers[producerBufferIndex].sensorData;
+    volatile lineSensorValuesData_t* const sensorData = &g_txSendSensorDataBuffers[producerBufferIndex].sensorData;
 
     if (g_isCalibrated)
     {
         for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
         {
-            const uint16_t clampedValue = clampU16(g_adcBuffer1[i], g_calibrationData.minSensorUnitValues[i], g_calibrationData.maxSensorUnitValues[i]);
+            const uint16_t clampedValue = clampU16(g_adcBuffer1[i], g_calibrationData.calibrationData.minSensorUnitValues[i], g_calibrationData.calibrationData.maxSensorUnitValues[i]);
 
             sensorData->sensorUnitValues[i] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[i]);
         }
 
         const uint16_t clampedValue = clampU16(g_adcBuffer2[ADC_BUFFER_2_START_IDX],
-                                               g_calibrationData.minSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX],
-                                               g_calibrationData.maxSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX]);
+                                               g_calibrationData.calibrationData.minSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX],
+                                               g_calibrationData.calibrationData.maxSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX]);
 
         sensorData->sensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[ADC_BUFFER_2_SENSOR_INDEX]);
     }

@@ -19,6 +19,8 @@ void initializeSpi()
 
     LL_SPI_EnableDMAReq_RX(SPI2);
     LL_SPI_EnableDMAReq_TX(SPI2);
+
+    LL_SPI_EnableIT_ERR(SPI2);
 }
 
 void activateSpi()
@@ -28,9 +30,9 @@ void activateSpi()
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_4,
                            LL_SPI_DMA_GetRegAddr(SPI2),
-                           (uint32_t) g_rxBuffer,
+                           (uint32_t) &g_rxBuffer,
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, RX_BUFFER_LENGTH);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, sizeof(lineSensorRequestHeaderData_t));
 
     LL_SPI_Enable(SPI2);
 
@@ -46,7 +48,13 @@ void DMA1_Channel4_IRQHandler(void)
     }
     else if(LL_DMA_IsActiveFlag_TE4(DMA1))
     {
+        for (;;) ;
     }
+}
+
+void SPI2_IRQHandler(void)
+{
+    for (;;) ;
 }
 
 void DMA1_Channel5_IRQHandler(void)
@@ -57,5 +65,6 @@ void DMA1_Channel5_IRQHandler(void)
     }
     else if (LL_DMA_IsActiveFlag_TE5(DMA1))
     {
+        for (;;) ;
     }
 }
