@@ -1,50 +1,66 @@
 #pragma once
 
+#include <stdint.h>
+
 /*******************************************************************************
  * Hardware revision: line-sensor-var1a-r3-2019-10-06
  ******************************************************************************/
 
-#define NUMBER_OF_SENSORS 25
+#define NUMBER_OF_SENSORS ((uint8_t) 25)
 
-#define COMMAND_PREFIX          0b01010101
-#define COMMAND_RESPONSE_PREFIX 0b10101010
-
-#define SPI_CRC_POLYNOMIAL      0x9EB2
+#define CRC_POLYNOMIAL    ((uint16_t) 0xE5CC)
 
 /*******************************************************************************
- * Line sensor commands
+ * Line sensor commands (lineSensorCommandCode_t)
  ******************************************************************************/
 
-#define LSC_RESET                          0x01
-#define LSC_START_CALIBRATION              0x02
-#define LSC_FINISH_CALIBRATION             0x03
-#define LSC_USE_CALIBRATION_DATA           0x04
-#define LSC_USE_HARDCODED_CALIBRATION_DATA 0x05
-#define LSC_SEND_SENSOR_DATA               0x06
+#define LSC_NONE                           ((uint8_t) 0x00)
+#define LSC_GET_SENSOR_VALUES              ((uint8_t) 0x01)
+#define LSC_START_PHYSICAL_CALIBRATION     ((uint8_t) 0x02)
+#define LSC_GET_CALIBRATION_STATUS         ((uint8_t) 0x03)
+#define LSC_FINISH_CALIBRATION             ((uint8_t) 0x04)
+#define LSC_GET_CALIBRATION_VALUES         ((uint8_t) 0x05)
+#define LSC_GET_DETAILED_SENSOR_STATUS     ((uint8_t) 0x06)
+/*
+ * reset command restarts linse sensor and next command after reset will be default command
+ * response LSC_GET_SENSOR_VALUES (so this command doesn't have response of its own).
+ */
+#define LSC_RESET                          ((uint8_t) 0x07)
+
+#define LSC_FIRST_COMMAND LSC_GET_SENSOR_VALUES
+#define LSC_LAST_COMMAND  LSC_RESET
 
 /*******************************************************************************
- * Line sensor status
+ * Line sensor status (lineSensorStatus_t)
  ******************************************************************************/
 
-#define LSS_ZERO                               0x0000
+#define LSS_OK                                 ((uint8_t) 0x00)
+#define LSS_OK_FLAG_NEW_DATA_AVAILABLE         ((uint8_t) 0x01)
+#define LSS_ERROR                              ((uint8_t) 0x02)
 
-#define LSS_OK_FLAG_NEW_DATA_AVAILABLE         0x0001
+/*******************************************************************************
+ * Line sensor detailed status (lineSensorDetailedStatus_t)
+ ******************************************************************************/
 
-#define LSS_ERR_FLAG_NOT_READY                 0x0002
-#define LSS_ERR_FLAG_CALIBRATION_ERROR         0x0004
-#define LSS_ERR_FLAG_SENSOR_NOT_CALIBRATED     0x0008
-#define LSS_ERR_FLAG_UNKNOWN_COMMAND           0x0010
+#define LSDS_OK                                 ((uint32_t) 0x00000000)
 
-#define LSS_ERR_FLAG_WATCHDOG_RESET_DETECTED   0x0020
+#define LSDS_OK_FLAG_NEW_DATA_AVAILABLE         ((uint32_t) 0x00000001)
 
-#define LSS_ERR_FLAG_ADC_DMA_FAILURE           0x0040
-#define LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED 0x0080
+#define LSDS_ERR_FLAG_UNKNOWN_COMMAND_REQUESTED ((uint32_t) 0x00000002)
 
-#define LSS_ERR_FLAG_SPI_RECEIVING_ERROR       0x0100
-#define LSS_ERR_FLAG_SPI_DMA_FAILURE           0x0200
-#define LSS_ERR_FLAG_SPI_ERROR_CRC             0x0400
-#define LSS_ERR_FLAG_SPI_ERROR_MODE_FAULT      0x0800
-#define LSS_ERR_FLAG_SPI_ERROR_OVERRUN         0x1000
-#define LSS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT    0x2000
+#define LSDS_ERR_FLAG_WATCHDOG_RESET_DETECTED   ((uint32_t) 0x00000004)
 
-#define LSS_ERR_FLAG_ADC_ALL                   ((LSS_ERR_FLAG_ADC_DMA_FAILURE) | (LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED))
+#define LSDS_ERR_FLAG_ADC_DMA_FAILURE           ((uint32_t) 0x00000008)
+#define LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED ((uint32_t) 0x00000010)
+
+#define LSDS_ERR_FLAG_SPI_RX_ERROR              ((uint32_t) 0x00000020)
+#define LSDS_ERR_FLAG_SPI_DMA_FAILURE           ((uint32_t) 0x00000040)
+#define LSDS_ERR_FLAG_SPI_ERROR_CRC             ((uint32_t) 0x00000080)
+#define LSDS_ERR_FLAG_SPI_ERROR_MODE_FAULT      ((uint32_t) 0x00000100)
+#define LSDS_ERR_FLAG_SPI_ERROR_OVERRUN         ((uint32_t) 0x00000200)
+#define LSDS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT    ((uint32_t) 0x00000400)
+#define LSDS_ERR_FLAG_SPI_STATE_MACHINE_FAILURE ((uint32_t) 0x00000800)
+
+#define LSDS_ERR_FLAG_ALL                       ((uint32_t) 0xFFFFFFFE)
+
+#define LSDS_ERR_FLAG_ADC_ALL                   ((LSDS_ERR_FLAG_ADC_DMA_FAILURE) | (LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED))

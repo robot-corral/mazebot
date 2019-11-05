@@ -8,42 +8,49 @@
  * ADC data
  *******************************************************************************/
 
+volatile adcState_t g_adcState;
+
 // ADC is a 1/2 word increment so arrays must be 1/2 word aligned (2 bytes)
 volatile uint16_t g_adcBuffer1[ADC_BUFFER_1_LENGTH] __attribute__((aligned(2)));
-
 volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH] __attribute__((aligned(2)));
-
-/*******************************************************************************
- * RX/TX data
- *******************************************************************************/
-
-bool g_receivingHeader;
-
-volatile lineSensorCommand_t g_rxBuffer;
-
-volatile uint32_t g_txDataBufferIndexes;
-
-volatile lineSensorCommandResponseSendSensorData_t g_txSendSensorDataBuffers[NUMBER_OF_TX_DATA_BUFFERS];
 
 /*******************************************************************************
  * Calibration data
  *******************************************************************************/
 
-volatile bool g_isCalibrated;
+volatile uint16_t minValues[NUMBER_OF_SENSORS];
+volatile uint16_t maxValues[NUMBER_OF_SENSORS];
 
-volatile uint16_t g_calibrationDataMaxMinusMin[NUMBER_OF_SENSORS];
+/*******************************************************************************
+ * Sensor values
+ *******************************************************************************/
 
-volatile lineSensorCommandResponseFinishCalibration_t g_calibrationData;
+volatile uint32_t g_lineSensorValuesBuffersProducerConsumerIndexes;
+volatile lineSensorResponseGetSensorValues_t g_lineSensorValuesBuffers[NUMBER_OF_TX_DATA_BUFFERS];
+
+/*******************************************************************************
+ * SPI data
+ *******************************************************************************/
+
+volatile spiState_t g_spiState;
+volatile lineSensorCommandCode_t g_spiCurrentCommand;
+
+volatile bool g_spiReceivingFillerFinished;
+volatile bool g_spiTransmittingResponseFinished;
+
+volatile uint8_t g_spiRxBuffer[MAX_RX_SIZE_BYTES];
+volatile lineSensorResponse_t g_spiTxBuffer;
 
 /*******************************************************************************
  * Errors
  *******************************************************************************/
 
-volatile lineSensorStatus_t g_sensorStatus;
+volatile lineSensorDetailedStatus_t g_statusDetailedInternal; // do not read directly
+volatile lineSensorDetailedStatus_t g_statusCumulativeDetailedInternal; // do not read directly
 
 void initializeGlobalData()
 {
-    g_isCalibrated = false;
-    g_sensorStatus = LSS_ZERO;
-    g_txDataBufferIndexes = DATA_BUFFER_EMPTY_INDEXES;
+    g_statusDetailedInternal = LSDS_OK;
+    g_statusCumulativeDetailedInternal = LSDS_OK;
+    consumerProducerBufferResetInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes);
 }

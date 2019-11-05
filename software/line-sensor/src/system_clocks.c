@@ -24,7 +24,8 @@ void initializeSystemClocks()
                              LL_AHB1_GRP1_PERIPH_GPIOC |
                              LL_AHB1_GRP1_PERIPH_GPIOD |
                              LL_AHB1_GRP1_PERIPH_GPIOE |
-                             LL_AHB1_GRP1_PERIPH_DMA1);
+                             LL_AHB1_GRP1_PERIPH_DMA1  |
+                             LL_AHB1_GRP1_PERIPH_CRC);
 
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5 |
                              LL_APB1_GRP1_PERIPH_COMP |
@@ -40,16 +41,21 @@ void initializeSystemClocks()
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
     while (LL_PWR_IsActiveFlag_VOSF() != 0);
 
-//    LL_RCC_HSE_Enable();
-//    while (LL_RCC_HSE_IsReady() != 1);
+#ifdef CRYSTAL_EXTERNAL_HSE
+    LL_RCC_HSE_Enable();
+    while (LL_RCC_HSE_IsReady() != 1);
+#endif
 
     LL_RCC_HSI_Enable();
     while (LL_RCC_HSI_IsReady() != 1);
 
     LL_RCC_HSI_SetCalibTrimming(16);
 
-//    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLL_MUL_4, LL_RCC_PLL_DIV_3);
+#ifdef CRYSTAL_EXTERNAL_HSE
+    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLL_MUL_4, LL_RCC_PLL_DIV_3);
+#else
     LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLL_MUL_6, LL_RCC_PLL_DIV_3);
+#endif
 
     LL_RCC_PLL_Enable();
     while (LL_RCC_PLL_IsReady() != 1);

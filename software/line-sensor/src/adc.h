@@ -4,6 +4,19 @@
 
 #pragma once
 
+#include "line_sensor.h"
+
+#define ADC_BUFFER_1_START_IDX    1
+#define ADC_BUFFER_2_START_IDX    1
+#define ADC_BUFFER_2_SENSOR_INDEX ((NUMBER_OF_SENSORS) - 1)
+
+typedef enum
+{
+    ADC_S_IDLE,
+    ADC_S_CALIBRATING,
+    ADC_S_SENSING,
+} adcState_t;
+
  /*
  * initializes ADC hardware.
  *

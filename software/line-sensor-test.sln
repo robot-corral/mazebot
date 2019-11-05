@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-line-sensor-test-client-stm32l496zg", "line-sensor\prj-test-client-stm32l496zg\main-line-sensor-test-client-stm32l496zg.vcxproj", "{CE757F01-A018-4FA2-8462-5CBD6C704C2E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l496zg", "common\lib-stm32l4\prj-stm32l496zg\lib-stm32l496zg.vcxproj", "{28E807DD-CE7B-4EEF-822D-E5873B182727}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|VisualGDB = Debug|VisualGDB
+		Release|VisualGDB = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{CE757F01-A018-4FA2-8462-5CBD6C704C2E}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{28E807DD-CE7B-4EEF-822D-E5873B182727}.Release|VisualGDB.Build.0 = Release|VisualGDB
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7F7F909-9212-4067-9BB7-5ADED4007F0A}
+	EndGlobalSection
+EndGlobal

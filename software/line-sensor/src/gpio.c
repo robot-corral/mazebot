@@ -11,140 +11,137 @@
 void initializeGpio()
 {
     // all unused pins are set to analog mode to conserve power
-    //
-    // for analog (ADC) ports:
-    //
-    // mode               -   11 (analog)
-    // port pull up/down  -   00 (no)
 
-    // ports A/B have special unused pins which are going to retain their original reset configuration
+    // ports A/B/C have special unused pins which are going to retain their original reset configuration
 
-    {
-        // PA0  - ADC
-        // PA1  - ADC
-        // PA2  - ADC
-        // PA3  - ADC
-        // PA4  - ADC
-        // PA5  - ADC
-        // PA6  - ADC
-        // PA7  - ADC
-        // PA8  - UNUSED
-        // PA9  - UNUSED (ST_LINK_TX)
-        // PA10 - UNUSED (ST_LINK_RX)
-        // PA11 - UNUSED
-        // PA12 - UNUSED
-        // PA13 - UNUSED (ST_LINK_JTMS_SWDIO)
-        // PA14 - UNUSED (ST_LINK_JTCK_SWCLK)
-        // PA15 - UNUSED
+    /*******************************************************************************
+     * GPIOA
+     *******************************************************************************/
 
-        // pin             14  12  10  08  06  04  02  00
-        GPIOA->MODER = 0b10101011111111111111111111111111;
-        // pin           15  13  11  09  07  05  03  01
-    }
+    GPIOA->MODER = GPIO_MODE_00(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_01(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_02(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_03(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_04(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_05(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_06(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_07(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_08(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_09(GPIO_MODE_ANALOG) |    // UNUSED (ST_LINK_TX)
+                   GPIO_MODE_10(GPIO_MODE_ANALOG) |    // UNUSED (ST_LINK_RX)
+                   GPIO_MODE_11(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_12(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_13(GPIO_MODE_ALTERNATE) | // UNUSED (ST_LINK_JTMS_SWDIO)
+                   GPIO_MODE_14(GPIO_MODE_ALTERNATE) | // UNUSED (ST_LINK_JTCK_SWCLK)
+                   GPIO_MODE_15(GPIO_MODE_ALTERNATE);  // UNUSED (ST_LINK_JTDI)
 
-    {
-        // PB0  - ADC
-        // PB1  - ADC
-        // PB2  - ADC
-        // PB3  - UNUSED (ST_LINK_JTDO_TRACESWO)
-        // PB4  - UNUSED (SYS_JTRST)
-        // PB5  - UNUSED
-        // PB6  - UNUSED
-        // PB7  - UNUSED
-        // PB8  - UNUSED
-        // PB9  - UNUSED
-        // PB10 - UNUSED
-        // PB11 - UNUSED
-        // PB12 - ADC
-        // PB13 - ADC
-        // PB14 - ADC
-        // PB15 - ADC
+    /*******************************************************************************
+     * GPIOB
+     *******************************************************************************/
 
-        // pin             14  12  10  08  06  04  02  00
-        GPIOB->MODER = 0b11111111111111111111111010111111;
-        // pin           15  13  11  09  07  05  03  01
-    }
+    GPIOB->MODER = GPIO_MODE_00(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_01(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_02(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_03(GPIO_MODE_ALTERNATE) | // UNUSED (ST_LINK_JTDO_TRACESWO)
+                   GPIO_MODE_04(GPIO_MODE_ALTERNATE) | // UNUSED (SYS_JTRST)
+                   GPIO_MODE_05(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_06(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_07(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_08(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_09(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_10(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_11(GPIO_MODE_ANALOG) |    // UNUSED
+                   GPIO_MODE_12(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_13(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_14(GPIO_MODE_ANALOG) |    // ADC
+                   GPIO_MODE_15(GPIO_MODE_ANALOG);     // ADC
 
-    {
-        // PC0  - ADC
-        // PC1  - ADC
-        // PC2  - ADC
-        // PC3  - ADC
-        // PC4  - ADC
-        // PC5  - ADC
-        // PC6  - UNUSED
-        // PC7  - UNUSED
-        // PC8  - UNUSED
-        // PC9  - UNUSED
-        // PC10 - UNUSED
-        // PC11 - UNUSED
-        // PC12 - UNUSED
-        // PC13 - UNUSED
-        // PC14 - UNUSED (RCC_OSC32_IN)
-        // PC15 - UNUSED (RCC_OSC32_OUT)
+    /*******************************************************************************
+     * GPIOC
+     *******************************************************************************/
 
-        // pin             14  12  10  08  06  04  02  00
-        GPIOC->MODER = 0b00001111111111111111111111111111;
-        // pin           15  13  11  09  07  05  03  01
-    }
+    GPIOC->MODER = GPIO_MODE_00(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_01(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_02(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_03(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_04(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_05(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_06(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_07(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_08(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_09(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_10(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_11(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_12(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_13(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_14(GPIO_MODE_INPUT)  | // UNUSED (RCC_OSC32_IN)
+                   GPIO_MODE_15(GPIO_MODE_INPUT);   // UNUSED (RCC_OSC32_OUT)
 
-    {
-        // PD0  - SPI2_NSS
-        // PD1  - SPI2_SCK
-        // PD2  - UNUSED
-        // PD3  - SPI2_MISO
-        // PD4  - SPI2_MOSI
-        // PD5  - UNUSED
-        // PD6  - UNUSED
-        // PD7  - UNUSED
-        // PD8  - UNUSED
-        // PD9  - UNUSED
-        // PD10 - UNUSED
-        // PD11 - UNUSED
-        // PD12 - UNUSED
-        // PD13 - UNUSED
-        // PD14 - UNUSED
-        // PD15 - UNUSED
+    /*******************************************************************************
+     * GPIOD
+     *******************************************************************************/
 
-        //
-        // SPI2 pins
-        //
-        // mode               -   10 (alternate)
-        // port pull up/down  -   00 (no)
-        // output speed       -   10 (high <= 10 MHz)
-        // output type        -    0 (push-pull)
-        // alternate function - 0101 (AF5)
+    GPIOD->MODER = GPIO_MODE_00(GPIO_MODE_ALTERNATE) | // SPI2_NSS
+                   GPIO_MODE_01(GPIO_MODE_ALTERNATE) | // SPI2_SCK
+                   GPIO_MODE_02(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_03(GPIO_MODE_ALTERNATE) | // SPI2_MISO
+                   GPIO_MODE_04(GPIO_MODE_ALTERNATE) | // SPI2_MOSI
+                   GPIO_MODE_05(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_06(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_07(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_08(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_09(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_10(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_11(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_12(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_13(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_14(GPIO_MODE_ANALOG)    | // UNUSED
+                   GPIO_MODE_15(GPIO_MODE_ANALOG);     // UNUSED
 
-        // pin             14  12  10  08  06  04  02  00
-        GPIOD->MODER = 0b11111111111111111111111010111010;
-        // pin           15  13  11  09  07  05  03  01
+    GPIOD->OSPEEDR = GPIO_OSPEED_00(GPIO_OSPEED_HIGH_SPEED) | // SPI2_NSS
+                     GPIO_OSPEED_01(GPIO_OSPEED_HIGH_SPEED) | // SPI2_SCK
+                     GPIO_OSPEED_02(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_03(GPIO_OSPEED_HIGH_SPEED) | // SPI2_MISO
+                     GPIO_OSPEED_04(GPIO_OSPEED_HIGH_SPEED) | // SPI2_MOSI
+                     GPIO_OSPEED_05(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_06(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_07(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_08(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_09(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_10(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_11(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_12(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_13(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_14(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
+                     GPIO_OSPEED_15(GPIO_OSPEED_LOW_SPEED);   // UNUSED
 
-        // pin               14  12  10  08  06  04  02  00
-        GPIOD->OSPEEDR = 0b00000000000000000000001010001010;
-        // pin             15  13  11  09  07  05  03  01
+    GPIOD->AFR[0] = GPIO_AF_00(GPIO_AF05) | // SPI2_NSS
+                    GPIO_AF_01(GPIO_AF05) | // SPI2_SCK
+                    GPIO_AF_02(GPIO_AF00) | // UNUSED
+                    GPIO_AF_03(GPIO_AF05) | // SPI2_MISO
+                    GPIO_AF_04(GPIO_AF05) | // SPI2_MOSI
+                    GPIO_AF_05(GPIO_AF00) | // UNUSED
+                    GPIO_AF_06(GPIO_AF00) | // UNUSED
+                    GPIO_AF_07(GPIO_AF00);  // UNUSED
 
-        // pin                0006    0004    0002    0000
-        GPIOD->AFR[0] = 0b00000000000001010101000001010101;
-        // pin            0007    0005    0003    0001
-    }
+    /*******************************************************************************
+     * GPIOE
+     *******************************************************************************/
 
-    {
-        // PE0  - UNUSED
-        // PE1  - UNUSED
-        // PE2  - UNUSED
-        // PE3  - UNUSED
-        // PE4  - UNUSED
-        // PE5  - UNUSED
-        // PE6  - SYS_WKUP3
-        // PE7  - ADC
-        // PE8  - ADC
-        // PE9  - ADC
-        // PE10 - ADC
-        // PE11 - UNUSED
-        // PE12 - UNUSED
-        // PE13 - UNUSED
-        // PE14 - UNUSED
-        // PE15 - UNUSED
-        GPIOE->MODER = 0b11111111111111111111111111111111;
-    }
+    GPIOE->MODER = GPIO_MODE_00(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_01(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_02(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_03(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_04(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_05(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_06(GPIO_MODE_ANALOG) | // SYS_WKUP3
+                   GPIO_MODE_07(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_08(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_09(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_10(GPIO_MODE_ANALOG) | // ADC
+                   GPIO_MODE_11(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_12(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_13(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_14(GPIO_MODE_ANALOG) | // UNUSED
+                   GPIO_MODE_15(GPIO_MODE_ANALOG);  // UNUSED
 }

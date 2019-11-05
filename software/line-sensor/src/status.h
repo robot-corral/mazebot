@@ -1,9 +1,15 @@
 #pragma once
 
+#include "line_sensor.h"
+
 #include <stdint.h>
 
-uint16_t getSensorStatus();
+lineSensorStatus_t getSensorStatus();
 
-uint16_t setSensorStatusFlags(uint16_t flags);
+lineSensorDetailedStatus_t getDetailedSensorStatus();
 
-uint16_t resetSensorStatusFlags(uint16_t flags);
+lineSensorDetailedStatus_t getCumulitiveDetailedSensorStatus();
+
+lineSensorDetailedStatus_t setSensorStatusFlags(lineSensorDetailedStatus_t flags);
+
+lineSensorDetailedStatus_t resetSensorStatusFlags(lineSensorDetailedStatus_t flags);

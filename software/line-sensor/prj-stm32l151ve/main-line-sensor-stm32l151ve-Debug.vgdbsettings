@@ -17,7 +17,11 @@
       </Version>
     </ToolchainID>
     <ProjectFile>main-line-sensor-stm32l151ve.vcxproj</ProjectFile>
-    <ParallelJobCount>0</ParallelJobCount>
+    <RemoteBuildEnvironment>
+      <Records />
+      <EnvironmentSetupFiles />
+    </RemoteBuildEnvironment>
+    <ParallelJobCount>1</ParallelJobCount>
     <SuppressDirectoryChangeMessages>true</SuppressDirectoryChangeMessages>
   </Build>
   <CustomBuild>
@@ -88,6 +92,8 @@
     </AdditionalGDBSettings>
     <DebugMethod>
       <ID>com.sysprogs.arm.openocd</ID>
+      <InterfaceID>stlink-v3</InterfaceID>
+      <InterfaceSerialNumber>004400313137510839383538</InterfaceSerialNumber>
       <Configuration xsi:type="com.visualgdb.edp.openocd.settings">
         <CommandLine>-f interface/stlink.cfg -f target/stm32l1.cfg -c init -c "reset init"</CommandLine>
         <ExtraParameters>
@@ -107,7 +113,7 @@
         <ProgramFLASHUsingExternalTool>false</ProgramFLASHUsingExternalTool>
         <PreferredGDBPort>0</PreferredGDBPort>
         <PreferredTelnetPort>0</PreferredTelnetPort>
-        <AlwaysPassSerialNumber>false</AlwaysPassSerialNumber>
+        <AlwaysPassSerialNumber>true</AlwaysPassSerialNumber>
       </Configuration>
     </DebugMethod>
     <AutoDetectRTOS>true</AutoDetectRTOS>

@@ -45,6 +45,8 @@ void initializeSpi2Dma()
     NVIC_SetPriority(DMA1_Channel5_IRQn, INTERRUPT_PRIORITY_SPI2_TRANSMIT);
     NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
+    // RX
+
     LL_DMA_ConfigTransfer(DMA1,
                           LL_DMA_CHANNEL_4,
                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY |
@@ -52,8 +54,10 @@ void initializeSpi2Dma()
                           LL_DMA_MODE_NORMAL                |
                           LL_DMA_PERIPH_NOINCREMENT         |
                           LL_DMA_MEMORY_INCREMENT           |
-                          LL_DMA_PDATAALIGN_BYTE            |
-                          LL_DMA_MDATAALIGN_BYTE);
+                          LL_DMA_PDATAALIGN_HALFWORD        |
+                          LL_DMA_MDATAALIGN_HALFWORD);
+
+    // TX
 
     LL_DMA_ConfigTransfer(DMA1,
                           LL_DMA_CHANNEL_5,
@@ -62,8 +66,8 @@ void initializeSpi2Dma()
                           LL_DMA_MODE_NORMAL                |
                           LL_DMA_PERIPH_NOINCREMENT         |
                           LL_DMA_MEMORY_INCREMENT           |
-                          LL_DMA_PDATAALIGN_BYTE            |
-                          LL_DMA_MDATAALIGN_BYTE);
+                          LL_DMA_PDATAALIGN_HALFWORD        |
+                          LL_DMA_MDATAALIGN_HALFWORD);
 
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_4);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_4);

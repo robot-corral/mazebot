@@ -19,8 +19,13 @@ static void configureBankA();
 static void configureBankB();
 static bool processAdcData();
 
+static void collectCalibrationData();
+static bool collectSensorValues();
+
 void initializeAdc()
 {
+    g_adcState = ADC_S_IDLE;
+
     // ADC clock is by default with prescaler DIV1
 
     ADC1->CR1 = ADC_CR1_SCAN;
@@ -82,8 +87,6 @@ void initializeAdc()
     COMP->CSR = COMP_CSR_FCH3 | COMP_CSR_FCH8;
 
     LL_ADC_Enable(ADC1);
-
-    consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
 }
 
 void configureBankA()
@@ -134,7 +137,7 @@ void DMA1_Channel1_IRQHandler()
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
         LL_DMA_ClearFlag_TE1(DMA1);
-        setSensorStatusFlags(LSS_ERR_FLAG_ADC_DMA_FAILURE);
+        setSensorStatusFlags(LSDS_ERR_FLAG_ADC_DMA_FAILURE);
         startQueryingAdc();
     }
     else if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
@@ -159,14 +162,14 @@ void DMA1_Channel1_IRQHandler()
         {
             if (processAdcData())
             {
-                resetSensorStatusFlags(LSS_ERR_FLAG_ADC_ALL);
+                resetSensorStatusFlags(LSDS_ERR_FLAG_ADC_ALL);
                 startQueryingAdc();
                 resetWatchdog();
             }
             else
             {
-                setSensorStatusFlags(LSS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
-                consumerProducerBufferResetInterruptSafe(&g_txDataBufferIndexes);
+                setSensorStatusFlags(LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
+                consumerProducerBufferResetInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes);
                 startQueryingAdc();
             }
         }
@@ -175,46 +178,40 @@ void DMA1_Channel1_IRQHandler()
 
 static bool processAdcData()
 {
-    #define ADC_BUFFER_1_START_IDX 1
+    switch (g_adcState)
+    {
+        case ADC_S_CALIBRATING: collectCalibrationData(); return true;
+        case ADC_S_SENSING    : return collectSensorValues();
+        default               : return true;
+    }
+}
 
-    #define ADC_BUFFER_2_START_IDX    1
-    #define ADC_BUFFER_2_SENSOR_INDEX (NUMBER_OF_SENSORS - 1)
+void collectCalibrationData()
+{
+    // TODO add calibration
+}
 
-    const uint8_t producerBufferIndex = consumerProducerBufferGetProducerIndexInterruptSafe(&g_txDataBufferIndexes);
+bool collectSensorValues()
+{
+    const uint8_t producerBufferIndex = consumerProducerBufferGetProducerIndexInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes);
 
     if (producerBufferIndex == DATA_BUFFER_LENGTH)
     {
         return false;
     }
 
-    volatile lineSensorValuesData_t* const sensorData = &g_txSendSensorDataBuffers[producerBufferIndex].sensorData;
+    volatile lineSensorValue_t* sensorData = g_lineSensorValuesBuffers[producerBufferIndex].sensorValues;
 
-    if (g_isCalibrated)
+    for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
     {
-        for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
-        {
-            const uint16_t clampedValue = clampU16(g_adcBuffer1[i], g_calibrationData.calibrationData.minSensorUnitValues[i], g_calibrationData.calibrationData.maxSensorUnitValues[i]);
-
-            sensorData->sensorUnitValues[i] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[i]);
-        }
-
-        const uint16_t clampedValue = clampU16(g_adcBuffer2[ADC_BUFFER_2_START_IDX],
-                                               g_calibrationData.calibrationData.minSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX],
-                                               g_calibrationData.calibrationData.maxSensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX]);
-
-        sensorData->sensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX] = convertU16ValueToUQ1_15(clampedValue, g_calibrationDataMaxMinusMin[ADC_BUFFER_2_SENSOR_INDEX]);
-    }
-    else
-    {
-        for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
-        {
-            sensorData->sensorUnitValues[i] = g_adcBuffer1[i];
-        }
-
-        sensorData->sensorUnitValues[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
+        sensorData[i] = g_adcBuffer1[i];
     }
 
-    g_txSendSensorDataBuffers[producerBufferIndex].header.status = LSS_OK_FLAG_NEW_DATA_AVAILABLE;
+    sensorData[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
 
-    return consumerProducerBufferSetLastReadIndexInterruptSafe(&g_txDataBufferIndexes, producerBufferIndex);
+    g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSDS_OK_FLAG_NEW_DATA_AVAILABLE;
+
+    // TODO add CRC
+
+    return consumerProducerBufferSetLastReadIndexInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
 }

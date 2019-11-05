@@ -2,17 +2,40 @@
 
 #include "global_data.h"
 
-uint16_t getSensorStatus()
+#include <stdatomic.h>
+
+lineSensorStatus_t getSensorStatus()
 {
-    return 0; // TODO
+    lineSensorStatus_t result = LSS_OK;
+    lineSensorDetailedStatus_t detailedStatus = atomic_load(&g_statusDetailedInternal);
+    if (detailedStatus & LSDS_ERR_FLAG_ALL)
+    {
+        result |= LSS_ERROR;
+    }
+    if (detailedStatus & LSDS_OK_FLAG_NEW_DATA_AVAILABLE)
+    {
+        result |= LSS_OK_FLAG_NEW_DATA_AVAILABLE;
+    }
+    return result;
 }
 
-uint16_t setSensorStatusFlags(uint16_t flags)
+lineSensorDetailedStatus_t getDetailedSensorStatus()
 {
-    return 0; // TODO
+    return atomic_load(&g_statusDetailedInternal);
 }
 
-uint16_t resetSensorStatusFlags(uint16_t flags)
+lineSensorDetailedStatus_t getCumulitiveDetailedSensorStatus()
 {
-    return 0; // TODO
+    return atomic_load(&g_statusCumulativeDetailedInternal);
+}
+
+lineSensorDetailedStatus_t setSensorStatusFlags(lineSensorDetailedStatus_t flags)
+{
+    atomic_fetch_or(&g_statusCumulativeDetailedInternal, flags);
+    return atomic_fetch_or(&g_statusDetailedInternal, flags);
+}
+
+lineSensorDetailedStatus_t resetSensorStatusFlags(lineSensorDetailedStatus_t flags)
+{
+    return atomic_fetch_and(&g_statusDetailedInternal, ~flags);
 }
