@@ -283,16 +283,32 @@ void processCommand(lineSensorCommandCode_t command)
         case LSC_GET_CALIBRATION_STATUS     :
         case LSC_FINISH_CALIBRATION         :
         case LSC_GET_CALIBRATION_VALUES     :
-        case LSC_GET_DETAILED_SENSOR_STATUS :
         {
             // TODO
             break;
         }
+        case LSC_GET_DETAILED_SENSOR_STATUS :
+        {
+            const lineSensorDetailedStatus_t detailedStatus = getDetailedSensorStatus();
+            const lineSensorDetailedStatus_t cumulitiveDetailedStatus = getCumulitiveDetailedSensorStatus();
+            const lineSensorStatus_t status = getSensorStatusFromDetailedStatus(detailedStatus);
+            g_spiTxBuffer.getDetailedSensorStatus.respondingToCommandCode = LSC_GET_DETAILED_SENSOR_STATUS;
+            g_spiTxBuffer.getDetailedSensorStatus.currentStatus = status;
+            g_spiTxBuffer.getDetailedSensorStatus.currentDetailedStatus = detailedStatus;
+            g_spiTxBuffer.getDetailedSensorStatus.cumulativeDetailedStatusSinceLastReset = cumulitiveDetailedStatus;
+            LL_CRC_FeedData32(CRC, (status << 8) | LSC_GET_DETAILED_SENSOR_STATUS);
+            LL_CRC_FeedData32(CRC, detailedStatus);
+            LL_CRC_FeedData32(CRC, cumulitiveDetailedStatus);
+            g_spiTxBuffer.getDetailedSensorStatus.crc = LL_CRC_ReadData32(CRC);
+            txLength = sizeof(lineSensorResponseGetDetailedSensorStatus_t) / sizeof(uint16_t);
+            break;
+        }
         case LSC_RESET:
         {
+            const lineSensorStatus_t status = getSensorStatus();
             g_spiTxBuffer.reset.respondingToCommandCode = LSC_RESET;
-            g_spiTxBuffer.reset.currentStatus = getSensorStatus();
-            LL_CRC_FeedData32(CRC, (g_spiTxBuffer.reset.currentStatus << 8) | g_spiTxBuffer.reset.respondingToCommandCode);
+            g_spiTxBuffer.reset.currentStatus = status;
+            LL_CRC_FeedData32(CRC, status | LSC_RESET);
             g_spiTxBuffer.reset.crc = LL_CRC_ReadData32(CRC);
             txLength = sizeof(lineSensorResponseReset_t) / sizeof(uint16_t);
             break;

@@ -24,6 +24,7 @@ uint32_t g_lastSendTime = 0;
 static void sendCommand();
 
 static void createResetCommand(uint16_t* pRxLength, uint16_t* pTxLength);
+static void createGetDetailedSensorStatusCommand(uint16_t* pRxLength, uint16_t* pTxLength);
 
 void SystemClock_Config()
 {
@@ -343,7 +344,8 @@ void sendCommand()
     uint16_t rxLength = 0;
     uint16_t txLength = 0;
 
-    createResetCommand(&rxLength, &txLength);
+    // createResetCommand(&rxLength, &txLength);
+    createGetDetailedSensorStatusCommand(&rxLength, &txLength);
 
     // RX
 
@@ -380,4 +382,11 @@ void createResetCommand(uint16_t* pRxLength, uint16_t* pTxLength)
     g_txBuffer.reset.encodedCommandCode = encodeCommand(LSC_RESET);
     *pRxLength = sizeof(lineSensorResponseReset_t) / sizeof(uint16_t);
     *pTxLength = sizeof(lineSensorRequestReset_t) / sizeof(uint16_t);
+}
+
+void createGetDetailedSensorStatusCommand(uint16_t* pRxLength, uint16_t* pTxLength)
+{
+    g_txBuffer.reset.encodedCommandCode = encodeCommand(LSC_GET_DETAILED_SENSOR_STATUS);
+    *pRxLength = sizeof(lineSensorResponseGetDetailedSensorStatus_t) / sizeof(uint16_t);
+    *pTxLength = sizeof(lineSensorRequestGetDetailedSensorStatus_t) / sizeof(uint16_t);
 }

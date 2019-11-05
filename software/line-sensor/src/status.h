@@ -4,11 +4,16 @@
 
 #include <stdint.h>
 
-lineSensorStatus_t getSensorStatus();
-
 lineSensorDetailedStatus_t getDetailedSensorStatus();
 
 lineSensorDetailedStatus_t getCumulitiveDetailedSensorStatus();
+
+lineSensorStatus_t getSensorStatusFromDetailedStatus(lineSensorDetailedStatus_t detailedStatus);
+
+static lineSensorStatus_t getSensorStatus()
+{
+    return getSensorStatusFromDetailedStatus(getDetailedSensorStatus());
+}
 
 lineSensorDetailedStatus_t setSensorStatusFlags(lineSensorDetailedStatus_t flags);
 

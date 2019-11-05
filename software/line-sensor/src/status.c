@@ -4,10 +4,9 @@
 
 #include <stdatomic.h>
 
-lineSensorStatus_t getSensorStatus()
+lineSensorStatus_t getSensorStatusFromDetailedStatus(lineSensorDetailedStatus_t detailedStatus)
 {
     lineSensorStatus_t result = LSS_OK;
-    lineSensorDetailedStatus_t detailedStatus = atomic_load(&g_statusDetailedInternal);
     if (detailedStatus & LSDS_ERR_FLAG_ALL)
     {
         result |= LSS_ERROR;
