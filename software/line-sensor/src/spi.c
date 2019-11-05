@@ -55,22 +55,14 @@ void initializeSpi()
     NVIC_SetPriority(SPI2_IRQn, INTERRUPT_PRIORITY_SPI2_INTERRUPT);
     NVIC_EnableIRQ(SPI2_IRQn);
 
-    LL_SPI_SetBaudRatePrescaler(SPI2, LL_SPI_BAUDRATEPRESCALER_DIV128);
-    LL_SPI_SetTransferDirection(SPI2, LL_SPI_FULL_DUPLEX);
+    SPI2->CR1 = SPI_CR1_DFF      |
+                SPI_CR1_LSBFIRST |
+                SPI_CR1_CPOL     |
+                SPI_CR1_CPHA;
 
-    LL_SPI_SetClockPhase(SPI2, LL_SPI_PHASE_2EDGE);
-    LL_SPI_SetClockPolarity(SPI2, LL_SPI_POLARITY_HIGH);
-
-    LL_SPI_SetDataWidth(SPI2, LL_SPI_DATAWIDTH_16BIT);
-    LL_SPI_SetNSSMode(SPI2, LL_SPI_NSS_HARD_OUTPUT);
-    LL_SPI_SetMode(SPI2, LL_SPI_MODE_SLAVE);
-    LL_SPI_SetTransferBitOrder(SPI2, LL_SPI_LSB_FIRST);
-    LL_SPI_SetStandard(SPI2, LL_SPI_PROTOCOL_MOTOROLA);
-
-    LL_SPI_EnableIT_ERR(SPI2);
-
-    LL_SPI_EnableDMAReq_RX(SPI2);
-    LL_SPI_EnableDMAReq_TX(SPI2);
+    SPI2->CR2 = SPI_CR2_ERRIE   |
+                SPI_CR2_RXDMAEN |
+                SPI_CR2_TXDMAEN;
 }
 
 void resetSpiDma()
