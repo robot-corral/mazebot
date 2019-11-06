@@ -1,6 +1,7 @@
 #include "spi.h"
 
 #include "status.h"
+#include "watchdog.h"
 #include "global_data.h"
 #include "interrupt_priorities.h"
 
@@ -220,6 +221,7 @@ void processEndOfReceivingFillerAndTransmittingResponse()
 {
     if (g_spiReceivingFillerFinished && g_spiTransmittingResponseFinished)
     {
+        resetWatchdog(WS_SPI);
         switch (g_spiCurrentCommand)
         {
             case LSC_GET_SENSOR_VALUES:

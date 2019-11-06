@@ -58,30 +58,30 @@ void initializeAdc()
     // 48 improves ADC accuracy and on release this is enough for 10'000 scans per second
     // (one scan is reading all sensor values)
 
-    ADC1->SMPR1 = ADC_SMPR_RANK_1(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_2(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_3(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_4(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_5(LL_ADC_SAMPLINGTIME_48CYCLES);
-    ADC1->SMPR2 = ADC_SMPR_RANK_1(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_2(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_3(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_4(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_5(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_6(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_7(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_8(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_9(LL_ADC_SAMPLINGTIME_48CYCLES) |
+    ADC1->SMPR1 = ADC_SMPR_RANK_01(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_02(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_03(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_04(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_05(LL_ADC_SAMPLINGTIME_48CYCLES);
+    ADC1->SMPR2 = ADC_SMPR_RANK_01(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_02(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_03(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_04(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_05(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_06(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_07(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_08(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_09(LL_ADC_SAMPLINGTIME_48CYCLES) |
                   ADC_SMPR_RANK_10(LL_ADC_SAMPLINGTIME_48CYCLES);
-    ADC1->SMPR2 = ADC_SMPR_RANK_1(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_2(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_3(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_4(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_5(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_6(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_7(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_8(LL_ADC_SAMPLINGTIME_48CYCLES) |
-                  ADC_SMPR_RANK_9(LL_ADC_SAMPLINGTIME_48CYCLES) |
+    ADC1->SMPR2 = ADC_SMPR_RANK_01(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_02(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_03(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_04(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_05(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_06(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_07(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_08(LL_ADC_SAMPLINGTIME_48CYCLES) |
+                  ADC_SMPR_RANK_09(LL_ADC_SAMPLINGTIME_48CYCLES) |
                   ADC_SMPR_RANK_10(LL_ADC_SAMPLINGTIME_48CYCLES);
 
     COMP->CSR = COMP_CSR_FCH3 | COMP_CSR_FCH8;
@@ -164,14 +164,12 @@ void DMA1_Channel1_IRQHandler()
             {
                 resetSensorStatusFlags(LSDS_ERR_FLAG_ADC_ALL);
                 startQueryingAdc();
-                resetWatchdog();
+                resetWatchdog(WS_ADC);
             }
             else
             {
                 setSensorStatusFlags(LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
-                // TODO
-                // TODO this can lead to invalid data being transmitted
-                // TODO
+                // even if it breaks data which is being sent we should reset to ground zero so we can send good data next time
                 consumerProducerBuffer_reset(&g_lineSensorValuesBuffersProducerConsumerIndexes);
                 startQueryingAdc();
             }

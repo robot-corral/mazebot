@@ -4,6 +4,8 @@
 
 #include "global_data.h"
 
+#include "watchdog.h"
+
 /*******************************************************************************
  * ADC data
  *******************************************************************************/
@@ -48,8 +50,15 @@ volatile lineSensorResponse_t g_spiTxBuffer;
 volatile lineSensorDetailedStatus_t g_statusDetailedInternal;
 volatile lineSensorDetailedStatus_t g_statusCumulativeDetailedInternal;
 
+/*******************************************************************************
+ * Watchdog
+ *******************************************************************************/
+
+volatile uint8_t g_watchdogCalledBy;
+
 void initializeGlobalData()
 {
+    g_watchdogCalledBy = WS_NONE;
     g_statusDetailedInternal = LSDS_OK;
     g_statusCumulativeDetailedInternal = LSDS_OK;
     consumerProducerBuffer_reset(&g_lineSensorValuesBuffersProducerConsumerIndexes);

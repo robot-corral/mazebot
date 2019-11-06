@@ -26,7 +26,11 @@ typedef void (*task_t)(void* pTaskParameter);
 
 extern result_t scheduleTask(task_t task, taskPriority_t priority, void* pTaskParameter);
 
-extern result_t scheduleSuspendedTask(task_t task, taskPriority_t priority, uint32_t suspendedDuration, void* pTaskParameter);
+extern result_t scheduleTaskWithStartTimeRestriction(task_t task, taskPriority_t priority, uint32_t earliestStartTime, void* pTaskParameter);
+
+extern result_t scheduleTaskWithDeadline(task_t task, taskPriority_t priority, uint32_t deadline, void* pTaskParameter);
+
+extern result_t scheduleTaskWithStartTimeRestrictionAndDeadline(task_t task, taskPriority_t priority, uint32_t earliestStartTime, uint32_t deadline, void* pTaskParameter);
 
 /*
  * suspend calling tasks for specified duration.

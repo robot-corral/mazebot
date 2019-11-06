@@ -31,7 +31,8 @@ void initializeAndStartWatchdog()
 //    while (LL_RCC_LSE_IsReady() != 1) ;
 //
 //    LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSE);
-#else    LL_RCC_LSI_Enable();
+#else
+    LL_RCC_LSI_Enable();
     while (LL_RCC_LSI_IsReady() != 1) ;
 
     LL_RCC_SetRTCClockSource(LL_RCC_RTC_CLKSOURCE_LSI);
@@ -39,8 +40,7 @@ void initializeAndStartWatchdog()
 
     LL_IWDG_Enable(IWDG);
     LL_IWDG_EnableWriteAccess(IWDG);
-    LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_4);
-    // reset if resetWatchdog wasn't called in ((6 * 4) / 37000) = 0.648649 milliseconds
+    LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_32);
     LL_IWDG_SetReloadCounter(IWDG, 6);
 
     while (LL_IWDG_IsReady(IWDG) != 1) ;
@@ -48,7 +48,12 @@ void initializeAndStartWatchdog()
     LL_IWDG_ReloadCounter(IWDG);
 }
 
-void resetWatchdog()
+void resetWatchdog(watchdogSource_t source)
 {
-    LL_IWDG_ReloadCounter(IWDG);
+    uint8_t newCallers = atomic_fetch_or(&g_watchdogCalledBy, source);
+    if ((newCallers & WS_EVERYBODY_REPORTED_IN) == WS_EVERYBODY_REPORTED_IN)
+    {
+        LL_IWDG_ReloadCounter(IWDG);
+        atomic_store(&g_watchdogCalledBy, 0);
+    }
 }
