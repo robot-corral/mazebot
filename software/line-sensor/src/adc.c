@@ -212,8 +212,5 @@ bool collectSensorValues()
 
     g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSS_OK_FLAG_SENSOR_VALUES_AVAILABLE | LSS_OK_FLAG_NEW_SENSOR_VALUES_AVAILABLE;
 
-    // TODO add CRC
-    // TODO can CRC function in case of interrupt
-
     return consumerProducerBuffer_setLastReadIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
 }

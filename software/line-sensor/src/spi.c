@@ -84,8 +84,6 @@ void resetSpiDma()
     }
     while (LL_SPI_IsActiveFlag_BSY(SPI2) != 0) ;
 
-    LL_CRC_ResetCRCCalculationUnit(CRC);
-
     LL_SPI_EnableIT_RXNE(SPI2);
 }
 
@@ -284,6 +282,8 @@ void processCommand(lineSensorCommandCode_t command)
     volatile void* pData = 0;
     uint32_t txLength = 0;
 
+    LL_CRC_ResetCRCCalculationUnit(CRC);
+
     switch (command)
     {
         case LSC_GET_SENSOR_VALUES:
@@ -297,7 +297,10 @@ void processCommand(lineSensorCommandCode_t command)
                 g_lineSensorValuesBuffers[idx].currentStatus |= status;
                 // make sure to calculate crc using or'ed status
                 LL_CRC_FeedData32(CRC, (g_lineSensorValuesBuffers[idx].currentStatus << 8) | LSC_GET_SENSOR_VALUES);
-                LL_CRC_FeedData32(CRC, g_lineSensorValuesBuffers[idx].crc);
+                for (sensorIndex_t sensorIdx = 0; sensorIdx < NUMBER_OF_SENSORS; ++sensorIdx)
+                {
+                    LL_CRC_FeedData32(CRC, g_lineSensorValuesBuffers[idx].sensorValues[sensorIdx]);
+                }
                 g_lineSensorValuesBuffers[idx].crc = LL_CRC_ReadData32(CRC);
                 pData = &g_lineSensorValuesBuffers[idx];
             }
@@ -335,7 +338,11 @@ void processCommand(lineSensorCommandCode_t command)
                 g_lineSensorCalibrationValuesBuffers[idx].respondingToCommandCode = LSC_GET_CALIBRATION_VALUES;
                 g_lineSensorCalibrationValuesBuffers[idx].currentStatus = status;
                 LL_CRC_FeedData32(CRC, (status << 8) | LSC_GET_CALIBRATION_VALUES);
-                LL_CRC_FeedData32(CRC, g_lineSensorCalibrationValuesBuffers[idx].crc);
+                for (sensorIndex_t sensorIdx = 0; sensorIdx < NUMBER_OF_SENSORS; ++sensorIdx)
+                {
+                    LL_CRC_FeedData32(CRC, (g_lineSensorCalibrationValuesBuffers[idx].minSensorCalibrationValues[sensorIdx] << 16) |
+                                            g_lineSensorCalibrationValuesBuffers[idx].maxSensorCalibrationValues[sensorIdx]);
+                }
                 g_lineSensorCalibrationValuesBuffers[idx].crc = LL_CRC_ReadData32(CRC);
                 pData = &g_lineSensorCalibrationValuesBuffers[idx];
             }

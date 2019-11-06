@@ -245,8 +245,13 @@ void checkIfSpiCommunicationHasFinished()
 {
     if (!g_isReceiving && !g_isTransmitting)
     {
-        LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
-        LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_2);
+        while (LL_SPI_GetTxFIFOLevel(SPI3) != LL_SPI_TX_FIFO_EMPTY) ;
+        while (LL_SPI_IsActiveFlag_BSY(SPI3) != 0) ;
+        while (LL_SPI_GetRxFIFOLevel(SPI3) != LL_SPI_RX_FIFO_EMPTY)
+        {
+            LL_SPI_ReceiveData16(SPI3);
+        }
+
         LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
     }
 }
@@ -337,13 +342,6 @@ void sendCommand()
 
     LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_1);
     LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_2);
-
-    while (LL_SPI_GetTxFIFOLevel(SPI3) != LL_SPI_TX_FIFO_EMPTY) ;
-    while (LL_SPI_IsActiveFlag_BSY(SPI3) != 0) ;
-    while (LL_SPI_GetRxFIFOLevel(SPI3) != LL_SPI_RX_FIFO_EMPTY)
-    {
-        LL_SPI_ReceiveData16(SPI3);
-    }
 
     uint16_t rxLength = 0;
     uint16_t txLength = 0;
