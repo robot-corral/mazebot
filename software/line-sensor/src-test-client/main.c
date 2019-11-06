@@ -23,8 +23,12 @@ uint32_t g_lastSendTime = 0;
 
 static void sendCommand();
 
-static void createResetCommand(uint16_t* pRxLength, uint16_t* pTxLength);
+static void createGetSensorValuesCommand(uint16_t* pRxLength, uint16_t* pTxLength);
+static void createStartCalibrationCommand(uint16_t* pRxLength, uint16_t* pTxLength);
+static void createGetCalibrationValuesCommand(uint16_t* pRxLength, uint16_t* pTxLength);
+static void createFinishCalibrationCommand(uint16_t* pRxLength, uint16_t* pTxLength);
 static void createGetDetailedSensorStatusCommand(uint16_t* pRxLength, uint16_t* pTxLength);
+static void createResetCommand(uint16_t* pRxLength, uint16_t* pTxLength);
 
 void SystemClock_Config()
 {
@@ -344,8 +348,12 @@ void sendCommand()
     uint16_t rxLength = 0;
     uint16_t txLength = 0;
 
+    createGetSensorValuesCommand(&rxLength, &txLength);
+    // createStartCalibrationCommand(&rxLength, &txLength);
+    // createGetCalibrationValuesCommand(&rxLength, &txLength);
+    // createFinishCalibrationCommand(&rxLength, &txLength);
     // createResetCommand(&rxLength, &txLength);
-    createGetDetailedSensorStatusCommand(&rxLength, &txLength);
+    // createGetDetailedSensorStatusCommand(&rxLength, &txLength);
 
     // RX
 
@@ -377,16 +385,44 @@ void sendCommand()
     LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_2);
 }
 
+void createGetSensorValuesCommand(uint16_t* pRxLength, uint16_t* pTxLength)
+{
+    g_txBuffer.getSensorValues.encodedCommandCode = encodeCommand(LSC_GET_SENSOR_VALUES);
+    *pRxLength = sizeof(lineSensorResponseGetSensorValues_t) / sizeof(uint16_t);
+    *pTxLength = sizeof(lineSensorRequestGetSensorValues_t) / sizeof(uint16_t);
+}
+
+void createStartCalibrationCommand(uint16_t* pRxLength, uint16_t* pTxLength)
+{
+    g_txBuffer.startCalibration.encodedCommandCode = encodeCommand(LSC_START_CALIBRATION);
+    *pRxLength = sizeof(lineSensorResponseStartCalibration_t) / sizeof(uint16_t);
+    *pTxLength = sizeof(lineSensorRequestStartCalibration_t) / sizeof(uint16_t);
+}
+
+void createGetCalibrationValuesCommand(uint16_t* pRxLength, uint16_t* pTxLength)
+{
+    g_txBuffer.getCalibrationValues.encodedCommandCode = encodeCommand(LSC_GET_CALIBRATION_VALUES);
+    *pRxLength = sizeof(lineSensorResponseGetCalibrationValues_t) / sizeof(uint16_t);
+    *pTxLength = sizeof(lineSensorRequestGetCalibrationValues_t) / sizeof(uint16_t);
+}
+
+void createFinishCalibrationCommand(uint16_t* pRxLength, uint16_t* pTxLength)
+{
+    g_txBuffer.finishCalibration.encodedCommandCode = encodeCommand(LSC_FINISH_CALIBRATION);
+    *pRxLength = sizeof(lineSensorResponseFinishCalibration_t) / sizeof(uint16_t);
+    *pTxLength = sizeof(lineSensorRequestFinishCalibration_t) / sizeof(uint16_t);
+}
+
+void createGetDetailedSensorStatusCommand(uint16_t* pRxLength, uint16_t* pTxLength)
+{
+    g_txBuffer.getDetailedSensorStatus.encodedCommandCode = encodeCommand(LSC_GET_DETAILED_SENSOR_STATUS);
+    *pRxLength = sizeof(lineSensorResponseGetDetailedSensorStatus_t) / sizeof(uint16_t);
+    *pTxLength = sizeof(lineSensorRequestGetDetailedSensorStatus_t) / sizeof(uint16_t);
+}
+
 void createResetCommand(uint16_t* pRxLength, uint16_t* pTxLength)
 {
     g_txBuffer.reset.encodedCommandCode = encodeCommand(LSC_RESET);
     *pRxLength = sizeof(lineSensorResponseReset_t) / sizeof(uint16_t);
     *pTxLength = sizeof(lineSensorRequestReset_t) / sizeof(uint16_t);
-}
-
-void createGetDetailedSensorStatusCommand(uint16_t* pRxLength, uint16_t* pTxLength)
-{
-    g_txBuffer.reset.encodedCommandCode = encodeCommand(LSC_GET_DETAILED_SENSOR_STATUS);
-    *pRxLength = sizeof(lineSensorResponseGetDetailedSensorStatus_t) / sizeof(uint16_t);
-    *pTxLength = sizeof(lineSensorRequestGetDetailedSensorStatus_t) / sizeof(uint16_t);
 }

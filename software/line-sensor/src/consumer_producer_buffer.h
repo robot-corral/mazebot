@@ -12,18 +12,18 @@
 #define DATA_BUFFER_LAST_INDEX_COMPLEMENT_MASK     (~(DATA_BUFFER_INDEX_MASK))
 #define DATA_BUFFER_CONSUMER_INDEX_COMPLEMENT_MASK (~(DATA_BUFFER_INDEX_MASK << DATA_BUFFER_CONSUMER_INDEX_SHIFT))
 
-static void consumerProducerBufferResetInterruptSafe(volatile uint32_t* bufferIndexes)
+static void consumerProducerBuffer_reset(volatile uint32_t* bufferIndexes)
 {
     atomic_store(bufferIndexes, DATA_BUFFER_EMPTY_INDEXES);
 }
 
-static uint8_t consumerProducerBufferGetConsumerIndex(volatile uint32_t* bufferIndexes)
+static uint8_t consumerProducerBuffer_getConsumerIndex(volatile uint32_t* bufferIndexes)
 {
     const uint32_t oldDataBufferIndexes = atomic_load(bufferIndexes);
     return (oldDataBufferIndexes >> DATA_BUFFER_CONSUMER_INDEX_SHIFT) & DATA_BUFFER_INDEX_MASK;
 }
 
-static uint8_t consumerProducerBufferGetProducerIndexInterruptSafe(volatile uint32_t* bufferIndexes)
+static uint8_t consumerProducerBuffer_getProducerIndex(volatile uint32_t* bufferIndexes)
 {
     const uint32_t oldDataBufferIndexes = atomic_load(bufferIndexes);
 
@@ -41,7 +41,7 @@ static uint8_t consumerProducerBufferGetProducerIndexInterruptSafe(volatile uint
     return DATA_BUFFER_LENGTH;
 }
 
-static bool consumerProducerBufferSetLastReadIndexInterruptSafe(volatile uint32_t* bufferIndexes, uint8_t index)
+static bool consumerProducerBuffer_setLastReadIndex(volatile uint32_t* bufferIndexes, uint8_t index)
 {
     if (index > DATA_BUFFER_LENGTH)
     {
@@ -61,7 +61,7 @@ static bool consumerProducerBufferSetLastReadIndexInterruptSafe(volatile uint32_
     return true;
 }
 
-static uint8_t consumerProducerBufferMoveConsumerIndexToLastReadIndex(volatile uint32_t* bufferIndexes)
+static uint8_t consumerProducerBuffer_moveConsumerIndexToLastReadIndex(volatile uint32_t* bufferIndexes)
 {
     const uint32_t oldDataBufferIndexes = atomic_load(bufferIndexes);
     const uint8_t lastReadIndex = oldDataBufferIndexes & DATA_BUFFER_INDEX_MASK;

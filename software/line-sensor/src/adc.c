@@ -24,7 +24,7 @@ static bool collectSensorValues();
 
 void initializeAdc()
 {
-    g_adcState = ADC_S_IDLE;
+    g_adcState = ADC_S_SENSING;
 
     // ADC clock is by default with prescaler DIV1
 
@@ -169,7 +169,10 @@ void DMA1_Channel1_IRQHandler()
             else
             {
                 setSensorStatusFlags(LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
-                consumerProducerBufferResetInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes);
+                // TODO
+                // TODO this can lead to invalid data being transmitted
+                // TODO
+                consumerProducerBuffer_reset(&g_lineSensorValuesBuffersProducerConsumerIndexes);
                 startQueryingAdc();
             }
         }
@@ -193,7 +196,7 @@ void collectCalibrationData()
 
 bool collectSensorValues()
 {
-    const uint8_t producerBufferIndex = consumerProducerBufferGetProducerIndexInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes);
+    const uint8_t producerBufferIndex = consumerProducerBuffer_getProducerIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes);
 
     if (producerBufferIndex == DATA_BUFFER_LENGTH)
     {
@@ -209,9 +212,10 @@ bool collectSensorValues()
 
     sensorData[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
 
-    g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSDS_OK_FLAG_NEW_DATA_AVAILABLE;
+    g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSS_OK_FLAG_SENSOR_VALUES_AVAILABLE | LSS_OK_FLAG_NEW_SENSOR_VALUES_AVAILABLE;
 
     // TODO add CRC
+    // TODO can CRC function in case of interrupt
 
-    return consumerProducerBufferSetLastReadIndexInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
+    return consumerProducerBuffer_setLastReadIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
 }

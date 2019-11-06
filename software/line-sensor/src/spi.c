@@ -29,7 +29,7 @@ lineSensorDetailedStatus_t decodeCommand(lineSensorEncodedCommandCode_t encodedC
     if (command1 < LSC_FIRST_COMMAND || command1 > LSC_LAST_COMMAND)
     {
         *pResultCmd = LSC_NONE;
-        return LSDS_ERR_FLAG_UNKNOWN_COMMAND_REQUESTED;
+        return LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED;
     }
     else
     {
@@ -224,17 +224,23 @@ void processEndOfReceivingFillerAndTransmittingResponse()
         {
             case LSC_GET_SENSOR_VALUES:
             {
-                // TODO need to clear LSDS_OK_FLAG_NEW_DATA_AVAILABLE flag
+                // reset new data available in case master queries too fast
+                // or there is a problem with ADC
+                const uint8_t idx = consumerProducerBuffer_getConsumerIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes);
+                if (idx < DATA_BUFFER_LENGTH)
+                {
+                    g_lineSensorValuesBuffers[idx].currentStatus &= ~LSS_OK_FLAG_NEW_SENSOR_VALUES_AVAILABLE;
+                }
                 break;
             }
             case LSC_RESET:
             {
-                // TODO
-                // NVIC_SystemReset();
+                NVIC_SystemReset();
                 return;
             }
         }
         g_spiState = SPI_S_IDLE;
+        resetSensorStatusFlags(LSDS_ERR_FLAG_SPI_ALL);
     }
 }
 
@@ -243,10 +249,9 @@ uint32_t getFillerReceiveSizeByCommand(lineSensorCommandCode_t command)
     switch (command)
     {
         case LSC_GET_SENSOR_VALUES          : return sizeof(lineSensorResponseGetSensorValues_t) / sizeof(uint16_t);
-        case LSC_START_PHYSICAL_CALIBRATION : return sizeof(lineSensorResponseStartPhysicalCalibration_t) / sizeof(uint16_t);
-        case LSC_GET_CALIBRATION_STATUS     : return sizeof(lineSensorResponseGetCalibrationStatus_t) / sizeof(uint16_t);
-        case LSC_FINISH_CALIBRATION         : return sizeof(lineSensorResponseFinishCalibration_t) / sizeof(uint16_t);
+        case LSC_START_CALIBRATION          : return sizeof(lineSensorResponseStartCalibration_t) / sizeof(uint16_t);
         case LSC_GET_CALIBRATION_VALUES     : return sizeof(lineSensorResponseGetCalibrationValues_t) / sizeof(uint16_t);
+        case LSC_FINISH_CALIBRATION         : return sizeof(lineSensorResponseFinishCalibration_t) / sizeof(uint16_t);
         case LSC_GET_DETAILED_SENSOR_STATUS : return sizeof(lineSensorResponseGetDetailedSensorStatus_t) / sizeof(uint16_t);
         case LSC_RESET                      : return sizeof(lineSensorResponseReset_t) / sizeof(uint16_t);
         default                             : return 0;
@@ -274,20 +279,89 @@ void processCommand(lineSensorCommandCode_t command)
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_4, spiCurrentCommandFillerReceiveSize);
     LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_4);
 
+    volatile void* pData = 0;
     uint32_t txLength = 0;
 
     switch (command)
     {
-        case LSC_GET_SENSOR_VALUES          :
-        case LSC_START_PHYSICAL_CALIBRATION :
-        case LSC_GET_CALIBRATION_STATUS     :
-        case LSC_FINISH_CALIBRATION         :
-        case LSC_GET_CALIBRATION_VALUES     :
+        case LSC_GET_SENSOR_VALUES:
         {
-            // TODO
+            const uint8_t idx = consumerProducerBuffer_moveConsumerIndexToLastReadIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes);
+            const lineSensorStatus_t status = getSensorStatus();
+            if (idx < DATA_BUFFER_LENGTH)
+            {
+                g_lineSensorValuesBuffers[idx].respondingToCommandCode = LSC_GET_SENSOR_VALUES;
+                // or status as we don't want to lose LSS_OK_FLAG_NEW_DATA_AVAILABLE flag
+                g_lineSensorValuesBuffers[idx].currentStatus |= status;
+                // make sure to calculate crc using or'ed status
+                LL_CRC_FeedData32(CRC, (g_lineSensorValuesBuffers[idx].currentStatus << 8) | LSC_GET_SENSOR_VALUES);
+                LL_CRC_FeedData32(CRC, g_lineSensorValuesBuffers[idx].crc);
+                g_lineSensorValuesBuffers[idx].crc = LL_CRC_ReadData32(CRC);
+                pData = &g_lineSensorValuesBuffers[idx];
+            }
+            else
+            {
+                // no data was read
+                g_spiTxBuffer.getSensorValues.respondingToCommandCode = LSC_GET_SENSOR_VALUES;
+                // no new data is available
+                g_spiTxBuffer.getSensorValues.currentStatus = status;
+                LL_CRC_FeedData32(CRC, (status << 8) | LSC_GET_SENSOR_VALUES);
+                g_spiTxBuffer.getSensorValues.crc = LL_CRC_ReadData32(CRC);
+                pData = &g_spiTxBuffer;
+            }
+            txLength = sizeof(lineSensorResponseGetCalibrationValues_t) / sizeof(uint16_t);
             break;
         }
-        case LSC_GET_DETAILED_SENSOR_STATUS :
+        case LSC_START_CALIBRATION:
+        {
+            g_adcState = ADC_S_CALIBRATION_PENDING;
+            const lineSensorStatus_t status = getSensorStatus();
+            g_spiTxBuffer.startCalibration.respondingToCommandCode = LSC_START_CALIBRATION;
+            g_spiTxBuffer.startCalibration.currentStatus = status;
+            LL_CRC_FeedData32(CRC, (status << 8) | LSC_START_CALIBRATION);
+            g_spiTxBuffer.startCalibration.crc = LL_CRC_ReadData32(CRC);
+            txLength = sizeof(lineSensorResponseStartCalibration_t) / sizeof(uint16_t);
+            pData = &g_spiTxBuffer;
+            break;
+        }
+        case LSC_GET_CALIBRATION_VALUES:
+        {
+            const uint8_t idx = consumerProducerBuffer_moveConsumerIndexToLastReadIndex(&g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes);
+            const lineSensorStatus_t status = getSensorStatus();
+            if (idx < DATA_BUFFER_LENGTH)
+            {
+                g_lineSensorCalibrationValuesBuffers[idx].respondingToCommandCode = LSC_GET_CALIBRATION_VALUES;
+                g_lineSensorCalibrationValuesBuffers[idx].currentStatus = status;
+                LL_CRC_FeedData32(CRC, (status << 8) | LSC_GET_CALIBRATION_VALUES);
+                LL_CRC_FeedData32(CRC, g_lineSensorCalibrationValuesBuffers[idx].crc);
+                g_lineSensorCalibrationValuesBuffers[idx].crc = LL_CRC_ReadData32(CRC);
+                pData = &g_lineSensorCalibrationValuesBuffers[idx];
+            }
+            else
+            {
+                // no data was read
+                g_spiTxBuffer.getCalibrationValues.respondingToCommandCode = LSC_GET_CALIBRATION_VALUES;
+                g_spiTxBuffer.getCalibrationValues.currentStatus = status;
+                LL_CRC_FeedData32(CRC, (status << 8) | LSC_GET_CALIBRATION_VALUES);
+                g_spiTxBuffer.getCalibrationValues.crc = LL_CRC_ReadData32(CRC);
+                pData = &g_spiTxBuffer;
+            }
+            txLength = sizeof(lineSensorResponseGetCalibrationValues_t) / sizeof(uint16_t);
+            break;
+        }
+        case LSC_FINISH_CALIBRATION:
+        {
+            g_adcState = ADC_S_SENSING;
+            const lineSensorStatus_t status = getSensorStatus();
+            g_spiTxBuffer.finishCalibration.respondingToCommandCode = LSC_FINISH_CALIBRATION;
+            g_spiTxBuffer.finishCalibration.currentStatus = status;
+            LL_CRC_FeedData32(CRC, (status << 8) | LSC_FINISH_CALIBRATION);
+            g_spiTxBuffer.finishCalibration.crc = LL_CRC_ReadData32(CRC);
+            txLength = sizeof(lineSensorResponseFinishCalibration_t) / sizeof(uint16_t);
+            pData = &g_spiTxBuffer;
+            break;
+        }
+        case LSC_GET_DETAILED_SENSOR_STATUS:
         {
             const lineSensorDetailedStatus_t detailedStatus = getDetailedSensorStatus();
             const lineSensorDetailedStatus_t cumulitiveDetailedStatus = getCumulitiveDetailedSensorStatus();
@@ -301,6 +375,7 @@ void processCommand(lineSensorCommandCode_t command)
             LL_CRC_FeedData32(CRC, cumulitiveDetailedStatus);
             g_spiTxBuffer.getDetailedSensorStatus.crc = LL_CRC_ReadData32(CRC);
             txLength = sizeof(lineSensorResponseGetDetailedSensorStatus_t) / sizeof(uint16_t);
+            pData = &g_spiTxBuffer;
             break;
         }
         case LSC_RESET:
@@ -308,9 +383,10 @@ void processCommand(lineSensorCommandCode_t command)
             const lineSensorStatus_t status = getSensorStatus();
             g_spiTxBuffer.reset.respondingToCommandCode = LSC_RESET;
             g_spiTxBuffer.reset.currentStatus = status;
-            LL_CRC_FeedData32(CRC, status | LSC_RESET);
+            LL_CRC_FeedData32(CRC, (status << 8) | LSC_RESET);
             g_spiTxBuffer.reset.crc = LL_CRC_ReadData32(CRC);
             txLength = sizeof(lineSensorResponseReset_t) / sizeof(uint16_t);
+            pData = &g_spiTxBuffer;
             break;
         }
     }
@@ -324,7 +400,7 @@ void processCommand(lineSensorCommandCode_t command)
     {
         LL_DMA_ConfigAddresses(DMA1,
                                LL_DMA_CHANNEL_5,
-                               (uint32_t) &g_spiTxBuffer,
+                               (uint32_t) pData,
                                LL_SPI_DMA_GetRegAddr(SPI2),
                                LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
         LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_5, txLength);

@@ -18,8 +18,8 @@ volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH] __attribute__((aligned(2)));
  * Calibration data
  *******************************************************************************/
 
-volatile uint16_t minValues[NUMBER_OF_SENSORS];
-volatile uint16_t maxValues[NUMBER_OF_SENSORS];
+volatile uint32_t g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes;
+volatile lineSensorResponseGetCalibrationValues_t g_lineSensorCalibrationValuesBuffers[NUMBER_OF_TX_DATA_BUFFERS];
 
 /*******************************************************************************
  * Sensor values
@@ -45,12 +45,13 @@ volatile lineSensorResponse_t g_spiTxBuffer;
  * Errors
  *******************************************************************************/
 
-volatile lineSensorDetailedStatus_t g_statusDetailedInternal; // do not read directly
-volatile lineSensorDetailedStatus_t g_statusCumulativeDetailedInternal; // do not read directly
+volatile lineSensorDetailedStatus_t g_statusDetailedInternal;
+volatile lineSensorDetailedStatus_t g_statusCumulativeDetailedInternal;
 
 void initializeGlobalData()
 {
     g_statusDetailedInternal = LSDS_OK;
     g_statusCumulativeDetailedInternal = LSDS_OK;
-    consumerProducerBufferResetInterruptSafe(&g_lineSensorValuesBuffersProducerConsumerIndexes);
+    consumerProducerBuffer_reset(&g_lineSensorValuesBuffersProducerConsumerIndexes);
+    consumerProducerBuffer_reset(&g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes);
 }

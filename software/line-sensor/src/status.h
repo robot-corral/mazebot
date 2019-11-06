@@ -8,7 +8,10 @@ lineSensorDetailedStatus_t getDetailedSensorStatus();
 
 lineSensorDetailedStatus_t getCumulitiveDetailedSensorStatus();
 
-lineSensorStatus_t getSensorStatusFromDetailedStatus(lineSensorDetailedStatus_t detailedStatus);
+static lineSensorStatus_t getSensorStatusFromDetailedStatus(lineSensorDetailedStatus_t detailedStatus)
+{
+    return detailedStatus == LSDS_OK ? LSS_ZERO : LSS_ERROR;
+}
 
 static lineSensorStatus_t getSensorStatus()
 {

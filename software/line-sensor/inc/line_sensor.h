@@ -54,23 +54,7 @@ typedef struct __attribute__((packed))
     lineSensorCommandCode_t respondingToCommandCode;
     lineSensorStatus_t currentStatus;
     lineSensorCrcValue_t crc;
-} lineSensorResponseStartPhysicalCalibration_t;
-
-typedef struct __attribute__((packed))
-{
-    COMMAND_PROCESSING_DELAY;
-    lineSensorCommandCode_t respondingToCommandCode;
-    lineSensorStatus_t currentStatus;
-    lineSensorCrcValue_t crc;
-} lineSensorResponseGetCalibrationStatus_t;
-
-typedef struct __attribute__((packed))
-{
-    COMMAND_PROCESSING_DELAY;
-    lineSensorCommandCode_t respondingToCommandCode;
-    lineSensorStatus_t currentStatus;
-    lineSensorCrcValue_t crc;
-} lineSensorResponseFinishCalibration_t;
+} lineSensorResponseStartCalibration_t;
 
 typedef struct __attribute__((packed))
 {
@@ -81,6 +65,14 @@ typedef struct __attribute__((packed))
     lineSensorValue_t maxSensorCalibrationValues[NUMBER_OF_SENSORS];
     lineSensorCrcValue_t crc;
 } lineSensorResponseGetCalibrationValues_t;
+
+typedef struct __attribute__((packed))
+{
+    COMMAND_PROCESSING_DELAY;
+    lineSensorCommandCode_t respondingToCommandCode;
+    lineSensorStatus_t currentStatus;
+    lineSensorCrcValue_t crc;
+} lineSensorResponseFinishCalibration_t;
 
 typedef struct __attribute__((packed))
 {
@@ -113,26 +105,20 @@ typedef struct __attribute__((packed))
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
-    uint8_t filler[sizeof(lineSensorResponseStartPhysicalCalibration_t)];
-} lineSensorRequestStartPhysicalCalibration_t;
-
-typedef struct __attribute__((packed))
-{
-    lineSensorEncodedCommandCode_t encodedCommandCode;
-    uint8_t filler[sizeof(lineSensorResponseGetCalibrationStatus_t)];
-} lineSensorRequestGetCalibrationStatus_t;
-
-typedef struct __attribute__((packed))
-{
-    lineSensorEncodedCommandCode_t encodedCommandCode;
-    uint8_t filler[sizeof(lineSensorResponseFinishCalibration_t)];
-} lineSensorRequestFinishCalibration_t;
+    uint8_t filler[sizeof(lineSensorResponseStartCalibration_t)];
+} lineSensorRequestStartCalibration_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     uint8_t filler[sizeof(lineSensorResponseGetCalibrationValues_t)];
 } lineSensorRequestGetCalibrationValues_t;
+
+typedef struct __attribute__((packed))
+{
+    lineSensorEncodedCommandCode_t encodedCommandCode;
+    uint8_t filler[sizeof(lineSensorResponseFinishCalibration_t)];
+} lineSensorRequestFinishCalibration_t;
 
 typedef struct __attribute__((packed))
 {
@@ -153,10 +139,9 @@ typedef struct __attribute__((packed))
 typedef union __attribute__((packed))
 {
     lineSensorRequestGetSensorValues_t getSensorValues;
-    lineSensorRequestStartPhysicalCalibration_t startPhysicalCalibration;
-    lineSensorRequestGetCalibrationStatus_t getCalibrationStatus;
-    lineSensorRequestFinishCalibration_t finishCalibration;
+    lineSensorRequestStartCalibration_t startCalibration;
     lineSensorRequestGetCalibrationValues_t getCalibrationValues;
+    lineSensorRequestFinishCalibration_t finishCalibration;
     lineSensorRequestGetDetailedSensorStatus_t getDetailedSensorStatus;
     lineSensorRequestReset_t reset;
 } lineSensorRequest_t;
@@ -164,10 +149,9 @@ typedef union __attribute__((packed))
 typedef union __attribute__((packed))
 {
     lineSensorResponseGetSensorValues_t getSensorValues;
-    lineSensorResponseStartPhysicalCalibration_t startPhysicalCalibration;
-    lineSensorResponseGetCalibrationStatus_t getCalibrationStatus;
-    lineSensorResponseFinishCalibration_t finishCalibration;
+    lineSensorResponseStartCalibration_t startCalibration;
     lineSensorResponseGetCalibrationValues_t getCalibrationValues;
+    lineSensorResponseFinishCalibration_t finishCalibration;
     lineSensorResponseGetDetailedSensorStatus_t getDetailedSensorStatus;
     lineSensorResponseReset_t reset;
 } lineSensorResponse_t;

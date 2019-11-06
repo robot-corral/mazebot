@@ -13,6 +13,7 @@
 typedef enum
 {
     ADC_S_IDLE,
+    ADC_S_CALIBRATION_PENDING,
     ADC_S_CALIBRATING,
     ADC_S_SENSING,
 } adcState_t;
