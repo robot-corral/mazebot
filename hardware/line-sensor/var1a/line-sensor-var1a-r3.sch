@@ -8,22 +8,22 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="16" fill="1" visible="no" active="no"/>
-<layer number="15" name="Route15" color="23" fill="1" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="24" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="16" fill="1" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="23" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="24" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -32,8 +32,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -41,19 +41,19 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
-<layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
-<layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
-<layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
+<layer number="57" name="tCAD" color="7" fill="1" visible="yes" active="no"/>
+<layer number="59" name="tCarbon" color="7" fill="1" visible="yes" active="no"/>
+<layer number="60" name="bCarbon" color="7" fill="1" visible="yes" active="no"/>
 <layer number="88" name="SimResults" color="9" fill="1" visible="yes" active="yes"/>
 <layer number="89" name="SimProbes" color="9" fill="1" visible="yes" active="yes"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
@@ -1335,23 +1335,15 @@ Auto generated by &lt;i&gt;make-symbol-device-package-bsdl.ulp Rev. 44&lt;/i&gt;
 <wire x1="3.2" y1="-3" x2="3.2" y2="-2" width="0.1" layer="21"/>
 <text x="0" y="0" size="1" layer="21" rot="R90" align="center">&gt;NAME</text>
 </package>
-<package name="KYOCERA-CX3225GB24000D0HEQ" urn="urn:adsk.eagle:footprint:9990570/4" locally_modified="yes" library_version="53" library_locally_modified="yes">
-<description>Frequency: 24MHz&lt;br/&gt;
-Frequency Stability: ±30ppm&lt;br/&gt;
-Frequency Tolerance: ±20ppm&lt;br/&gt;
-Load Capacitance: 8pF&lt;/br&gt;
-ESR (Equivalent Series Resistance): 60 Ohms&lt;br/&gt;</description>
-<smd name="GND1" x="-1.15" y="0.925" dx="1.3" dy="1.05" layer="1" rot="R180"/>
-<smd name="1" x="-1.15" y="-0.925" dx="1.3" dy="1.05" layer="1" rot="R180"/>
-<smd name="2" x="1.15" y="0.925" dx="1.3" dy="1.05" layer="1" rot="R180"/>
-<smd name="GND2" x="1.15" y="-0.925" dx="1.3" dy="1.05" layer="1" rot="R180"/>
-<text x="0" y="0" size="0.6" layer="21" rot="R270" align="center">&gt;NAME</text>
-<rectangle x1="-1.6" y1="-1.25" x2="1.6" y2="1.25" layer="39"/>
-<wire x1="-0.375" y1="1.25" x2="0.375" y2="1.25" width="0.05" layer="21"/>
-<wire x1="-0.375" y1="-1.25" x2="0.375" y2="-1.25" width="0.05" layer="21"/>
-<wire x1="1.6" y1="0.3" x2="1.6" y2="-0.3" width="0.05" layer="21"/>
-<wire x1="-1.6" y1="0.3" x2="-1.6" y2="-0.3" width="0.05" layer="21"/>
-<circle x="-1.2" y="-1.7" radius="0.1" width="0.1" layer="21"/>
+<package name="KYOCERA-CX5032GA" urn="urn:adsk.eagle:footprint:14994042/1" library_version="54">
+<smd name="P$1" x="-2.05" y="0" dx="1.9" dy="2.4" layer="1"/>
+<smd name="P$2" x="2.05" y="0" dx="1.9" dy="2.4" layer="1"/>
+<wire x1="-2.5" y1="1.6" x2="2.5" y2="1.6" width="0.127" layer="21"/>
+<wire x1="2.5" y1="1.6" x2="2.5" y2="-1.6" width="0.127" layer="21"/>
+<wire x1="2.5" y1="-1.6" x2="-2.5" y2="-1.6" width="0.127" layer="21"/>
+<wire x1="-2.5" y1="-1.6" x2="-2.5" y2="1.6" width="0.127" layer="21"/>
+<rectangle x1="-2.5" y1="-1.6" x2="2.5" y2="1.6" layer="39"/>
+<text x="0" y="0" size="1" layer="25" rot="R90" align="center">&gt;NAME</text>
 </package>
 <package name="NDK-NX3215SA" urn="urn:adsk.eagle:footprint:11610116/3" library_version="51" library_locally_modified="yes">
 <smd name="1" x="-1.25" y="0" dx="1.8" dy="1" layer="1" rot="R90"/>
@@ -1497,14 +1489,9 @@ ESR (Equivalent Series Resistance): 60 Ohms&lt;br/&gt;</description>
 <packageinstance name="PANASONIC-SERIES-H"/>
 </packageinstances>
 </package3d>
-<package3d name="KYOCERA-CX3225GB24000D0HEQ" urn="urn:adsk.eagle:package:9990572/5" type="model" library_version="53" library_locally_modified="yes">
-<description>Frequency: 24MHz&lt;br/&gt;
-Frequency Stability: ±30ppm&lt;br/&gt;
-Frequency Tolerance: ±20ppm&lt;br/&gt;
-Load Capacitance: 8pF&lt;/br&gt;
-ESR (Equivalent Series Resistance): 60 Ohms&lt;br/&gt;</description>
+<package3d name="KYOCERA-CX5032GA" urn="urn:adsk.eagle:package:14994043/1" type="box" library_version="54">
 <packageinstances>
-<packageinstance name="KYOCERA-CX3225GB24000D0HEQ"/>
+<packageinstance name="KYOCERA-CX5032GA"/>
 </packageinstances>
 </package3d>
 <package3d name="NDK-NX3215SA" urn="urn:adsk.eagle:package:11610117/4" type="model" library_version="51" library_locally_modified="yes">
@@ -1747,23 +1734,11 @@ ESR (Equivalent Series Resistance): 60 Ohms&lt;br/&gt;</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="CRYSTAL" urn="urn:adsk.eagle:component:9990578/5" prefix="Y" library_version="53" library_locally_modified="yes">
+<deviceset name="CRYSTAL" urn="urn:adsk.eagle:component:9990578/6" prefix="Y" library_version="54">
 <gates>
 <gate name="G$1" symbol="CRYSTAL" x="0" y="0"/>
 </gates>
 <devices>
-<device name="KYOCERA-CX3225GB24000D0HEQ" package="KYOCERA-CX3225GB24000D0HEQ">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<package3dinstances>
-<package3dinstance package3d_urn="urn:adsk.eagle:package:9990572/5"/>
-</package3dinstances>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
 <device name="NDK-NX3215SA" package="NDK-NX3215SA">
 <connects>
 <connect gate="G$1" pin="1" pad="1"/>
@@ -1771,6 +1746,18 @@ ESR (Equivalent Series Resistance): 60 Ohms&lt;br/&gt;</description>
 </connects>
 <package3dinstances>
 <package3dinstance package3d_urn="urn:adsk.eagle:package:11610117/4"/>
+</package3dinstances>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="KYOCERA-CX5032GA" package="KYOCERA-CX5032GA">
+<connects>
+<connect gate="G$1" pin="1" pad="P$1"/>
+<connect gate="G$1" pin="2" pad="P$2"/>
+</connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:14994043/1"/>
 </package3dinstances>
 <technologies>
 <technology name=""/>
@@ -2075,9 +2062,9 @@ Frequency: &amp;lt;= 600kHz&lt;br/&gt;</description>
 <part name="DGND14" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="DGND" device=""/>
 <part name="SUPPLY37" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="+3.3V" device=""/>
 <part name="FRAME5" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A4L-LOC" device=""/>
-<part name="Y1" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CRYSTAL" device="KYOCERA-CX3225GB24000D0HEQ" package3d_urn="urn:adsk.eagle:package:9990572/5"/>
-<part name="C8" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="4.3p"/>
-<part name="C9" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0402" package3d_urn="urn:adsk.eagle:package:11874712/3" value="4.3p"/>
+<part name="Y1" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CRYSTAL" device="KYOCERA-CX5032GA" package3d_urn="urn:adsk.eagle:package:14994043/1"/>
+<part name="C8" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0603" package3d_urn="urn:adsk.eagle:package:704999/4" value="4.3p"/>
+<part name="C9" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0603" package3d_urn="urn:adsk.eagle:package:704999/4" value="4.3p"/>
 <part name="DGND15" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="DGND" device=""/>
 <part name="C12" library="passives" library_urn="urn:adsk.eagle:library:9287022" deviceset="CAPACITOR" device="0603" package3d_urn="urn:adsk.eagle:package:704999/4" value="1u 16V X7R"/>
 <part name="GND2" library="voltage-ground" library_urn="urn:adsk.eagle:library:704746" deviceset="GND" device=""/>
