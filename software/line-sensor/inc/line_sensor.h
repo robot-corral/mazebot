@@ -11,8 +11,12 @@
 #include <stdbool.h>
 
 typedef uint8_t sensorIndex_t;
+// up to 15 commands are supported
 typedef uint8_t lineSensorCommandCode_t;
-typedef uint16_t lineSensorEncodedCommandCode_t;
+typedef uint8_t lineSensorEncodedCommandCode_t;
+// up to 15 distinct parameters or 4 bits are supported
+typedef uint8_t lineSensorCommandParameter_t;
+typedef uint8_t lineSensorEncodedCommandParameter_t;
 typedef uint8_t lineSensorStatus_t;
 typedef uint32_t lineSensorDetailedStatus_t;
 typedef uint32_t lineSensorCrcValue_t;
@@ -28,11 +32,14 @@ typedef uint16_t lineSensorValue_t;
  * Common data
  *******************************************************************************/
 
-#define COMMAND_1_MASK ((uint16_t) 0b0000000011111111)
-
 static lineSensorEncodedCommandCode_t encodeCommand(lineSensorCommandCode_t cmd)
 {
-    return ((lineSensorEncodedCommandCode_t) cmd) | (((lineSensorEncodedCommandCode_t) (~cmd)) << 8);
+    return ((lineSensorEncodedCommandCode_t) cmd) | (((lineSensorEncodedCommandCode_t) (~cmd)) << 4);
+}
+
+static lineSensorEncodedCommandParameter_t encodeCommandParameter(lineSensorCommandParameter_t parameter)
+{
+    return ((lineSensorEncodedCommandParameter_t) parameter) | (((lineSensorEncodedCommandParameter_t) (~parameter)) << 4);
 }
 
 /*******************************************************************************
@@ -99,36 +106,51 @@ typedef struct __attribute__((packed))
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
+    lineSensorEncodedCommandParameter_t encodedCommandParameter;
     uint8_t filler[sizeof(lineSensorResponseGetSensorValues_t)];
 } lineSensorRequestGetSensorValues_t;
+
+typedef enum
+{
+    LSR_SC_P_WHITE_CALIBRATION                    = 0x00,
+    LSR_SC_P_BLACK_CALIBRATION                    = 0x01,
+    // before starting collecting new calibration data we need to reset previous one to 0
+    // this flag can be combined with the two flags above if old data isn't needed anymore
+    LSR_SC_P_FLAG_RESET_PREVIOUS_CALIBRATION_DATA = 0x02,
+} lineSensorRequestStartCalibrationParameters_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
+    lineSensorEncodedCommandParameter_t encodedCommandParameter;
     uint8_t filler[sizeof(lineSensorResponseStartCalibration_t)];
 } lineSensorRequestStartCalibration_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
+    lineSensorEncodedCommandParameter_t encodedCommandParameter;
     uint8_t filler[sizeof(lineSensorResponseGetCalibrationValues_t)];
 } lineSensorRequestGetCalibrationValues_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
+    lineSensorEncodedCommandParameter_t encodedCommandParameter;
     uint8_t filler[sizeof(lineSensorResponseFinishCalibration_t)];
 } lineSensorRequestFinishCalibration_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
+    lineSensorEncodedCommandParameter_t encodedCommandParameter;
     uint8_t filler[sizeof(lineSensorResponseGetDetailedSensorStatus_t)];
 } lineSensorRequestGetDetailedSensorStatus_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
+    lineSensorEncodedCommandParameter_t encodedCommandParameter;
     uint8_t filler[sizeof(lineSensorResponseReset_t)];
 } lineSensorRequestReset_t;
 

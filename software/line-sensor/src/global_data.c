@@ -11,6 +11,7 @@
  *******************************************************************************/
 
 volatile adcState_t g_adcState;
+volatile uint8_t g_adcCalibrationParameter;
 
 // ADC is a 1/2 word increment so arrays must be 1/2 word aligned (2 bytes)
 volatile uint16_t g_adcBuffer1[ADC_BUFFER_1_LENGTH] __attribute__((aligned(2)));
@@ -19,6 +20,9 @@ volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH] __attribute__((aligned(2)));
 /*******************************************************************************
  * Calibration data
  *******************************************************************************/
+
+volatile uint16_t g_calibrationMinValues[NUMBER_OF_SENSORS];
+volatile uint16_t g_calibrationMaxValues[NUMBER_OF_SENSORS];
 
 volatile uint32_t g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes;
 volatile lineSensorResponseGetCalibrationValues_t g_lineSensorCalibrationValuesBuffers[NUMBER_OF_TX_DATA_BUFFERS];

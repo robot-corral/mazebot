@@ -11,32 +11,48 @@
 #include <stm32/stm32l1xx_ll_exti.h>
 #include <stm32/stm32l1xx_ll_system.h>
 
+#define DECODE_MASK 0x000F
+
 static void initializeNssPinExti();
 static void resetSpiDma();
 
 static uint32_t getFillerReceiveSizeByCommand(lineSensorCommandCode_t command);
-static void processCommand(lineSensorCommandCode_t command);
+static void processCommand(lineSensorCommandCode_t command, lineSensorCommandParameter_t parameter);
 static void processEndOfReceivingFillerAndTransmittingResponse();
 
-lineSensorDetailedStatus_t decodeCommand(lineSensorEncodedCommandCode_t encodedCmd, lineSensorCommandCode_t* pResultCmd)
+static lineSensorDetailedStatus_t decodeCommand(uint16_t encodedCommandWithParameter, lineSensorCommandCode_t* pResultCmd, lineSensorCommandParameter_t* pResultParam)
 {
-    lineSensorCommandCode_t command1 = (lineSensorCommandCode_t) (encodedCmd & COMMAND_1_MASK);
-    lineSensorCommandCode_t command2 = (~((lineSensorCommandCode_t) (encodedCmd >> 8)));
-    if (command1 != command2)
+    const lineSensorCommandCode_t command1 = encodedCommandWithParameter & DECODE_MASK;
+    encodedCommandWithParameter >>= 4;
+    const lineSensorCommandCode_t command2 = encodedCommandWithParameter & DECODE_MASK;
+    encodedCommandWithParameter >>= 4;
+    const lineSensorCommandParameter_t parameter1 = encodedCommandWithParameter & DECODE_MASK;
+    encodedCommandWithParameter >>= 4;
+    const lineSensorCommandParameter_t parameter2 = encodedCommandWithParameter & DECODE_MASK;
+    if (command1 != command2 || parameter1 != parameter2)
     {
+        *pResultParam = 0;
         *pResultCmd = LSC_NONE;
         return LSDS_ERR_FLAG_SPI_RX_ERROR;
     }
     if (command1 < LSC_FIRST_COMMAND || command1 > LSC_LAST_COMMAND)
     {
+        *pResultParam = 0;
         *pResultCmd = LSC_NONE;
         return LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED;
     }
-    else
+    if (command1 == LSC_START_CALIBRATION)
     {
-        *pResultCmd = command1;
-        return LSDS_OK;
+        if (parameter1 > 3)
+        {
+            *pResultParam = 0;
+            *pResultCmd = LSC_NONE;
+            return LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER;
+        }
     }
+    *pResultCmd = command1;
+    *pResultParam = parameter1;
+    return LSDS_OK;
 }
 
 void initializeNssPinExti()
@@ -119,12 +135,13 @@ void SPI2_IRQHandler(void)
         {
             LL_SPI_DisableIT_RXNE(SPI2);
             lineSensorCommandCode_t command;
-            const lineSensorEncodedCommandCode_t encodedCommand = LL_SPI_ReceiveData16(SPI2);
-            const lineSensorDetailedStatus_t status = decodeCommand(encodedCommand, &command);
+            lineSensorCommandParameter_t parameter;
+            const uint16_t encodedCommandWithParameter = LL_SPI_ReceiveData16(SPI2);
+            const lineSensorDetailedStatus_t status = decodeCommand(encodedCommandWithParameter, &command, &parameter);
             if (status == LSDS_OK)
             {
                 g_spiCurrentCommand = command;
-                processCommand(command);
+                processCommand(command, parameter);
             }
             else
             {
@@ -229,7 +246,18 @@ void processEndOfReceivingFillerAndTransmittingResponse()
                 const uint8_t idx = consumerProducerBuffer_getConsumerIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes);
                 if (idx < DATA_BUFFER_LENGTH)
                 {
-                    g_lineSensorValuesBuffers[idx].currentStatus &= ~LSS_OK_FLAG_NEW_SENSOR_VALUES_AVAILABLE;
+                    g_lineSensorValuesBuffers[idx].currentStatus &= ~LSS_OK_FLAG_NEW_DATA_AVAILABLE;
+                }
+                break;
+            }
+            case LSC_GET_CALIBRATION_VALUES:
+            {
+                // reset new data available in case master queries too fast
+                // or there is a problem with ADC
+                const uint8_t idx = consumerProducerBuffer_getConsumerIndex(&g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes);
+                if (idx < DATA_BUFFER_LENGTH)
+                {
+                    g_lineSensorCalibrationValuesBuffers[idx].currentStatus &= ~LSS_OK_FLAG_NEW_DATA_AVAILABLE;
                 }
                 break;
             }
@@ -258,7 +286,7 @@ uint32_t getFillerReceiveSizeByCommand(lineSensorCommandCode_t command)
     }
 }
 
-void processCommand(lineSensorCommandCode_t command)
+void processCommand(lineSensorCommandCode_t command, lineSensorCommandParameter_t parameter)
 {
     g_spiState = SPI_S_RECEIVING_FILLER_AND_TRANSMITTING_RESPONSE;
 
@@ -319,6 +347,7 @@ void processCommand(lineSensorCommandCode_t command)
         }
         case LSC_START_CALIBRATION:
         {
+            g_adcCalibrationParameter = parameter;
             g_adcState = ADC_S_CALIBRATION_PENDING;
             const lineSensorStatus_t status = getSensorStatus();
             g_spiTxBuffer.startCalibration.respondingToCommandCode = LSC_START_CALIBRATION;

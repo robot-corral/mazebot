@@ -19,7 +19,8 @@ static void configureBankA();
 static void configureBankB();
 static bool processAdcData();
 
-static void collectCalibrationData();
+static void startCalibration();
+static bool collectCalibrationData();
 static bool collectSensorValues();
 
 void initializeAdc()
@@ -181,15 +182,72 @@ static bool processAdcData()
 {
     switch (g_adcState)
     {
-        case ADC_S_CALIBRATING: collectCalibrationData(); return true;
-        case ADC_S_SENSING    : return collectSensorValues();
-        default               : return true;
+        case ADC_S_CALIBRATION_PENDING : startCalibration(); return true;
+        case ADC_S_CALIBRATING         : return collectCalibrationData();
+        case ADC_S_SENSING             : return collectSensorValues();
+        default                        : return true;
     }
 }
 
-void collectCalibrationData()
+void startCalibration()
 {
-    // TODO add calibration
+    if (g_adcCalibrationParameter == (LSR_SC_P_FLAG_RESET_PREVIOUS_CALIBRATION_DATA | LSR_SC_P_WHITE_CALIBRATION))
+    {
+        for (int i = 0; i < NUMBER_OF_SENSORS; ++i)
+        {
+            g_calibrationMinValues[i] = 0;
+        }
+    }
+    else if (g_adcCalibrationParameter == (LSR_SC_P_FLAG_RESET_PREVIOUS_CALIBRATION_DATA | LSR_SC_P_BLACK_CALIBRATION))
+    {
+        for (int i = 0; i < NUMBER_OF_SENSORS; ++i)
+        {
+            g_calibrationMaxValues[i] = 0;
+        }
+    }
+    g_adcState = ADC_S_CALIBRATING;
+    g_adcCalibrationParameter &= ~LSR_SC_P_FLAG_RESET_PREVIOUS_CALIBRATION_DATA;
+}
+
+bool collectCalibrationData()
+{
+    const uint8_t producerBufferIndex = consumerProducerBuffer_getProducerIndex(&g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes);
+
+    if (producerBufferIndex == DATA_BUFFER_LENGTH)
+    {
+        return false;
+    }
+
+    if (g_adcCalibrationParameter == LSR_SC_P_WHITE_CALIBRATION)
+    {
+        for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
+        {
+            g_calibrationMinValues[i - ADC_BUFFER_1_START_IDX] = MAX(g_calibrationMinValues[i - ADC_BUFFER_1_START_IDX], g_adcBuffer1[i]);
+        }
+
+        g_calibrationMinValues[ADC_BUFFER_2_SENSOR_INDEX] = MAX(g_calibrationMinValues[ADC_BUFFER_2_SENSOR_INDEX], g_adcBuffer2[ADC_BUFFER_2_START_IDX]);
+    }
+    else if (g_adcCalibrationParameter == LSR_SC_P_BLACK_CALIBRATION)
+    {
+        for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
+        {
+            g_calibrationMaxValues[i - ADC_BUFFER_1_START_IDX] = MAX(g_calibrationMaxValues[i - ADC_BUFFER_1_START_IDX], g_adcBuffer1[i]);
+        }
+
+        g_calibrationMaxValues[ADC_BUFFER_2_SENSOR_INDEX] = MAX(g_calibrationMaxValues[ADC_BUFFER_2_SENSOR_INDEX], g_adcBuffer2[ADC_BUFFER_2_START_IDX]);
+    }
+
+    volatile lineSensorResponseGetCalibrationValues_t* const calibrationData = &g_lineSensorCalibrationValuesBuffers[producerBufferIndex];
+
+    for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
+    {
+        calibrationData->minSensorCalibrationValues[i] = g_calibrationMinValues[i];
+        calibrationData->maxSensorCalibrationValues[i] = g_calibrationMaxValues[i];
+    }
+
+    calibrationData->currentStatus = LSS_OK_FLAG_DATA_AVAILABLE | LSS_OK_FLAG_NEW_DATA_AVAILABLE;
+
+    return consumerProducerBuffer_setLastReadIndex(&g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes, producerBufferIndex);
 }
 
 bool collectSensorValues()
@@ -201,16 +259,16 @@ bool collectSensorValues()
         return false;
     }
 
-    volatile lineSensorValue_t* sensorData = g_lineSensorValuesBuffers[producerBufferIndex].sensorValues;
+    volatile lineSensorValue_t* const sensorData = g_lineSensorValuesBuffers[producerBufferIndex].sensorValues;
 
     for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
     {
-        sensorData[i] = g_adcBuffer1[i];
+        sensorData[i - ADC_BUFFER_1_START_IDX] = g_adcBuffer1[i];
     }
 
     sensorData[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
 
-    g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSS_OK_FLAG_SENSOR_VALUES_AVAILABLE | LSS_OK_FLAG_NEW_SENSOR_VALUES_AVAILABLE;
+    g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSS_OK_FLAG_DATA_AVAILABLE | LSS_OK_FLAG_NEW_DATA_AVAILABLE;
 
     return consumerProducerBuffer_setLastReadIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
 }

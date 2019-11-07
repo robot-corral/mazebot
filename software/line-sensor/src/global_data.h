@@ -28,6 +28,7 @@ void initializeGlobalData();
  *******************************************************************************/
 
 extern volatile adcState_t g_adcState;
+extern volatile uint8_t g_adcCalibrationParameter;
 
 extern volatile uint16_t g_adcBuffer1[ADC_BUFFER_1_LENGTH];
 extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
@@ -35,6 +36,9 @@ extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
 /*******************************************************************************
  * Calibration values
  *******************************************************************************/
+
+extern volatile uint16_t g_calibrationMinValues[NUMBER_OF_SENSORS];
+extern volatile uint16_t g_calibrationMaxValues[NUMBER_OF_SENSORS];
 
 extern volatile uint32_t g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes;
 extern volatile lineSensorResponseGetCalibrationValues_t g_lineSensorCalibrationValuesBuffers[NUMBER_OF_TX_DATA_BUFFERS];

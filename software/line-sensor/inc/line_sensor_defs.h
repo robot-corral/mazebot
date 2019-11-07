@@ -37,10 +37,10 @@
  * Line sensor status (lineSensorStatus_t)
  ******************************************************************************/
 
-#define LSS_ZERO                                ((uint8_t) 0x00)
-#define LSS_OK_FLAG_SENSOR_VALUES_AVAILABLE     ((uint8_t) 0x01)
-#define LSS_OK_FLAG_NEW_SENSOR_VALUES_AVAILABLE ((uint8_t) 0x02)
-#define LSS_ERROR                               ((uint8_t) 0x04)
+#define LSS_ZERO                       ((uint8_t) 0x00)
+#define LSS_OK_FLAG_DATA_AVAILABLE     ((uint8_t) 0x01)
+#define LSS_OK_FLAG_NEW_DATA_AVAILABLE ((uint8_t) 0x02)
+#define LSS_ERROR                      ((uint8_t) 0x04)
 
 /*******************************************************************************
  * Line sensor detailed status (lineSensorDetailedStatus_t)
@@ -60,6 +60,7 @@
 #define LSDS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT        ((uint32_t) 0x00000080)
 #define LSDS_ERR_FLAG_SPI_STATE_MACHINE_FAILURE     ((uint32_t) 0x00000100)
 #define LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED ((uint32_t) 0x00000200)
+#define LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER ((uint32_t) 0x00000400)
 
 #define LSDS_ERR_FLAG_ADC_ALL                       ((LSDS_ERR_FLAG_ADC_DMA_FAILURE) | \
                                                      (LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED))
@@ -70,4 +71,5 @@
                                                      (LSDS_ERR_FLAG_SPI_ERROR_OVERRUN) | \
                                                      (LSDS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT) | \
                                                      (LSDS_ERR_FLAG_SPI_STATE_MACHINE_FAILURE) | \
-                                                     (LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED))
+                                                     (LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED) | \
+                                                     (LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER))
