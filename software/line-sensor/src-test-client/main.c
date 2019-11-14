@@ -30,6 +30,11 @@ static void createFinishCalibrationCommand(uint16_t* pRxLength, uint16_t* pTxLen
 static void createGetDetailedSensorStatusCommand(uint16_t* pRxLength, uint16_t* pTxLength);
 static void createResetCommand(uint16_t* pRxLength, uint16_t* pTxLength);
 
+static void setSlavePowerEnabled(bool isEnabled);
+
+static bool isSlaveSelected();
+static void setSlaveSelected(bool isSelected);
+
 void SystemClock_Config()
 {
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR  |
@@ -129,10 +134,42 @@ void setRedLedEnabled(bool isEnabled)
 void initializeControlPins()
 {
     LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_5, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_5, LL_GPIO_OUTPUT_PUSHPULL);
 
-    LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
-    LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_7);
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_7, LL_GPIO_OUTPUT_PUSHPULL);
+
+    setSlavePowerEnabled(true);
+    setSlaveSelected(false);
+}
+
+void setSlavePowerEnabled(bool isEnabled)
+{
+    if (isEnabled)
+    {
+        LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_7);
+    }
+    else
+    {
+        LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_7);
+    }
+}
+
+bool isSlaveSelected()
+{
+    return !LL_GPIO_IsOutputPinSet(GPIOD, LL_GPIO_PIN_5);
+}
+
+void setSlaveSelected(bool isSelected)
+{
+    if (isSelected)
+    {
+        LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_5);
+    }
+    else
+    {
+        LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
+    }
 }
 
 void initializeSpi()
@@ -252,7 +289,7 @@ void checkIfSpiCommunicationHasFinished()
             LL_SPI_ReceiveData16(SPI3);
         }
 
-        LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
+        setSlaveSelected(false);
     }
 }
 
@@ -329,8 +366,9 @@ void sendCommand()
 {
     uint32_t currentTime = LL_TIM_GetCounter(TIM5);
 
-    if (g_isReceiving ||  g_isTransmitting || !LL_GPIO_IsOutputPinSet(GPIOD, LL_GPIO_PIN_5) || g_lastSendTime + 500000 > currentTime)
+    if (g_isReceiving ||  g_isTransmitting || isSlaveSelected() || g_lastSendTime + 500000 > currentTime)
     {
+        // to avoid jitter / double-press
         return;
     }
 
@@ -375,7 +413,7 @@ void sendCommand()
 
     LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_2, txLength);
 
-    LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_5);
+    setSlaveSelected(true);
 
     // enable rx 1st
     LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_1);

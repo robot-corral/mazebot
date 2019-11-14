@@ -165,7 +165,7 @@ void DMA1_Channel1_IRQHandler()
             {
                 resetSensorStatusFlags(LSDS_ERR_FLAG_ADC_ALL);
                 startQueryingAdc();
-                resetWatchdog(WS_ADC);
+                resetWatchdog();
             }
             else
             {

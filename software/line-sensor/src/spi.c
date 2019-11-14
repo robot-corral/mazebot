@@ -236,7 +236,6 @@ void processEndOfReceivingFillerAndTransmittingResponse()
 {
     if (g_spiReceivingFillerFinished && g_spiTransmittingResponseFinished)
     {
-        resetWatchdog(WS_SPI);
         switch (g_spiCurrentCommand)
         {
             case LSC_GET_SENSOR_VALUES:

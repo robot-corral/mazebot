@@ -3,7 +3,6 @@
 #include "watchdog.h"
 
 #include "status.h"
-#include "global_data.h"
 
 #include <stm32/stm32l1xx_ll_rcc.h>
 #include <stm32/stm32l1xx_ll_iwdg.h>
@@ -40,20 +39,20 @@ void initializeAndStartWatchdog()
 
     LL_IWDG_Enable(IWDG);
     LL_IWDG_EnableWriteAccess(IWDG);
-    LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_32);
-    LL_IWDG_SetReloadCounter(IWDG, 6);
+    //
+    // each tick is 8 / 37000 seconds
+    // 463 ticks is approximately 0.1 of a second
+    //
+    LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_8);
+    LL_IWDG_SetReloadCounter(IWDG, 463);
+    LL_IWDG_DisableWriteAccess(IWDG);
 
     while (LL_IWDG_IsReady(IWDG) != 1) ;
 
     LL_IWDG_ReloadCounter(IWDG);
 }
 
-void resetWatchdog(watchdogSource_t source)
+void resetWatchdog()
 {
-    uint8_t newCallers = atomic_fetch_or(&g_watchdogCalledBy, source);
-    if ((newCallers & WS_EVERYBODY_REPORTED_IN) == WS_EVERYBODY_REPORTED_IN)
-    {
-        LL_IWDG_ReloadCounter(IWDG);
-        atomic_store(&g_watchdogCalledBy, 0);
-    }
+    LL_IWDG_ReloadCounter(IWDG);
 }

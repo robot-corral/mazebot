@@ -69,9 +69,3 @@ extern volatile lineSensorResponse_t g_spiTxBuffer;
 
 extern volatile lineSensorDetailedStatus_t g_statusDetailedInternal; // do not read directly
 extern volatile lineSensorDetailedStatus_t g_statusCumulativeDetailedInternal; // do not read directly
-
-/*******************************************************************************
- * Watchdog
- *******************************************************************************/
-
-extern volatile uint8_t g_watchdogCalledBy;
