@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "src-data-collector", "line-sensor\src-data-collector\src-data-collector.pyproj", "{BBB3DA9C-B9E0-443E-932A-375770FD07FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBB3DA9C-B9E0-443E-932A-375770FD07FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBB3DA9C-B9E0-443E-932A-375770FD07FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18D96CD7-5AC5-416C-A8DC-A1ABEA93B794}
+	EndGlobalSection
+EndGlobal

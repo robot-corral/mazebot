@@ -12,6 +12,7 @@
 #include <stm32\stm32l4xx_ll_gpio.h>
 #include <stm32\stm32l4xx_ll_utils.h>
 #include <stm32\stm32l4xx_ll_cortex.h>
+#include <stm32\stm32l4xx_ll_lpuart.h>
 #include <stm32\stm32l4xx_ll_system.h>
 
 lineSensorRequest_t g_txBuffer;
@@ -41,16 +42,22 @@ void SystemClock_Config()
                              LL_APB1_GRP1_PERIPH_TIM5 |
                              LL_APB1_GRP1_PERIPH_SPI3);
 
+    LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPUART1);
+
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2);
 
     LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB |
                              LL_AHB2_GRP1_PERIPH_GPIOC |
-                             LL_AHB2_GRP1_PERIPH_GPIOD);
+                             LL_AHB2_GRP1_PERIPH_GPIOD |
+                             LL_AHB2_GRP1_PERIPH_GPIOG);
 
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
+
+    LL_RCC_HSI_Enable();
+    while (LL_RCC_HSI_IsReady() != 1) ;
 
     LL_RCC_MSI_Enable();
     while (LL_RCC_MSI_IsReady() != 1) ;
@@ -80,6 +87,8 @@ void SystemClock_Config()
     LL_TIM_SetAutoReload(TIM5, 0xFFFFFFFF); // reload 32 bit value (TIM5 is 32 bit)
     LL_TIM_EnableCounter(TIM5);
     LL_TIM_GenerateEvent_UPDATE(TIM5);
+
+    LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 }
 
 void initializeLed()
@@ -253,6 +262,53 @@ void initializeSpi()
     LL_SPI_Enable(SPI3);
 }
 
+void enableVddIo2()
+{
+    if (LL_PWR_IsEnabledVddIO2())
+    {
+        return;
+    }
+
+    LL_PWR_EnablePVM(LL_PWR_PVM_VDDIO2_0_9V);
+
+    while (LL_PWR_IsActiveFlag_PVMO2());
+
+    do
+    {
+        LL_PWR_EnableVddIO2();
+    } while (!LL_PWR_IsEnabledVddIO2());
+
+    LL_PWR_DisablePVM(LL_PWR_PVM_VDDIO2_0_9V);
+}
+
+void initializeUsart()
+{
+    // this part is for NUCLEO-L496ZG
+
+    enableVddIo2();
+
+    LL_GPIO_SetPinMode(GPIOG, LL_GPIO_PIN_7, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetAFPin_0_7(GPIOG, LL_GPIO_PIN_7, LL_GPIO_AF_8);
+    LL_GPIO_SetPinSpeed(GPIOG, LL_GPIO_PIN_7, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinOutputType(GPIOG, LL_GPIO_PIN_7, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(GPIOG, LL_GPIO_PIN_7, LL_GPIO_PULL_NO);
+
+    LL_GPIO_SetPinMode(GPIOG, LL_GPIO_PIN_8, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetAFPin_8_15(GPIOG, LL_GPIO_PIN_8, LL_GPIO_AF_8);
+    LL_GPIO_SetPinSpeed(GPIOG, LL_GPIO_PIN_8, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinOutputType(GPIOG, LL_GPIO_PIN_8, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(GPIOG, LL_GPIO_PIN_8, LL_GPIO_PULL_NO);
+
+    LL_RCC_SetLPUARTClockSource(LL_RCC_LPUART1_CLKSOURCE_HSI);
+
+    LL_LPUART_SetTransferDirection(LPUART1, LL_LPUART_DIRECTION_TX_RX);
+    LL_LPUART_ConfigCharacter(LPUART1, LL_LPUART_DATAWIDTH_8B, LL_LPUART_PARITY_NONE, LL_LPUART_STOPBITS_1);
+    LL_LPUART_SetBaudRate(LPUART1, HSI_VALUE, 230400); 
+    LL_LPUART_Enable(LPUART1);
+
+    while (!LL_LPUART_IsActiveFlag_TEACK(LPUART1));
+}
+
 void initializeButton()
 {
     NVIC_EnableIRQ(EXTI15_10_IRQn);
@@ -273,6 +329,7 @@ int main()
     initializeLed();
     initializeControlPins();
     initializeSpi();
+    initializeUsart();
     initializeButton();
 
     for (;;) ;
