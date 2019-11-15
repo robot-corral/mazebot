@@ -53,6 +53,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src-test-client\main.c" />
+    <ClCompile Include="..\src-test-client\motor_control.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -66,5 +67,8 @@
     <ProjectReference Include="..\..\common\lib-stm32l4\prj-stm32l496zg\lib-stm32l496zg.vcxproj">
       <Project>{28e807dd-ce7b-4eef-822d-e5873b182727}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src-test-client\motor_control.h" />
   </ItemGroup>
 </Project>

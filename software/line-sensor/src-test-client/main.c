@@ -1,5 +1,7 @@
 #include "line_sensor.h"
 
+#include "motor_control.h"
+
 #include <stdbool.h>
 
 #include <stm32\stm32l4xx_ll_bus.h>
@@ -40,15 +42,18 @@ void SystemClock_Config()
 {
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR  |
                              LL_APB1_GRP1_PERIPH_TIM5 |
+                             LL_APB1_GRP1_PERIPH_TIM2 |
                              LL_APB1_GRP1_PERIPH_SPI3);
 
     LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPUART1);
 
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2 |
+                             LL_AHB1_GRP1_PERIPH_DMA1);
 
-    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB |
+    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA |
+                             LL_AHB2_GRP1_PERIPH_GPIOB |
                              LL_AHB2_GRP1_PERIPH_GPIOC |
                              LL_AHB2_GRP1_PERIPH_GPIOD |
                              LL_AHB2_GRP1_PERIPH_GPIOG);
@@ -329,6 +334,7 @@ int main()
     initializeLed();
     initializeControlPins();
     initializeSpi();
+    initializeMotorControl();
     initializeUsart();
     initializeButton();
 

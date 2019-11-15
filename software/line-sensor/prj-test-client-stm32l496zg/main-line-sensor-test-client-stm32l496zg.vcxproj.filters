@@ -18,5 +18,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src-test-client\main.c" />
+    <ClCompile Include="..\src-test-client\motor_control.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src-test-client\motor_control.h" />
   </ItemGroup>
 </Project>
