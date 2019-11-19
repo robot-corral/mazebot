@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{b9532ba1-27ba-4b9a-8f34-ba0b6263a64f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main-data-collector-firmware-stm32l496zg-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="main-data-collector-firmware-stm32l496zg-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src-data-collector-firmware\main.c" />
+    <ClCompile Include="..\src-data-collector-firmware\motor_control.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src-data-collector-firmware\motor_control.h" />
+  </ItemGroup>
+</Project>
