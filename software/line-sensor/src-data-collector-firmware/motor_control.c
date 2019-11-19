@@ -67,6 +67,9 @@ void generatePulses(diraction_t direction, uint32_t pulseCount)
 
     // TODO current code will generate 10 raising edges and 9 falling ones
     // TODO need to check if motor driver needs both eges to move or only falling ones
+    //
+    // !!! move happens on falling edge (following rising edge which is slower than 10 usec)
+    //
 
     // direction
     // LL_GPIO_ResetOutputPin away from the motor
