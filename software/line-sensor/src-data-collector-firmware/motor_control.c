@@ -1,5 +1,9 @@
 #include "motor_control.h"
 
+#include "global_data.h"
+
+#include <stdatomic.h>
+
 #include <stm32\stm32l4xx_ll_dma.h>
 #include <stm32\stm32l4xx_ll_tim.h>
 #include <stm32\stm32l4xx_ll_gpio.h>
@@ -10,6 +14,7 @@ static void initializeMasterTimer();
 
 void initializeMotorControl()
 {
+    atomic_store(&g_isMotorControlBusy, false);
     initializeSlaveTimer();
     initializeMasterTimer();
 }
@@ -51,8 +56,20 @@ void initializeMasterTimer()
     LL_TIM_SetTriggerOutput(TIM2, LL_TIM_TRGO_UPDATE);
 }
 
-void generatePulses(diraction_t direction, uint32_t pulseCount)
+bool isBusy()
 {
+    return atomic_load(&g_isMotorControlBusy);
+}
+
+bool generatePulses(diraction_t direction, uint32_t pulseCount)
+{
+    bool expected = false;
+
+    if (!atomic_compare_exchange_strong(&g_isMotorControlBusy, &expected, true))
+    {
+        return false;
+    }
+
     switch (direction)
     {
         case D_FORWARD:
@@ -67,7 +84,7 @@ void generatePulses(diraction_t direction, uint32_t pulseCount)
         }
         default:
         {
-            return;
+            return false;
         }
     }
 
@@ -81,6 +98,8 @@ void generatePulses(diraction_t direction, uint32_t pulseCount)
     LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_EnableCounter(TIM2);
     LL_TIM_GenerateEvent_UPDATE(TIM2);
+
+    return true;
 }
 
 void TIM5_IRQHandler()
@@ -95,5 +114,6 @@ void TIM5_IRQHandler()
         LL_mDelay(1);
         // disable motor controller
         LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
+        atomic_store(&g_isMotorControlBusy, false);
     }
 }

@@ -65,11 +65,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src-data-collector-firmware\global_data.c" />
     <ClCompile Include="..\src-data-collector-firmware\gpio.c" />
     <ClCompile Include="..\src-data-collector-firmware\main.c" />
     <ClCompile Include="..\src-data-collector-firmware\motor_control.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src-data-collector-firmware\global_data.h" />
     <ClInclude Include="..\src-data-collector-firmware\gpio.h" />
     <ClInclude Include="..\src-data-collector-firmware\motor_control.h" />
   </ItemGroup>

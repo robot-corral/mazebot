@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum
 {
@@ -10,4 +11,9 @@ typedef enum
 
 void initializeMotorControl();
 
-void generatePulses(diraction_t direction, uint32_t pulseCount);
+bool isBusy();
+
+/*
+ * returns false if direction is invalid or motor control is busy controlling the motor.
+ */
+bool generatePulses(diraction_t direction, uint32_t pulseCount);
