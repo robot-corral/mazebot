@@ -1,5 +1,6 @@
 #include "line_sensor.h"
 
+#include "gpio.h"
 #include "motor_control.h"
 
 #include <stdbool.h>
@@ -325,6 +326,7 @@ void initializeButton()
 int main()
 {
     SystemClock_Config();
+    intializeGpio();
     initializeLed();
     initializeControlPins();
     initializeSpi();
@@ -332,7 +334,8 @@ int main()
     initializeUsart();
     initializeButton();
 
-    generatePulses(D_FORWARD, 100);
+    // TODO remove (temporary code)
+    generatePulses(D_FORWARD, 5);
 
     for (;;) ;
 }

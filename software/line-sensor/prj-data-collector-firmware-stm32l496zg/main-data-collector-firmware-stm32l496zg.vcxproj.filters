@@ -19,8 +19,10 @@
   <ItemGroup>
     <ClCompile Include="..\src-data-collector-firmware\main.c" />
     <ClCompile Include="..\src-data-collector-firmware\motor_control.c" />
+    <ClCompile Include="..\src-data-collector-firmware\gpio.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-data-collector-firmware\motor_control.h" />
+    <ClInclude Include="..\src-data-collector-firmware\gpio.h" />
   </ItemGroup>
 </Project>
