@@ -1,6 +1,7 @@
 #include "motor_control.h"
 
 #include "global_data.h"
+#include "interrupt_priorities.h"
 
 #include <stdatomic.h>
 
@@ -21,7 +22,7 @@ void initializeMotorControl()
 
 void initializeSlaveTimer()
 {
-    NVIC_SetPriority(TIM5_IRQn, 0);
+    NVIC_SetPriority(TIM5_IRQn, IRQ_PRIORITY_MOTOR_PWM_STOP);
     NVIC_EnableIRQ(TIM5_IRQn);
 
     LL_TIM_SetTriggerInput(TIM5, LL_TIM_TS_ITR0);
@@ -116,4 +117,16 @@ void TIM5_IRQHandler()
         LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
         atomic_store(&g_isMotorControlBusy, false);
     }
+}
+
+void emergencyStop()
+{
+    // disable controller first
+    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
+    // disable timer after that
+    LL_TIM_ClearFlag_UPDATE(TIM5);
+    LL_TIM_DisableCounter(TIM2);
+    LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+    // no longer busy!
+    atomic_store(&g_isMotorControlBusy, false);
 }
