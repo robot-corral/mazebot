@@ -33,11 +33,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <GNUConfigurationType>Debug</GNUConfigurationType>
     <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
-    <ToolchainVersion>7.2.0/8.0.1/r3</ToolchainVersion>
+    <ToolchainVersion>9.2.1/8.3.0/r1</ToolchainVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ToolchainID>com.visualgdb.arm-eabi</ToolchainID>
-    <ToolchainVersion>7.2.0/8.0.1/r3</ToolchainVersion>
+    <ToolchainVersion>9.2.1/8.3.0/r1</ToolchainVersion>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
@@ -66,24 +66,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src-data-collector-firmware\button.c" />
-    <ClCompile Include="..\src-data-collector-firmware\client_communication_usart.c" />
+    <ClCompile Include="..\src-data-collector-firmware\client_communication_uart.c" />
     <ClCompile Include="..\src-data-collector-firmware\global_data.c" />
     <ClCompile Include="..\src-data-collector-firmware\gpio.c" />
     <ClCompile Include="..\src-data-collector-firmware\led.c" />
     <ClCompile Include="..\src-data-collector-firmware\main.c" />
-    <ClCompile Include="..\src-data-collector-firmware\motor_control.c" />
+    <ClCompile Include="..\src-data-collector-firmware\position_controller.c" />
     <ClCompile Include="..\src-data-collector-firmware\line_sensor_control.c" />
     <ClCompile Include="..\src-data-collector-firmware\system_clock.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-data-collector-firmware\button.h" />
-    <ClInclude Include="..\src-data-collector-firmware\client_communication_usart.h" />
+    <ClInclude Include="..\src-data-collector-firmware\client_communication_uart.h" />
     <ClInclude Include="..\src-data-collector-firmware\global_data.h" />
     <ClInclude Include="..\src-data-collector-firmware\gpio.h" />
     <ClInclude Include="..\src-data-collector-firmware\interrupt_priorities.h" />
     <ClInclude Include="..\src-data-collector-firmware\led.h" />
-    <ClInclude Include="..\src-data-collector-firmware\line_sensor_control_impl.h" />
-    <ClInclude Include="..\src-data-collector-firmware\motor_control.h" />
+    <ClInclude Include="..\src-data-collector-firmware\position_controller.h" />
     <ClInclude Include="..\src-data-collector-firmware\line_sensor_control.h" />
     <ClInclude Include="..\src-data-collector-firmware\system_clock.h" />
   </ItemGroup>

@@ -18,25 +18,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src-data-collector-firmware\main.c" />
-    <ClCompile Include="..\src-data-collector-firmware\motor_control.c" />
     <ClCompile Include="..\src-data-collector-firmware\gpio.c" />
     <ClCompile Include="..\src-data-collector-firmware\global_data.c" />
     <ClCompile Include="..\src-data-collector-firmware\system_clock.c" />
     <ClCompile Include="..\src-data-collector-firmware\led.c" />
     <ClCompile Include="..\src-data-collector-firmware\line_sensor_control.c" />
-    <ClCompile Include="..\src-data-collector-firmware\client_communication_usart.c" />
     <ClCompile Include="..\src-data-collector-firmware\button.c" />
+    <ClCompile Include="..\src-data-collector-firmware\client_communication_uart.c" />
+    <ClCompile Include="..\src-data-collector-firmware\position_controller.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src-data-collector-firmware\motor_control.h" />
     <ClInclude Include="..\src-data-collector-firmware\gpio.h" />
     <ClInclude Include="..\src-data-collector-firmware\global_data.h" />
     <ClInclude Include="..\src-data-collector-firmware\system_clock.h" />
     <ClInclude Include="..\src-data-collector-firmware\led.h" />
     <ClInclude Include="..\src-data-collector-firmware\line_sensor_control.h" />
-    <ClInclude Include="..\src-data-collector-firmware\client_communication_usart.h" />
     <ClInclude Include="..\src-data-collector-firmware\button.h" />
     <ClInclude Include="..\src-data-collector-firmware\interrupt_priorities.h" />
-    <ClInclude Include="..\src-data-collector-firmware\line_sensor_control_impl.h" />
+    <ClInclude Include="..\src-data-collector-firmware\client_communication_uart.h" />
+    <ClInclude Include="..\src-data-collector-firmware\position_controller.h" />
   </ItemGroup>
 </Project>

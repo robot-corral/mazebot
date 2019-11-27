@@ -1,6 +1,6 @@
 #include "button.h"
 
-#include "motor_control.h"
+#include "position_controller.h"
 #include "interrupt_priorities.h"
 
 #include <stm32\stm32l4xx_ll_exti.h>
@@ -22,6 +22,6 @@ void EXTI15_10_IRQHandler()
     if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_13) != RESET)
     {
         LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
-        emergencyStop();
+        positionControllerEmergencyStop();
     }
 }

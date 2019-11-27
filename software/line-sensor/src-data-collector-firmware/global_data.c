@@ -1,8 +1,15 @@
 #include "global_data.h"
 
-volatile bool g_isMotorControlBusy;
+volatile uint32_t g_positionControllerX;
+volatile uint32_t g_positionControllerXMaxValue;
+volatile uint32_t g_positionControllerXDesiredValue;
+volatile positionControllerStatus_t g_positionControllerXStatus;
+volatile positionControllerDirection_t g_positionControllerXDirection;
 
 volatile bool g_lineSensorClientIsReceiving;
 volatile bool g_lineSensorClientIsTransmitting;
 volatile lineSensorRequest_t g_lineSensorClientTxBuffer;
 volatile lineSensorResponse_t g_lineSensorClientRxBuffer;
+
+volatile clientUartRequest_t g_clientUartRxBuffer;
+volatile clientUartResponse_t g_clientUartTxBuffer;

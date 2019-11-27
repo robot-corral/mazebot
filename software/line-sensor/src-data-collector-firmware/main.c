@@ -3,9 +3,9 @@
 #include "gpio.h"
 #include "button.h"
 #include "system_clock.h"
-#include "motor_control.h"
+#include "position_controller.h"
 #include "line_sensor_control.h"
-#include "client_communication_usart.h"
+#include "client_communication_uart.h"
 
 int main()
 {
@@ -13,8 +13,8 @@ int main()
     intializeGpio();
     initializeButton();
     initializeLineSensor();
-    initializeMotorControl();
-    initializeClientCommunicationUsart();
+    initializePositionController();
+    initializeClientCommunicationUart();
 
     for (;;) ;
 }

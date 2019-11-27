@@ -1,5 +1,4 @@
 #include "line_sensor_control.h"
-#include "line_sensor_control_impl.h"
 
 #include "led.h"
 #include "global_data.h"
@@ -31,10 +30,10 @@ void initializeLineSensor()
     LL_SPI_EnableDMAReq_RX(SPI3);
     LL_SPI_EnableDMAReq_TX(SPI3);
 
-    NVIC_SetPriority(DMA2_Channel1_IRQn, IRQ_PRIORITY_LINE_SENSOR_DMI2_CHANNEL1_RX);
+    NVIC_SetPriority(DMA2_Channel1_IRQn, IRQ_PRIORITY_LINE_SENSOR_DMA2_CHANNEL1_RX);
     NVIC_EnableIRQ(DMA2_Channel1_IRQn);
 
-    NVIC_SetPriority(DMA2_Channel2_IRQn, IRQ_PRIORITY_LINE_SENSOR_DMI2_CHANNEL2_TX);
+    NVIC_SetPriority(DMA2_Channel2_IRQn, IRQ_PRIORITY_LINE_SENSOR_DMA2_CHANNEL2_TX);
     NVIC_EnableIRQ(DMA2_Channel2_IRQn);
 
     // RX

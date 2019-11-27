@@ -9,5 +9,6 @@ s = serial.Serial(port = 'COM7',
                   dsrdtr = True)
 if s.is_open == False:
     s.open()
-b = s.read(1)
-b = s.read(1)
+request = bytes([0x41, 0x54, 0x02, 0x01, 0xFF, 0x00, 0x00, 0x00])
+s.write(request)
+response = s.read(7)
