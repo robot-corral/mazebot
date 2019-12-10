@@ -19,16 +19,26 @@ typedef enum
     PCS_EMERGENCY_STOPPED = 4,
 } positionControllerStatus_t;
 
-void initializePositionController();
+typedef enum
+{
+    PCLST_NONE = 0,
+    PCLST_MIN  = 1,
+    PCLST_MAX  = 2,
+} positionControllerLimitStopType_t;
 
-void calibratePositionController();
+void initializePositionController();
 
 bool isPositionControllerBusy();
 
 uint32_t getPosition();
 
 /*
- * returns false if direction is invalid or motor control is busy controlling the motor.
+ * returns false if position control is busy controlling the motor.
+ */
+bool calibratePositionController();
+
+/*
+ * returns false if direction is invalid or position control is busy controlling the motor.
  */
 bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount);
 
@@ -36,3 +46,5 @@ bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount);
  * recalibration is required after emergency stop.
  */
 void positionControllerEmergencyStop();
+
+void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType);

@@ -9,10 +9,11 @@ void initializeClientCommunicationUart();
 
 typedef enum
 {
-    MCMD_CALIBRATE      = 1,
-    MCMD_EMERGENCY_STOP = 2,
-    MCMD_MOVE_IF_IDLE   = 3,
-    MCMD_GET_POSITION   = 4,
+    MCMD_CALIBRATE            = 1,
+    MCMD_EMERGENCY_STOP       = 2,
+    MCMD_MOVE_IF_IDLE         = 3,
+    MCMD_GET_STATUS           = 4,
+    MCMD_RESET                = 5,
 } motorCommand_t;
 
 typedef enum

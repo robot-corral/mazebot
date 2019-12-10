@@ -103,6 +103,11 @@ static void initializeUart()
 
     LL_LPUART_EnableDMAReq_TX(LPUART1);
 
+    while (LL_LPUART_IsActiveFlag_RXNE(LPUART1))
+    {
+        LL_LPUART_ReceiveData8(LPUART1);
+    }
+
     // ready to receive
     LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_7);
 }
@@ -136,12 +141,21 @@ static void processCommand(volatile clientUartRequest_t* pRequest)
         }
         case MCMD_CALIBRATE:
         {
-            calibratePositionController();
+            if (!calibratePositionController())
+            {
+                g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_BUSY;
+            }
             break;
         }
-        case MCMD_GET_POSITION:
+        case MCMD_GET_STATUS:
         {
             // we already set position above
+            break;
+        }
+        case MCMD_RESET:
+        {
+            positionControllerEmergencyStop();
+            NVIC_SystemReset();
             break;
         }
         default:

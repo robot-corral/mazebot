@@ -18,6 +18,23 @@ void intializeGpio()
     LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
 
     /***************************************************************************
+     * Button
+     ***************************************************************************/
+
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_INPUT);
+    LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_NO);
+
+    /***************************************************************************
+     * Limit switches
+     ***************************************************************************/
+
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_1, LL_GPIO_MODE_INPUT);
+    LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_1, LL_GPIO_PULL_NO);
+
+    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_3, LL_GPIO_MODE_INPUT);
+    LL_GPIO_SetPinPull(GPIOD, LL_GPIO_PIN_3, LL_GPIO_PULL_NO);
+
+    /***************************************************************************
      * Motor control PWM timer output
      ***************************************************************************/
 
@@ -33,11 +50,12 @@ void intializeGpio()
      ***************************************************************************/
 
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
-
     LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
+
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_14);
+    
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
 
     /***************************************************************************
@@ -86,11 +104,4 @@ void intializeGpio()
     LL_GPIO_SetPinSpeed(GPIOG, LL_GPIO_PIN_8, LL_GPIO_SPEED_FREQ_HIGH);
     LL_GPIO_SetPinOutputType(GPIOG, LL_GPIO_PIN_8, LL_GPIO_OUTPUT_PUSHPULL);
     LL_GPIO_SetPinPull(GPIOG, LL_GPIO_PIN_8, LL_GPIO_PULL_NO);
-
-    /***************************************************************************
-     * Button
-     ***************************************************************************/
-
-    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_INPUT);
-    LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_NO);
 }

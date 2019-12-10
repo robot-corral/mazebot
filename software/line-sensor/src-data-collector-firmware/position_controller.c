@@ -17,8 +17,8 @@ static void initializeMasterTimer();
 void initializePositionController()
 {
     g_positionControllerX = 0;
-    g_positionControllerXStatus = 0;
-    g_positionControllerXMaxValue = 10000; // TODO initial value should be 0, actual value should be set by calibration procedure
+    g_positionControllerXMaxValue = 0;
+    g_positionControllerXStatus = PCS_FREE;
     g_positionControllerXDesiredValue = 0;
     g_positionControllerXDirection = PCD_NONE;
     initializeSlaveTimer();
@@ -47,7 +47,7 @@ void initializeMasterTimer()
     LL_TIM_SetPrescaler(TIM2, prescaler);
     LL_TIM_EnableARRPreload(TIM2);
 
-    const uint32_t cycle = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 1000);
+    const uint32_t cycle = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 1500);
 
     LL_TIM_SetAutoReload(TIM2, cycle);
     LL_TIM_OC_SetMode(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_PWM1);
@@ -60,11 +60,6 @@ void initializeMasterTimer()
 
     LL_TIM_EnableMasterSlaveMode(TIM2);
     LL_TIM_SetTriggerOutput(TIM2, LL_TIM_TRGO_UPDATE);
-}
-
-void calibratePositionController()
-{
-    // TODO (need limit-switches)
 }
 
 bool isPositionControllerBusy()
@@ -214,6 +209,7 @@ void TIM5_IRQHandler()
         {
             LL_TIM_DisableCounter(TIM2);
             LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+            LL_TIM_DisableCounter(TIM5);
             // wait 1 millisecond for falling edge to move the motor
             // (might need to reduce this wait time in the future)
             // at the moment it's not a big deal as I need to query sensor
@@ -233,10 +229,31 @@ void positionControllerEmergencyStop()
     // disable controller first
     LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
     // disable timer after that
-    LL_TIM_ClearFlag_UPDATE(TIM5);
-    LL_TIM_DisableCounter(TIM2);
     LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+    LL_TIM_DisableCounter(TIM2);
+    LL_TIM_DisableCounter(TIM5);
     // after emergency stop we need to recalibrate
     atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
+    // turn on emergency stop LED
     setRedLedEnabled(true);
+}
+
+void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType)
+{
+    // disable controller first
+    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
+    // disable timer after that
+    LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+    LL_TIM_DisableCounter(TIM2);
+    LL_TIM_DisableCounter(TIM5);
+    // after emergency stop we need to recalibrate
+    atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
+    // turn on emergency stop LED
+    setRedLedEnabled(true);
+}
+
+bool calibratePositionController()
+{
+    // TODO (need limit-switches)
+    return false;
 }
