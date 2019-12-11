@@ -21,7 +21,7 @@ void initializeButton()
     // max limit stop
 
     NVIC_EnableIRQ(EXTI1_IRQn);
-    NVIC_SetPriority(EXTI1_IRQn, IRQ_PRIORITY_EMERGENCY_BUTTON);
+    NVIC_SetPriority(EXTI1_IRQn, IRQ_PRIORITY_LIMIT_SWITCH);
 
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE1);
 
@@ -31,7 +31,7 @@ void initializeButton()
     // min limit stop
 
     NVIC_EnableIRQ(EXTI3_IRQn);
-    NVIC_SetPriority(EXTI3_IRQn, IRQ_PRIORITY_EMERGENCY_BUTTON);
+    NVIC_SetPriority(EXTI3_IRQn, IRQ_PRIORITY_LIMIT_SWITCH);
 
     LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTD, LL_SYSCFG_EXTI_LINE3);
 

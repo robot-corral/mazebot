@@ -1,5 +1,6 @@
 #include "position_controller.h"
 
+#include "arm.h"
 #include "led.h"
 #include "global_data.h"
 #include "interrupt_priorities.h"
@@ -13,6 +14,8 @@
 
 static void initializeSlaveTimer();
 static void initializeMasterTimer();
+static void positionControllerStop();
+static bool positionControllerMove(positionControllerStatus_t desired);
 
 void initializePositionController()
 {
@@ -35,6 +38,9 @@ void initializeSlaveTimer()
 
     LL_TIM_SetCounterMode(TIM5, LL_TIM_COUNTERMODE_DOWN);
     LL_TIM_EnableARRPreload(TIM5);
+
+    LL_TIM_SetAutoReload(TIM5, 1);
+    LL_TIM_SetCounter(TIM5, 1);
 
     LL_TIM_EnableIT_UPDATE(TIM5);
 }
@@ -69,7 +75,30 @@ bool isPositionControllerBusy()
 
 uint32_t getPosition()
 {
-    return atomic_load(&g_positionControllerX);
+    return g_positionControllerX;
+}
+
+bool positionControllerMove(positionControllerStatus_t desired)
+{
+    bool result = false;
+    // in case emergency stop happened we don't want to resume moving the motor
+    // so make sure we cannot get interrupted
+    raise_interrupt_priority();
+    if (atomic_load(&g_positionControllerXStatus) == desired)
+    {
+        setGreenLedEnabled(true);
+        // get ready to count TIM2 pulses
+        LL_TIM_EnableCounter(TIM5);
+        // enable motor controller
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
+        // start moving motor
+        LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+        LL_TIM_EnableCounter(TIM2);
+        LL_TIM_GenerateEvent_UPDATE(TIM2);
+        result = true;
+    }
+    restore_interrupt_priority();
+    return result;
 }
 
 bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount)
@@ -97,7 +126,7 @@ bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount)
 
     g_positionControllerXDirection = direction;
 
-    const uint32_t positionControllerX = atomic_load(&g_positionControllerX);
+    const uint32_t positionControllerX = g_positionControllerX;
 
     switch (direction)
     {
@@ -107,10 +136,13 @@ bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount)
             if (pulseCount > g_positionControllerXMaxValue ||
                 positionControllerX > g_positionControllerXMaxValue - pulseCount)
             {
-                atomic_store(&g_positionControllerXStatus, PCS_FREE);
+                // make sure we do not overwrite status if it changed since we set it to desired value
+                expected = desired;
+                atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_FREE);
                 return false;
             }
             g_positionControllerXDesiredValue = positionControllerX + pulseCount;
+            // set forward direction
             LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6);
             break;
         }
@@ -119,10 +151,13 @@ bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount)
             // make sure we don't trigger min limit-switch
             if (pulseCount > positionControllerX)
             {
-                atomic_store(&g_positionControllerXStatus, PCS_FREE);
+                // make sure we do not overwrite status if it changed since we set it to desired value
+                expected = desired;
+                atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_FREE);
                 return false;
             }
             g_positionControllerXDesiredValue = positionControllerX - pulseCount;
+            // set backward direction
             LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
             break;
         }
@@ -134,20 +169,7 @@ bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount)
         }
     }
 
-    setGreenLedEnabled(true);
-
-    LL_TIM_SetAutoReload(TIM5, 1);
-    LL_TIM_SetCounter(TIM5, 1);
-    LL_TIM_EnableCounter(TIM5);
-
-    // enable motor controller
-    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
-
-    LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-    LL_TIM_EnableCounter(TIM2);
-    LL_TIM_GenerateEvent_UPDATE(TIM2);
-
-    return true;
+    return positionControllerMove(desired);
 }
 
 void TIM5_IRQHandler()
@@ -162,12 +184,12 @@ void TIM5_IRQHandler()
         {
             case PCD_FORWARD :
             {
-                if (g_positionControllerX == g_positionControllerXMaxValue)
+                if (g_positionControllerX >= g_positionControllerXMaxValue)
                 {
                     positionControllerEmergencyStop();
                     return;
                 }
-                atomic_fetch_add(&g_positionControllerX, 1);
+                g_positionControllerX = g_positionControllerX + 1;
                 if (g_positionControllerX == g_positionControllerXDesiredValue)
                 {
                     stop = true;
@@ -186,7 +208,7 @@ void TIM5_IRQHandler()
                     positionControllerEmergencyStop();
                     return;
                 }
-                atomic_fetch_sub(&g_positionControllerX, 1);
+                g_positionControllerX = g_positionControllerX - 1;
                 if (g_positionControllerX == g_positionControllerXDesiredValue)
                 {
                     stop = true;
@@ -207,23 +229,44 @@ void TIM5_IRQHandler()
         }
         if (stop)
         {
-            LL_TIM_DisableCounter(TIM2);
-            LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-            LL_TIM_DisableCounter(TIM5);
-            // wait 1 millisecond for falling edge to move the motor
-            // (might need to reduce this wait time in the future)
-            // at the moment it's not a big deal as I need to query sensor
-            // not doing any complicated movement anyway
-            LL_mDelay(1);
-            // disable motor controller
-            LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
-            setGreenLedEnabled(false);
+            positionControllerStop();
             // now we are free to do whatever
             atomic_store(&g_positionControllerXStatus, PCS_FREE);
         }
     }
 }
 
+void NMI_Handler()
+{
+    positionControllerEmergencyStop();
+    setBlueLedEnabled(true);
+    for (;;) ;
+}
+
+void HardFault_Handler()
+{
+    positionControllerEmergencyStop();
+    setBlueLedEnabled(true);
+    for (;;) ;
+}
+
+void MemManage_Handler()
+{
+    positionControllerEmergencyStop();
+    setBlueLedEnabled(true);
+    for (;;) ;
+}
+
+void BusFault_Handler()
+{
+    positionControllerEmergencyStop();
+    setBlueLedEnabled(true);
+    for (;;) ;
+}
+
+/*
+ * this method is called from highest priority interrupts
+ */
 void positionControllerEmergencyStop()
 {
     // disable controller first
@@ -232,28 +275,91 @@ void positionControllerEmergencyStop()
     LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_DisableCounter(TIM2);
     LL_TIM_DisableCounter(TIM5);
-    // after emergency stop we need to recalibrate
-    atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
     // turn on emergency stop LED
     setRedLedEnabled(true);
+    // modify memory at the end of the method in case it generates some faults
+    atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
 }
 
-void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType)
+void positionControllerStop()
 {
-    // disable controller first
-    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
-    // disable timer after that
-    LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_DisableCounter(TIM2);
+    LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_DisableCounter(TIM5);
-    // after emergency stop we need to recalibrate
-    atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
-    // turn on emergency stop LED
-    setRedLedEnabled(true);
+    // wait 1 millisecond for falling edge to move the motor
+    // (might need to reduce this wait time in the future)
+    // at the moment it's not a big deal as I need to query sensor
+    // not doing any complicated movement anyway
+    LL_mDelay(1);
+    // disable motor controller
+    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
+    setGreenLedEnabled(false);
 }
 
 bool calibratePositionController()
 {
-    // TODO (need limit-switches)
-    return false;
+    positionControllerStatus_t expected = PCS_FREE;
+
+    if (!atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_CALIBRATING_MIN))
+    {
+        return false;
+    }
+
+    // move to min position 1st
+    g_positionControllerX = UINT32_MAX;
+    g_positionControllerXDesiredValue = 0;
+    g_positionControllerXMaxValue = UINT32_MAX;
+    g_positionControllerXDirection = PCD_BACKWARD;
+
+    // set backward direction
+    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
+
+    return positionControllerMove(PCS_CALIBRATING_MIN);
+}
+
+/*
+ * the only way to interrupt this method is with emergency stop interrupt
+ */
+void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType)
+{
+    positionControllerStop();
+
+    const positionControllerStatus_t positionControllerXStatus = atomic_load(&g_positionControllerXStatus);
+
+    if (positionControllerXStatus == PCS_CALIBRATING_MIN && limitStopType == PCLST_MIN)
+    {
+        positionControllerStatus_t expected = PCS_CALIBRATING_MIN;
+        if (atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_CALIBRATING_MAX))
+        {
+            // move to max position
+            g_positionControllerX = 0;
+            g_positionControllerXMaxValue = UINT32_MAX;
+            g_positionControllerXDirection = PCD_FORWARD;
+            g_positionControllerXDesiredValue = UINT32_MAX;
+
+            // set forward direction
+            LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6);
+
+            positionControllerMove(PCS_CALIBRATING_MAX);
+        }
+    }
+    else if (positionControllerXStatus == PCS_CALIBRATING_MAX)
+    {
+        if (limitStopType == PCLST_MAX)
+        {
+            // we figured out max x value
+            g_positionControllerXDesiredValue = 0;
+            g_positionControllerXDirection = PCD_NONE;
+            g_positionControllerXMaxValue = g_positionControllerX;
+
+            // we can now use the position controller
+            positionControllerStatus_t expected = PCS_CALIBRATING_MAX;
+            atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_FREE);
+        }
+    }
+    else
+    {
+        atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
+        setRedLedEnabled(true);
+    }
 }

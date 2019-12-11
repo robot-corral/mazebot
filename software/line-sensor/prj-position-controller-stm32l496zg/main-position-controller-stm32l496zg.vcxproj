@@ -41,13 +41,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
-      <CLanguageStandard>C11</CLanguageStandard>
+      <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
-      <CLanguageStandard>C11</CLanguageStandard>
+      <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -75,6 +75,7 @@
     <ClCompile Include="..\src-position-controller\system_clock.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src-position-controller\arm.h" />
     <ClInclude Include="..\src-position-controller\button.h" />
     <ClInclude Include="..\src-position-controller\client_communication_uart.h" />
     <ClInclude Include="..\src-position-controller\global_data.h" />

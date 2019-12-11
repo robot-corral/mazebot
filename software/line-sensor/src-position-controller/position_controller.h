@@ -15,8 +15,9 @@ typedef enum
     PCS_FREE              = 0,
     PCS_MOVING_FORWARD    = 1,
     PCS_MOVING_BACKWARD   = 2,
-    PCS_CALIBRATING       = 3,
-    PCS_EMERGENCY_STOPPED = 4,
+    PCS_CALIBRATING_MIN   = 3,
+    PCS_CALIBRATING_MAX   = 4,
+    PCS_EMERGENCY_STOPPED = 5,
 } positionControllerStatus_t;
 
 typedef enum
