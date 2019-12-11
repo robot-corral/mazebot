@@ -22,7 +22,6 @@
     <ClCompile Include="..\src-position-controller\global_data.c" />
     <ClCompile Include="..\src-position-controller\system_clock.c" />
     <ClCompile Include="..\src-position-controller\led.c" />
-    <ClCompile Include="..\src-position-controller\line_sensor_control.c" />
     <ClCompile Include="..\src-position-controller\button.c" />
     <ClCompile Include="..\src-position-controller\client_communication_uart.c" />
     <ClCompile Include="..\src-position-controller\position_controller.c" />
@@ -32,7 +31,6 @@
     <ClInclude Include="..\src-position-controller\global_data.h" />
     <ClInclude Include="..\src-position-controller\system_clock.h" />
     <ClInclude Include="..\src-position-controller\led.h" />
-    <ClInclude Include="..\src-position-controller\line_sensor_control.h" />
     <ClInclude Include="..\src-position-controller\button.h" />
     <ClInclude Include="..\src-position-controller\interrupt_priorities.h" />
     <ClInclude Include="..\src-position-controller\client_communication_uart.h" />

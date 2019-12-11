@@ -11,8 +11,7 @@ void initializeSystemClock()
 {
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR  |
                              LL_APB1_GRP1_PERIPH_TIM5 |
-                             LL_APB1_GRP1_PERIPH_TIM2 |
-                             LL_APB1_GRP1_PERIPH_SPI3);
+                             LL_APB1_GRP1_PERIPH_TIM2);
 
     LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPUART1);
 
