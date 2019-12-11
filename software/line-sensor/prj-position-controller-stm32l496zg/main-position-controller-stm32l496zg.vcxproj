@@ -55,8 +55,8 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="main-data-collector-firmware-stm32l496zg-Debug.vgdbsettings" />
-    <None Include="main-data-collector-firmware-stm32l496zg-Release.vgdbsettings" />
+    <None Include="main-position-controller-stm32l496zg-Debug.vgdbsettings" />
+    <None Include="main-position-controller-stm32l496zg-Release.vgdbsettings" />
     <None Include="stm32.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -65,25 +65,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-data-collector-firmware\button.c" />
-    <ClCompile Include="..\src-data-collector-firmware\client_communication_uart.c" />
-    <ClCompile Include="..\src-data-collector-firmware\global_data.c" />
-    <ClCompile Include="..\src-data-collector-firmware\gpio.c" />
-    <ClCompile Include="..\src-data-collector-firmware\led.c" />
-    <ClCompile Include="..\src-data-collector-firmware\main.c" />
-    <ClCompile Include="..\src-data-collector-firmware\position_controller.c" />
-    <ClCompile Include="..\src-data-collector-firmware\line_sensor_control.c" />
-    <ClCompile Include="..\src-data-collector-firmware\system_clock.c" />
+    <ClCompile Include="..\src-position-controller\button.c" />
+    <ClCompile Include="..\src-position-controller\client_communication_uart.c" />
+    <ClCompile Include="..\src-position-controller\global_data.c" />
+    <ClCompile Include="..\src-position-controller\gpio.c" />
+    <ClCompile Include="..\src-position-controller\led.c" />
+    <ClCompile Include="..\src-position-controller\main.c" />
+    <ClCompile Include="..\src-position-controller\position_controller.c" />
+    <ClCompile Include="..\src-position-controller\line_sensor_control.c" />
+    <ClCompile Include="..\src-position-controller\system_clock.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src-data-collector-firmware\button.h" />
-    <ClInclude Include="..\src-data-collector-firmware\client_communication_uart.h" />
-    <ClInclude Include="..\src-data-collector-firmware\global_data.h" />
-    <ClInclude Include="..\src-data-collector-firmware\gpio.h" />
-    <ClInclude Include="..\src-data-collector-firmware\interrupt_priorities.h" />
-    <ClInclude Include="..\src-data-collector-firmware\led.h" />
-    <ClInclude Include="..\src-data-collector-firmware\position_controller.h" />
-    <ClInclude Include="..\src-data-collector-firmware\line_sensor_control.h" />
-    <ClInclude Include="..\src-data-collector-firmware\system_clock.h" />
+    <ClInclude Include="..\src-position-controller\button.h" />
+    <ClInclude Include="..\src-position-controller\client_communication_uart.h" />
+    <ClInclude Include="..\src-position-controller\global_data.h" />
+    <ClInclude Include="..\src-position-controller\gpio.h" />
+    <ClInclude Include="..\src-position-controller\interrupt_priorities.h" />
+    <ClInclude Include="..\src-position-controller\led.h" />
+    <ClInclude Include="..\src-position-controller\position_controller.h" />
+    <ClInclude Include="..\src-position-controller\line_sensor_control.h" />
+    <ClInclude Include="..\src-position-controller\system_clock.h" />
   </ItemGroup>
 </Project>
