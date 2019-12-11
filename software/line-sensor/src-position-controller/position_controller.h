@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// one step is 0.025 mm
+
 typedef enum
 {
     PCD_NONE     = 0,
@@ -30,6 +32,7 @@ typedef enum
 void initializePositionController();
 
 bool isPositionControllerBusy();
+bool isPositionControllerInEmergency();
 
 uint32_t getPosition();
 

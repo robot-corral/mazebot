@@ -43,6 +43,8 @@ static void resetUart()
 
 static void initializeUart()
 {
+    enableVddIo2();
+
     LL_RCC_SetLPUARTClockSource(LL_RCC_LPUART1_CLKSOURCE_HSI);
 
     LL_LPUART_SetTransferDirection(LPUART1, LL_LPUART_DIRECTION_TX_RX);
@@ -118,6 +120,15 @@ static void processCommand(volatile clientUartRequest_t* pRequest)
     g_clientUartTxBuffer.position = getPosition();
     g_clientUartTxBuffer.resultFlags = 0;
 
+    if (isPositionControllerBusy())
+    {
+        g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_BUSY;
+    }
+    if (isPositionControllerInEmergency())
+    {
+        g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
+    }
+
     if (pRequest == nullptr || pRequest->header != CLIENT_UART_REQUEST_HEADER)
     {
         g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_TX_ERROR;
@@ -129,13 +140,14 @@ static void processCommand(volatile clientUartRequest_t* pRequest)
         case MCMD_EMERGENCY_STOP:
         {
             positionControllerEmergencyStop();
+            g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
             break;
         }
         case MCMD_MOVE_IF_IDLE:
         {
             if (!setPosition(pRequest->direction, pRequest->steps))
             {
-                g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_BUSY;
+                g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_BUSY;
             }
             break;
         }
@@ -143,7 +155,7 @@ static void processCommand(volatile clientUartRequest_t* pRequest)
         {
             if (!calibratePositionController())
             {
-                g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_BUSY;
+                g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_BUSY;
             }
             break;
         }
@@ -160,7 +172,7 @@ static void processCommand(volatile clientUartRequest_t* pRequest)
         }
         default:
         {
-            g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_UNKNOWN_COMMAND;
+            g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_UNKNOWN_COMMAND;
             break;
         }
     }
@@ -168,7 +180,6 @@ static void processCommand(volatile clientUartRequest_t* pRequest)
 
 void initializeClientCommunicationUart()
 {
-    enableVddIo2();
     initializeUart();
 }
 

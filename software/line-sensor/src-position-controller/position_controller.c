@@ -70,7 +70,13 @@ void initializeMasterTimer()
 
 bool isPositionControllerBusy()
 {
-    return atomic_load(&g_positionControllerXStatus) != PCS_FREE;
+    const positionControllerStatus_t positionControllerXStatus = atomic_load(&g_positionControllerXStatus);
+    return positionControllerXStatus != PCS_FREE && positionControllerXStatus != PCS_EMERGENCY_STOPPED;
+}
+
+bool isPositionControllerInEmergency()
+{
+    return atomic_load(&g_positionControllerXStatus) == PCS_EMERGENCY_STOPPED;
 }
 
 uint32_t getPosition()

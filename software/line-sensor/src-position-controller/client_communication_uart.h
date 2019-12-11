@@ -22,8 +22,7 @@ typedef enum
     ERR_TX_ERROR          = 0x01,
     ERR_UNKNOWN_COMMAND   = 0x02,
     ERR_BUSY              = 0x04,
-    ERR_STOPEED_MIN_LIMIT = 0x08,
-    ERR_STOPEED_MAX_LIMIT = 0x10,
+    ERR_EMERGENCY_STOP    = 0x08,
 } commandResultFlags_t;
 
 typedef struct __attribute__((packed))
