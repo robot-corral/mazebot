@@ -52,11 +52,23 @@ void intializeGpio()
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
 
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_10, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_10);
+
+    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_11, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_11);
+
     LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_14);
     
     LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
+
+    LL_GPIO_SetPinMode(GPIOE, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_ResetOutputPin(GPIOE, LL_GPIO_PIN_14);
+
+    LL_GPIO_SetPinMode(GPIOE, LL_GPIO_PIN_15, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_ResetOutputPin(GPIOE, LL_GPIO_PIN_15);
 
     /***************************************************************************
      * Client communication usart

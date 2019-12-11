@@ -23,6 +23,7 @@ void initializeSystemClock()
                              LL_AHB2_GRP1_PERIPH_GPIOB |
                              LL_AHB2_GRP1_PERIPH_GPIOC |
                              LL_AHB2_GRP1_PERIPH_GPIOD |
+                             LL_AHB2_GRP1_PERIPH_GPIOE |
                              LL_AHB2_GRP1_PERIPH_GPIOG);
 
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);

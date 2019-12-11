@@ -92,7 +92,7 @@ bool positionControllerMove(positionControllerStatus_t desired)
     raise_interrupt_priority();
     if (atomic_load(&g_positionControllerXStatus) == desired)
     {
-        setGreenLedEnabled(true);
+        setPositionControllerMovingLedEnabled(true);
         // get ready to count TIM2 pulses
         LL_TIM_EnableCounter(TIM5);
         // enable motor controller
@@ -245,28 +245,28 @@ void TIM5_IRQHandler()
 void NMI_Handler()
 {
     positionControllerEmergencyStop();
-    setBlueLedEnabled(true);
+    setFatalErrorLedEnabled(true);
     for (;;) ;
 }
 
 void HardFault_Handler()
 {
     positionControllerEmergencyStop();
-    setBlueLedEnabled(true);
+    setFatalErrorLedEnabled(true);
     for (;;) ;
 }
 
 void MemManage_Handler()
 {
     positionControllerEmergencyStop();
-    setBlueLedEnabled(true);
+    setFatalErrorLedEnabled(true);
     for (;;) ;
 }
 
 void BusFault_Handler()
 {
     positionControllerEmergencyStop();
-    setBlueLedEnabled(true);
+    setFatalErrorLedEnabled(true);
     for (;;) ;
 }
 
@@ -282,9 +282,10 @@ void positionControllerEmergencyStop()
     LL_TIM_DisableCounter(TIM2);
     LL_TIM_DisableCounter(TIM5);
     // turn on emergency stop LED
-    setRedLedEnabled(true);
+    setEmergencyStopLedEnabled(true);
     // modify memory at the end of the method in case it generates some faults
     atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
+    setPositionControllerMovingLedEnabled(false);
 }
 
 void positionControllerStop()
@@ -299,7 +300,7 @@ void positionControllerStop()
     LL_mDelay(1);
     // disable motor controller
     LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
-    setGreenLedEnabled(false);
+    setPositionControllerMovingLedEnabled(false);
 }
 
 bool calibratePositionController()
@@ -366,6 +367,6 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
     else
     {
         atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
-        setRedLedEnabled(true);
+        setEmergencyStopLedEnabled(true);
     }
 }
