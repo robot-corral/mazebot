@@ -62,8 +62,8 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="prj-stm32wb55rg-Debug.vgdbsettings" />
-    <None Include="prj-stm32wb55rg-Release.vgdbsettings" />
+    <None Include="lib-stm32wb55rg-Debug.vgdbsettings" />
+    <None Include="lib-stm32wb55rg-Release.vgdbsettings" />
     <None Include="stm32wb.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +74,10 @@
     <ClInclude Include="..\stm32\stm32wbxx_ll_cortex.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_dma.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_gpio.h" />
+    <ClInclude Include="..\stm32\stm32wbxx_ll_hsem.h" />
+    <ClInclude Include="..\stm32\stm32wbxx_ll_ipcc.h" />
+    <ClInclude Include="..\stm32\stm32wbxx_ll_iwdg.h" />
+    <ClInclude Include="..\stm32\stm32wbxx_ll_pka.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_pwr.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_rcc.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_spi.h" />

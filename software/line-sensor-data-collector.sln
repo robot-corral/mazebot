@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-position-controller-st
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-line-sensor-wireless-stm32wb55rg", "line-sensor\prj-line-sensor-wireless-stm32wb55rg\main-line-sensor-wireless-stm32wb55rg.vcxproj", "{D81D3971-C186-4D3C-8B2B-9580CFDBA190}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prj-stm32wb55rg", "common\lib-stm32wb\prj-stm32wb55rg\prj-stm32wb55rg.vcxproj", "{50CB8853-DF20-4367-A74C-6F9E93764C59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32wb55rg", "common\lib-stm32wb\prj-stm32wb55rg\lib-stm32wb55rg.vcxproj", "{50CB8853-DF20-4367-A74C-6F9E93764C59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

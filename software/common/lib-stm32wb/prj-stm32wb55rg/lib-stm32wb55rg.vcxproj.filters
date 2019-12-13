@@ -12,10 +12,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="prj-stm32wb55rg-Debug.vgdbsettings">
+    <None Include="lib-stm32wb55rg-Debug.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
-    <None Include="prj-stm32wb55rg-Release.vgdbsettings">
+    <None Include="lib-stm32wb55rg-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
     <None Include="stm32wb.xml">
@@ -71,6 +71,18 @@
       <Filter>stm32</Filter>
     </ClInclude>
     <ClInclude Include="..\stm32\stm32wbxx_ll_wwdg.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32wbxx_ll_hsem.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32wbxx_ll_ipcc.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32wbxx_ll_iwdg.h">
+      <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stm32\stm32wbxx_ll_pka.h">
       <Filter>stm32</Filter>
     </ClInclude>
   </ItemGroup>

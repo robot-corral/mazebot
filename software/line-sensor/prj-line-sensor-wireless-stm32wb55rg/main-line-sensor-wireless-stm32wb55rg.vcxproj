@@ -49,11 +49,6 @@
       <CLanguageStandard>C11</CLanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\common\lib-stm32wb\prj-stm32wb55rg\prj-stm32wb55rg.vcxproj">
-      <Project>{50cb8853-df20-4367-a74c-6f9e93764c59}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
@@ -112,5 +107,10 @@
     <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_usart.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_utils.h" />
     <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_wwdg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\lib-stm32wb\prj-stm32wb55rg\lib-stm32wb55rg.vcxproj">
+      <Project>{50cb8853-df20-4367-a74c-6f9e93764c59}</Project>
+    </ProjectReference>
   </ItemGroup>
 </Project>
