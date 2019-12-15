@@ -1,4 +1,6 @@
 import time
+# pySerial
+# https://pyserial.readthedocs.io
 import serial
 
 s = serial.Serial(port = 'COM7',
