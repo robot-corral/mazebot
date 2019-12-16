@@ -31,6 +31,9 @@
     <Filter Include="src\cmsis">
       <UniqueIdentifier>{bcc8de64-a6ad-43df-b8e5-f968934799c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\tiny_lpm">
+      <UniqueIdentifier>{8efb40b6-324f-4e79-a879-f44424c27895}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="main-line-sensor-wireless-stm32wb55rg-Debug.vgdbsettings">
@@ -245,6 +248,51 @@
     <ClCompile Include="..\src-line-sensor-wireless\sequencer\stm32_seq.c">
       <Filter>src\sequencer</Filter>
     </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\system_clocks.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_pwr_ex.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\error.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rcc_ex.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\exti.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\gpio.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\application.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\tiny_lpm\stm32_lpm.c">
+      <Filter>src\tiny_lpm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\utilities\dbg_trace.c">
+      <Filter>src\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\utilities\stm_queue.c">
+      <Filter>src\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\uart.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_uart_ex.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\debug.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\led.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\buttons.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-line-sensor-wireless\application\app_common.h">
@@ -321,6 +369,51 @@
     </ClInclude>
     <ClInclude Include="..\src-line-sensor-wireless\cmsis\cmsis_compiler.h">
       <Filter>src\cmsis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\system_clocks.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\error.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_pwr_ex.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rcc_ex.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\exti.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\gpio.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\tiny_lpm\stm32_lpm.h">
+      <Filter>src\tiny_lpm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\dbg_trace.h">
+      <Filter>src\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\stm_queue.h">
+      <Filter>src\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\uart.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_uart_ex.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\debug.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\led.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\buttons.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
