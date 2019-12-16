@@ -42,11 +42,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\common\lib-stm32wb\conf;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\common\lib-stm32wb\conf;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -58,7 +60,11 @@
     <None Include="stm32wb.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src-line-sensor-wireless\error.c" />
     <ClCompile Include="..\src-line-sensor-wireless\main.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\system.c" />
+    <ClInclude Include="..\src-line-sensor-wireless\error.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\system.h" />
     <None Include="stm32wb.props" />
     <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\StartupFiles\startup_stm32wb55xx_cm4.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_adc.c" />

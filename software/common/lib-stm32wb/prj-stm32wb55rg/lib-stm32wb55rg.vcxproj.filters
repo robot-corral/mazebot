@@ -10,6 +10,15 @@
     <Filter Include="stm32">
       <UniqueIdentifier>{86657a9d-b357-4669-bfc9-6afe3c9981c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utilities">
+      <UniqueIdentifier>{c65167e0-d0a9-447c-afb2-e66c036f298e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sequencer">
+      <UniqueIdentifier>{ed914758-3226-43e9-9804-8125341563ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="conf">
+      <UniqueIdentifier>{a2538c6b-b64b-461f-86bf-c0eb29d042a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib-stm32wb55rg-Debug.vgdbsettings">
@@ -31,6 +40,12 @@
     </ClCompile>
     <ClCompile Include="..\src\system_stm32wbxx.c">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\utilities\otp.c">
+      <Filter>utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sequencer\stm32_seq.c">
+      <Filter>sequencer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +99,21 @@
     </ClInclude>
     <ClInclude Include="..\stm32\stm32wbxx_ll_pka.h">
       <Filter>stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utilities\otp.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\utilities\utilities_common.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sequencer\stm32_seq.h">
+      <Filter>sequencer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\conf\app_conf.h">
+      <Filter>conf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\conf\utilities_conf.h">
+      <Filter>conf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

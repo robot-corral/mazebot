@@ -173,5 +173,19 @@
     <ClCompile Include="..\src-line-sensor-wireless\main.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\system.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\error.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src-line-sensor-wireless\system.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\error.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,0 +1,17 @@
+-- see this for more invormation:
+-- https://www.st.com/en/microcontrollers-microprocessors/stm32wb-series.html
+-- How to program a STM32WB55 with STM32CubeProgrammer
+
+-- also see AN5185
+
+-- erase
+STM32_Programmer_CLI.exe -c port=swd -fwdelete
+
+-- update fus (Firmware Upgrade Services)
+STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=0 nboot1=1 nboot0=1 -fwupgrade stm32wb5x_FUS_fw.bin 0x080EC000 firstinstall=1
+
+-- ble stack update
+STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWBoot0=0 nboot1=1 nboot0=1 -fwupgrade stm32wb5x_BLE_Stack_fw.bin 0x080CB000
+
+-- application update
+STM32_Programmer_CLI.exe -c port=swd mode=UR -d application.hex 0x08000000 -v
