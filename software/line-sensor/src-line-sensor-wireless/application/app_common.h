@@ -77,10 +77,13 @@ extern "C"{
 
 #define MODSUB( a, b, m )    MODADD( a, (m)-(b), m )
 
-#define PAUSE( t )           M_BEGIN \
-                               __IO int _i; \
-                               for ( _i = t; _i > 0; _i -- ); \
-                             M_END
+// FIX pkrupkets
+#ifndef PAUSE
+    #define PAUSE( t )           M_BEGIN \
+                                   __IO int _i; \
+                                   for ( _i = t; _i > 0; _i -- ); \
+                                 M_END
+#endif// FIX end: pkrupkets
 
 #define DIVF( x, y )         ((x)/(y))
 

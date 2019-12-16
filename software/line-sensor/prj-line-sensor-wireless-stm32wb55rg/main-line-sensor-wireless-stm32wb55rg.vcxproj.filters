@@ -34,6 +34,12 @@
     <Filter Include="src\tiny_lpm">
       <UniqueIdentifier>{8efb40b6-324f-4e79-a879-f44424c27895}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ble_thread\tl">
+      <UniqueIdentifier>{7d0fc572-a8c1-4729-b3ca-366a178b6bfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ble">
+      <UniqueIdentifier>{a26082a2-3e8b-4cba-9e7e-74da86add1e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="main-line-sensor-wireless-stm32wb55rg-Debug.vgdbsettings">
@@ -293,6 +299,21 @@
     <ClCompile Include="..\src-line-sensor-wireless\buttons.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\shci_tl.c">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\shci_tl_if.c">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\tl_mbox.c">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\utilities\stm_list.c">
+      <Filter>src\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\application\hw_ipcc.c">
+      <Filter>src\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-line-sensor-wireless\application\app_common.h">
@@ -414,6 +435,30 @@
     </ClInclude>
     <ClInclude Include="..\src-line-sensor-wireless\buttons.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\tl\mbox_def.h">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\tl\shci_tl.h">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\tl\tl.h">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32_wpan_common.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\ble_common.h">
+      <Filter>src\ble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\stm_list.h">
+      <Filter>src\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\ble_conf.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\ble_dbg_conf.h">
+      <Filter>src\application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
