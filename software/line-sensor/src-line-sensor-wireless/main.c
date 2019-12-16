@@ -1,9 +1,5 @@
 #include "stm32wbxx_hal.h"
 
-#include "global_data.h"
-
-#include "hw_if.h"
-
 #include "utilities/otp.h"
 #include "sequencer/stm32_seq.h"
 
