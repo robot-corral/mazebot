@@ -44,21 +44,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\;$(ProjectDir)\..\conf\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\;$(ProjectDir)\..\conf\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\sequencer\stm32_seq.c" />
     <ClCompile Include="..\src\startup_stm32wb55xx_cm4.s" />
     <ClCompile Include="..\src\stm32wbxx_ll_utils.c" />
     <ClCompile Include="..\src\system_stm32wbxx.c" />
-    <ClCompile Include="..\utilities\otp.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -69,9 +67,6 @@
     <None Include="stm32wb.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\conf\app_conf.h" />
-    <ClInclude Include="..\conf\utilities_conf.h" />
-    <ClInclude Include="..\sequencer\stm32_seq.h" />
     <ClInclude Include="..\src\stm32wbxx.h" />
     <ClInclude Include="..\src\system_stm32wbxx.h" />
     <ClInclude Include="..\stm32\stm32wb55xx.h" />
@@ -91,7 +86,5 @@
     <ClInclude Include="..\stm32\stm32wbxx_ll_system.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_utils.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_wwdg.h" />
-    <ClInclude Include="..\utilities\otp.h" />
-    <ClInclude Include="..\utilities\utilities_common.h" />
   </ItemGroup>
 </Project>

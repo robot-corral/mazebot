@@ -50,7 +50,7 @@ extern "C" {
    *        The OTP manager handles only 64bits parameter
    *        | Id    | Parameter |
    *        | 8bits | 58bits    |
-   *        | MSB   | LSB       |
+   *        | MSB   |  LSB      |
    *
    * @param  id: ID of the parameter to read from OTP
    * @retval Address of the ID in the OTP - returns 0 when no ID found

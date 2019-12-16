@@ -42,14 +42,28 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\common\lib-stm32wb\conf;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32wb;$(ProjectDir)\..\src-line-sensor-wireless\stm32;$(ProjectDir)\..\src-line-sensor-wireless\cmsis;$(ProjectDir)\..\src-line-sensor-wireless\application;$(ProjectDir)\..\src-line-sensor-wireless\ble_thread;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEBUG=1;USE_STM32WBXX_NUCLEO=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <LinkerScript />
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\common\lib-stm32wb\conf;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32wb;$(ProjectDir)\..\src-line-sensor-wireless\stm32;$(ProjectDir)\..\src-line-sensor-wireless\cmsis;$(ProjectDir)\..\src-line-sensor-wireless\application;$(ProjectDir)\..\src-line-sensor-wireless\ble_thread;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;USE_STM32WBXX_NUCLEO=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
+      <LibrarySearchDirectories>;%(Link.LibrarySearchDirectories)</LibrarySearchDirectories>
+      <AdditionalLibraryNames>;%(Link.AdditionalLibraryNames)</AdditionalLibraryNames>
+      <LinkerScript />
+    </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -60,11 +74,50 @@
     <None Include="stm32wb.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-line-sensor-wireless\error.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\application\hw_timerserver.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\application\hw_uart.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\global_data.c" />
     <ClCompile Include="..\src-line-sensor-wireless\main.c" />
-    <ClCompile Include="..\src-line-sensor-wireless\system.c" />
-    <ClInclude Include="..\src-line-sensor-wireless\error.h" />
-    <ClInclude Include="..\src-line-sensor-wireless\system.h" />
+    <ClCompile Include="..\src-line-sensor-wireless\sequencer\stm32_seq.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_cortex.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_dma.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_exti.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_flash.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_gpio.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_hsem.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_ipcc.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_pwr.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rcc.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rtc.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_uart.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_nucleo.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\utilities\otp.c" />
+    <ClInclude Include="..\src-line-sensor-wireless\application\app_common.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\application\app_conf.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\application\hw_conf.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\application\hw_if.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\application\utilities_conf.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\hw.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\cmsis\cmsis_compiler.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\global_data.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\sequencer\stm32_seq.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_conf.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_cortex.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_dma.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_exti.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_flash.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_gpio.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_hsem.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_ipcc.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_pwr.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rcc.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rtc.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_uart.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_nucleo.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\otp.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\utilities_common.h" />
     <None Include="stm32wb.props" />
     <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\StartupFiles\startup_stm32wb55xx_cm4.c" />
     <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_adc.c" />

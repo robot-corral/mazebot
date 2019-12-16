@@ -1,10 +1,28 @@
-#include "system.h"
+#include "stm32wbxx_hal.h"
 
-#include <sequencer/stm32_seq.h>
+#include "global_data.h"
+
+#include "hw_if.h"
+
+#include "utilities/otp.h"
+#include "sequencer/stm32_seq.h"
+
+static void initializeHse();
 
 int main()
 {
-    initializeSystem();
+    HAL_Init();
+
+    initializeHse();
+
+//    SystemClock_Config();
+//    PeriphClock_Config();
+//    Init_Exti();
+//    MX_GPIO_Init();
+//    MX_DMA_Init();
+//    MX_RF_Init();
+//    MX_RTC_Init();
+//    APPE_Init();
 
     while (1)
     {
@@ -12,6 +30,11 @@ int main()
     }
 }
 
-void UTIL_SEQ_Idle()
+void initializeHse()
 {
+    OTP_ID0_t* p_otp = (OTP_ID0_t*) OTP_Read(0);
+    if (p_otp)
+    {
+        LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
+    }
 }

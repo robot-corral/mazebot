@@ -13,6 +13,24 @@
     <Filter Include="Device-specific files\LL">
       <UniqueIdentifier>{ee4a2a65-9f05-4a3c-9fac-56389f5b1c89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\application">
+      <UniqueIdentifier>{a79291fe-949d-4a1e-aaf2-3e1513d235fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utilities">
+      <UniqueIdentifier>{1455023a-8968-405e-8f5e-b5128d967d3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ble_thread">
+      <UniqueIdentifier>{f07c805c-0b7c-40d7-8723-722f82e625b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\stm32">
+      <UniqueIdentifier>{d1bde43e-5761-4d37-9486-23cad4b5aedb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\sequencer">
+      <UniqueIdentifier>{c0c45f0d-1c81-43c5-ad86-670a82222373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\cmsis">
+      <UniqueIdentifier>{bcc8de64-a6ad-43df-b8e5-f968934799c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="main-line-sensor-wireless-stm32wb55rg-Debug.vgdbsettings">
@@ -173,19 +191,136 @@
     <ClCompile Include="..\src-line-sensor-wireless\main.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src-line-sensor-wireless\system.c">
+    <ClCompile Include="..\src-line-sensor-wireless\application\hw_timerserver.c">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\application\hw_uart.c">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\utilities\otp.c">
+      <Filter>src\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_cortex.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_dma.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_exti.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_flash.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_gpio.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_hsem.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_ipcc.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_pwr.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rcc.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rtc.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_uart.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\stm32\stm32wbxx_nucleo.c">
+      <Filter>src\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\global_data.c">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src-line-sensor-wireless\error.c">
-      <Filter>src</Filter>
+    <ClCompile Include="..\src-line-sensor-wireless\sequencer\stm32_seq.c">
+      <Filter>src\sequencer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src-line-sensor-wireless\system.h">
+    <ClInclude Include="..\src-line-sensor-wireless\application\app_common.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\app_conf.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\hw_conf.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\hw_if.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\otp.h">
+      <Filter>src\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\utilities\utilities_common.h">
+      <Filter>src\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\hw.h">
+      <Filter>src\ble_thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rtc.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_conf.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_cortex.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_dma.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_exti.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_flash.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_gpio.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_hsem.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_ipcc.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_pwr.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_rcc.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_hal_uart.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\stm32\stm32wbxx_nucleo.h">
+      <Filter>src\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\global_data.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src-line-sensor-wireless\error.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\src-line-sensor-wireless\sequencer\stm32_seq.h">
+      <Filter>src\sequencer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\utilities_conf.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\cmsis\cmsis_compiler.h">
+      <Filter>src\cmsis</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
