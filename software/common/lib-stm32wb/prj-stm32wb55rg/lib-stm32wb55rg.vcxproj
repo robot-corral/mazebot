@@ -87,4 +87,8 @@
     <ClInclude Include="..\stm32\stm32wbxx_ll_utils.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_wwdg.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\programming.txt" />
+    <Text Include="..\version.txt" />
+  </ItemGroup>
 </Project>

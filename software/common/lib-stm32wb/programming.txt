@@ -1,17 +1,16 @@
--- see this for more invormation:
--- https://www.st.com/en/microcontrollers-microprocessors/stm32wb-series.html
--- How to program a STM32WB55 with STM32CubeProgrammer
+-- read: Projects\STM32WB_Copro_Wireless_Binaries\Release_Notes.html 
+-- read: https://visualgdb.com/tools/STM32WBUpdater/connecting/
 
--- also see AN5185
+-- connect both USB ports on nucleo board to PC
+-- put jumper from pin 5 to 7
+-- move power jumper to usb-mcu
 
--- erase
-STM32_Programmer_CLI.exe -c port=swd -fwdelete
+-- run this command so board is discoverable in DFU mode
+STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=1
 
--- update fus (Firmware Upgrade Services)
-STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=0 nboot1=1 nboot0=1 -fwupgrade stm32wb5x_FUS_fw.bin 0x080EC000 firstinstall=1
+-- follow Release_Notes.html to update MCU
+-- might need to reboot after updating stm32wb5x_FUS_fw.bin and reconnect to check if version was updated (or maybe even run program)
+-- after FUS is updated and show latest version stm32wb5x_BLE_Stack_fw.bin can be updated
 
--- ble stack update
-STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWBoot0=0 nboot1=1 nboot0=1 -fwupgrade stm32wb5x_BLE_Stack_fw.bin 0x080CB000
-
--- application update
-STM32_Programmer_CLI.exe -c port=swd mode=UR -d application.hex 0x08000000 -v
+-- to move device back to normal boot mode run this
+STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=0

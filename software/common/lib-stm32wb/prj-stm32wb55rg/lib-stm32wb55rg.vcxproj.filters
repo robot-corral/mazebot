@@ -92,4 +92,8 @@
       <Filter>stm32</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\programming.txt" />
+    <Text Include="..\version.txt" />
+  </ItemGroup>
 </Project>
