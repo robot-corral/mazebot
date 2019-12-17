@@ -55,6 +55,9 @@
     <Filter Include="src\ble_thread\schi">
       <UniqueIdentifier>{03ed37c2-4b22-4845-a21d-4c301090977d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ble\svc\src">
+      <UniqueIdentifier>{5568e3ff-6cf5-4fb1-905c-5198b0b29ffa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="main-line-sensor-wireless-stm32wb55rg-Debug.vgdbsettings">
@@ -347,6 +350,27 @@
     <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl.c">
       <Filter>src\ble_thread\tl</Filter>
     </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_hal_aci.c">
+      <Filter>src\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\svc\src\svc_ctl.c">
+      <Filter>src\ble\svc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_hci_le.c">
+      <Filter>src\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_gap_aci.c">
+      <Filter>src\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_gatt_aci.c">
+      <Filter>src\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\svc\src\p2p_stm.c">
+      <Filter>src\ble\svc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl_if.c">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-line-sensor-wireless\application\app_common.h">
@@ -603,6 +627,9 @@
     </ClInclude>
     <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_types.h">
       <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\src\common_blesvc.h">
+      <Filter>src\ble\svc\src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

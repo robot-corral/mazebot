@@ -81,9 +81,16 @@
     <ClCompile Include="..\src-line-sensor-wireless\application\hw_uart.c" />
     <ClCompile Include="..\src-line-sensor-wireless\application\osal.c" />
     <ClCompile Include="..\src-line-sensor-wireless\application\p2p_server_app.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_gap_aci.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_gatt_aci.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_hal_aci.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_hci_le.c" />
     <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_l2cap_aci.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble\svc\src\p2p_stm.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble\svc\src\svc_ctl.c" />
     <ClCompile Include="..\src-line-sensor-wireless\ble_thread\schi\shci.c" />
     <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl.c" />
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl_if.c" />
     <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\shci_tl.c" />
     <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\shci_tl_if.c" />
     <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\tl_mbox.c" />
@@ -163,6 +170,7 @@
     <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\template_stm.h" />
     <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\tps.h" />
     <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\uuid.h" />
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\src\common_blesvc.h" />
     <ClInclude Include="..\src-line-sensor-wireless\ble_thread\hw.h" />
     <ClInclude Include="..\src-line-sensor-wireless\ble_thread\schi\shci.h" />
     <ClInclude Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl.h" />

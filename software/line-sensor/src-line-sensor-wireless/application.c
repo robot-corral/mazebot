@@ -32,7 +32,7 @@ void initializeApplication()
     SHCI_TL_HciInitConf_t shci_tl_init_conf;
 
     /**< System channel initialization */
-    UTIL_SEQ_RegTask( 1<< CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, shci_user_evt_proc );
+    UTIL_SEQ_RegTask(1 << CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, shci_user_evt_proc);
     shci_tl_init_conf.p_cmdbuffer = (uint8_t*) &g_systemCmdBuffer;
     shci_tl_init_conf.StatusNotCallBack = sysStatusNot;
     shci_init(sysUserEvtRx, (void*) &shci_tl_init_conf);
@@ -110,16 +110,22 @@ void sysStatusNot(SHCI_TL_CmdStatus_t status)
 
 void sysUserEvtRx(void * pPayload)
 {
+    TL_TRACES_Init();
+    APP_BLE_Init();
+    UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
 }
 
 void shci_notify_asynch_evt(void* pdata)
 {
+    UTIL_SEQ_SetTask(1 << CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
 }
 
 void shci_cmd_resp_release(uint32_t flag)
 {
+    UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID);
 }
 
 void shci_cmd_resp_wait(uint32_t timeout)
 {
+    UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID);
 }
