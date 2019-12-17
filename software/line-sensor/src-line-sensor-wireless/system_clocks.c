@@ -116,7 +116,7 @@ void initializeSystemClock()
 {
     initializeHse();
     initializeClocks();
-    initializeRtc();
+    // initializeRtc();
 
     LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 }

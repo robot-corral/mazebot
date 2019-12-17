@@ -6,6 +6,7 @@
 #include "tiny_lpm/stm32_lpm.h"
 
 #include "application/hw_if.h"
+#include "application/app_ble.h"
 #include "application/app_conf.h"
 
 #include "ble_thread/tl/tl.h"
@@ -44,6 +45,63 @@ void initializeApplication()
     TL_MM_Init( &tl_mm_config );
 
     TL_Enable();
+}
+
+void EXTI4_IRQHandler()
+{
+    HAL_GPIO_EXTI_IRQHandler(BUTTON_SW1_PIN);
+}
+
+void EXTI0_IRQHandler()
+{
+    HAL_GPIO_EXTI_IRQHandler(BUTTON_SW2_PIN);
+}
+
+void RTC_WKUP_IRQHandler(void)
+{
+    HW_TS_RTC_Wakeup_Handler();
+}
+
+void IPCC_C1_TX_IRQHandler(void)
+{
+    HW_IPCC_Tx_Handler();
+}
+
+void IPCC_C1_RX_IRQHandler(void)
+{
+    HW_IPCC_Rx_Handler();
+}
+
+void SysTick_Handler(void)
+{
+    HAL_IncTick();
+}
+
+void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
+{
+    switch (GPIO_Pin)
+    {
+        case BUTTON_SW1_PIN:
+        {
+            APP_BLE_Key_Button1_Action();
+            break; 
+        }
+        case BUTTON_SW2_PIN:
+        {
+            APP_BLE_Key_Button2_Action();
+            break; 
+        }
+        case BUTTON_SW3_PIN:
+        {
+            APP_BLE_Key_Button3_Action();
+            break;
+        }
+        default: break;
+    }
+}
+
+void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb) (void))
+{
 }
 
 void sysStatusNot(SHCI_TL_CmdStatus_t status)

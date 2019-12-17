@@ -40,6 +40,21 @@
     <Filter Include="src\ble">
       <UniqueIdentifier>{a26082a2-3e8b-4cba-9e7e-74da86add1e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ble\core">
+      <UniqueIdentifier>{cd53b28b-a8ce-4f19-a238-1d9dfb6962cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ble\svc">
+      <UniqueIdentifier>{a0b717b1-ba4e-4560-8e56-c802892f7cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ble\svc\inc">
+      <UniqueIdentifier>{02873a8b-404a-40fd-a4a5-b652a548a458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ble\core\auto">
+      <UniqueIdentifier>{eb1a14d7-338f-40f6-859e-423942c37120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ble_thread\schi">
+      <UniqueIdentifier>{03ed37c2-4b22-4845-a21d-4c301090977d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="main-line-sensor-wireless-stm32wb55rg-Debug.vgdbsettings">
@@ -314,6 +329,24 @@
     <ClCompile Include="..\src-line-sensor-wireless\application\hw_ipcc.c">
       <Filter>src\application</Filter>
     </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\application\app_ble.c">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\application\p2p_server_app.c">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\application\osal.c">
+      <Filter>src\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\schi\shci.c">
+      <Filter>src\ble_thread\schi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble\core\auto\ble_l2cap_aci.c">
+      <Filter>src\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl.c">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-line-sensor-wireless\application\app_common.h">
@@ -459,6 +492,117 @@
     </ClInclude>
     <ClInclude Include="..\src-line-sensor-wireless\application\ble_dbg_conf.h">
       <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\app_ble.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\p2p_server_app.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\ble.h">
+      <Filter>src\ble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\ble_bufsize.h">
+      <Filter>src\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\ble_core.h">
+      <Filter>src\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\ble_defs.h">
+      <Filter>src\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\ble_legacy.h">
+      <Filter>src\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\ble_std.h">
+      <Filter>src\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\bls.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\crs_stm.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\dis.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\eds_stm.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\hids.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\hrs.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\hts.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\ias.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\lls.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\mesh.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\motenv_stm.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\otas_stm.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\p2p_stm.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\svc_ctl.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\template_stm.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\tps.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\svc\inc\uuid.h">
+      <Filter>src\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\ble_const.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\compiler.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\application\osal.h">
+      <Filter>src\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\tl\hci_tl.h">
+      <Filter>src\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble_thread\schi\shci.h">
+      <Filter>src\ble_thread\schi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_events.h">
+      <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_gap_aci.h">
+      <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_gatt_aci.h">
+      <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_hal_aci.h">
+      <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_hci_le.h">
+      <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_l2cap_aci.h">
+      <Filter>src\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-line-sensor-wireless\ble\core\auto\ble_types.h">
+      <Filter>src\ble\core\auto</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
