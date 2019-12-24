@@ -6,3 +6,5 @@ VisualGDB
 *.s#*
 *.b#*
 .vscode
+bin
+obj
