@@ -299,6 +299,7 @@
 #define P2P_SERVICE_UUID                                              (0xFE40)
 #define P2P_WRITE_CHAR_UUID                                           (0xFE41)
 #define P2P_NOTIFY_CHAR_UUID                                          (0xFE42)
+#define P2P_DATA_CHAR_UUID                                            (0xFE43)
 
 #define HOME_SERVICE_UUID                                              (0xFE90)
 #define HOME_WRITE_CHAR_UUID                                           (0xFE91)

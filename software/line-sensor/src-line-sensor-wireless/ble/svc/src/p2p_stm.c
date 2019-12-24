@@ -26,6 +26,7 @@ typedef struct{
   uint16_t	PeerToPeerSvcHdle;				        /**< Service handle */
   uint16_t	P2PWriteClientToServerCharHdle;	  /**< Characteristic handle */
   uint16_t	P2PNotifyServerToClientCharHdle;	/**< Characteristic handle */
+  uint16_t P2PDataServerToClientCharHdle;
 #if(BLE_CFG_OTA_REBOOT_CHAR != 0)
   uint16_t  RebootReqCharHdle;                /**< Characteristic handle */
 #endif
@@ -95,6 +96,7 @@ do {\
 #define COPY_P2P_SERVICE_UUID(uuid_struct)       COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x40,0xcc,0x7a,0x48,0x2a,0x98,0x4a,0x7f,0x2e,0xd5,0xb3,0xe5,0x8f)
 #define COPY_P2P_WRITE_CHAR_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x41,0x8e,0x22,0x45,0x41,0x9d,0x4c,0x21,0xed,0xae,0x82,0xed,0x19)
 #define COPY_P2P_NOTIFY_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x42,0x8e,0x22,0x45,0x41,0x9d,0x4c,0x21,0xed,0xae,0x82,0xed,0x19)
+#define COPY_P2P_DATA_CHAR_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x43,0x8e,0x22,0x45,0x41,0x9d,0x4c,0x21,0xed,0xae,0x82,0xed,0x19)
 
 
 
@@ -228,6 +230,18 @@ void P2PS_STM_Init(void)
                       1, /* isVariable */
                       &(aPeerToPeerContext.P2PWriteClientToServerCharHdle));
 
+    COPY_P2P_DATA_CHAR_UUID(uuid16.Char_UUID_128);
+    aci_gatt_add_char(aPeerToPeerContext.PeerToPeerSvcHdle,
+                      UUID_TYPE_128,
+                      &uuid16,
+                      52,
+                      CHAR_PROP_READ,
+                      ATTR_PERMISSION_NONE,
+                      GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
+                      10, /* encryKeySize */
+                      0, /* isVariable */
+                      &(aPeerToPeerContext.P2PDataServerToClientCharHdle));
+
     /**
      *   Add Button Characteristic
      */
@@ -281,6 +295,13 @@ tBleStatus P2PS_STM_App_Update_Char(uint16_t UUID, uint8_t *pPayload)
                              2, /* charValueLen */
                              (uint8_t *)  pPayload);
     
+      break;
+    case P2P_DATA_CHAR_UUID:
+     result = aci_gatt_update_char_value(aPeerToPeerContext.PeerToPeerSvcHdle,
+                             aPeerToPeerContext.P2PDataServerToClientCharHdle,
+                             0, /* charValOffset */
+                             52, /* charValueLen */
+                             (uint8_t *)  pPayload);
       break;
 
     default:

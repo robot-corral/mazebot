@@ -357,6 +357,8 @@ void P2PS_APP_SW1_Button_Action(void)
 }
 /* USER CODE END FD */
 
+char g_test[52] = { "Hello World!!!" };
+
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -379,6 +381,8 @@ void P2PS_Send_Notification(void)
    } else {
     APP_DBG_MSG("-- P2P APPLICATION SERVER : CAN'T INFORM CLIENT -  NOTIFICATION DISABLED\n "); 
    }
+
+  P2PS_STM_App_Update_Char(P2P_DATA_CHAR_UUID, (uint8_t*) g_test);
 
   return;
 }
