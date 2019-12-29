@@ -1,0 +1,108 @@
+﻿<Page
+    x:Class="line_sensor.data_collector.ui.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:line_sensor.data_collector.ui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded"
+    d:DesignWidth="640"
+    d:DesignHeight="480"
+>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   Text="Serial Devices:"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right"
+                   Margin="10,5,0,5"
+        />
+        <ComboBox Grid.Row="0"
+                  Grid.Column="1"
+                  ItemsSource="{Binding AllSupportedSerialDevices}"
+                  SelectedItem="{Binding SelectedSerialDevice}"
+                  IsEnabled="{Binding AllSupportedSerialDevicesEnabled}"
+                  Margin="10,5,0,5"
+                  HorizontalAlignment="Stretch"
+        >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="10,5,10,5"
+        >
+            <Image Width="32"
+                   Height="32"
+                   VerticalAlignment="Center"
+                   Source="/Assets/spinning.gif"
+                   Visibility="{Binding SerialDeviceScanningIndicatorVisible}"
+                   Margin="0,0,10,0"
+            />
+            <Button Content="{Binding SerialDeviceConnectCommandTitle}"
+                    Command="{Binding SerialDeviceConnectCommand}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+            />
+        </StackPanel>
+
+        <TextBlock Grid.Row="1"
+                   Grid.Column="0"
+                   Text="Bluetooth LE Devices:"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right"
+                   Margin="10,5,0,5"
+        />
+        <ComboBox Grid.Row="1"
+                  Grid.Column="1"
+                  ItemsSource="{Binding AllSupportedBleDevices}"
+                  SelectedItem="{Binding SelectedBleDevice}"
+                  IsEnabled="{Binding AllSupportedBleDevicesEnabled}"
+                  Margin="10,5,0,5"
+                  HorizontalAlignment="Stretch"
+        >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Margin="10,5,10,5"
+        >
+            <Image Width="32"
+                   Height="32"
+                   VerticalAlignment="Center"
+                   Source="/Assets/spinning.gif"
+                   Visibility="{Binding BleDeviceScanningIndicatorVisible}"
+                   Margin="0,0,10,0"
+            />
+            <Button Content="{Binding BleDeviceConnectCommandTitle}"
+                    Command="{Binding BleDeviceConnectCommand}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+            />
+        </StackPanel>
+    </Grid>
+</Page>
