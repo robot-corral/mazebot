@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:line_sensor.data_collector.ui"
+    xmlns:shared="using:line_sensor.data_collector.shared"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -11,6 +12,10 @@
     d:DesignWidth="640"
     d:DesignHeight="480"
 >
+    <Page.Resources>
+        <shared:BooleanNotConverter x:Key="NotConverter" />
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -36,7 +41,7 @@
                   Grid.Column="1"
                   ItemsSource="{Binding AllSupportedSerialDevices}"
                   SelectedItem="{Binding SelectedSerialDevice}"
-                  IsEnabled="{Binding AllSupportedSerialDevicesEnabled}"
+                  IsEnabled="{Binding ConnectedSerialDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
                   Margin="10,5,0,5"
                   HorizontalAlignment="Stretch"
         >
@@ -50,6 +55,8 @@
                     Grid.Row="0"
                     Grid.Column="3"
                     Margin="10,5,10,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
         >
             <Image Width="32"
                    Height="32"
@@ -58,8 +65,9 @@
                    Visibility="{Binding SerialDeviceScanningIndicatorVisible}"
                    Margin="0,0,10,0"
             />
-            <Button Content="{Binding SerialDeviceConnectCommandTitle}"
-                    Command="{Binding SerialDeviceConnectCommand}"
+            <Button Content="{Binding ConnectedSerialDeviceModel.Title}"
+                    Command="{Binding SerialDeviceConnectDisconnectCommand}"
+                    CommandParameter="{Binding}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
             />
@@ -76,7 +84,7 @@
                   Grid.Column="1"
                   ItemsSource="{Binding AllSupportedBleDevices}"
                   SelectedItem="{Binding SelectedBleDevice}"
-                  IsEnabled="{Binding AllSupportedBleDevicesEnabled}"
+                  IsEnabled="{Binding ConnectedBleDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
                   Margin="10,5,0,5"
                   HorizontalAlignment="Stretch"
         >
@@ -90,6 +98,8 @@
                     Grid.Row="1"
                     Grid.Column="3"
                     Margin="10,5,10,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
         >
             <Image Width="32"
                    Height="32"
@@ -98,8 +108,9 @@
                    Visibility="{Binding BleDeviceScanningIndicatorVisible}"
                    Margin="0,0,10,0"
             />
-            <Button Content="{Binding BleDeviceConnectCommandTitle}"
+            <Button Content="{Binding ConnectedBleDeviceModel.Title}"
                     Command="{Binding BleDeviceConnectCommand}"
+                    CommandParameter="{Binding}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
             />

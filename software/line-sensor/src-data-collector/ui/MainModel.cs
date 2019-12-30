@@ -8,6 +8,7 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using line_sensor.data_collector.shared;
 
 namespace line_sensor.data_collector.ui
 {
@@ -17,13 +18,15 @@ namespace line_sensor.data_collector.ui
         {
             this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 
-            AllSupportedSerialDevicesEnabled = true;
-            SerialDeviceConnectCommandTitle = TITLE_CONNECT;
-            SerialDeviceScanningIndicatorVisible = Visibility.Collapsed;
+            this.serialDeviceScanningIndicatorVisible = Visibility.Collapsed;
+            this.ConnectedSerialDeviceModel = new ConnectedSerialDeviceModel();
+            this.AllSupportedSerialDevices = new ObservableCollection<SerialDeviceModel>();
+            this.serialDeviceConnectDisconnectCommand = new SerialDeviceConnectDisconnectCommand();
 
-            AllSupportedBleDevicesEnabled = true;
-            BleDeviceConnectCommandTitle = TITLE_CONNECT;
-            BleDeviceScanningIndicatorVisible = Visibility.Collapsed;
+            this.ConnectedBleDeviceModel = new ConnectedBleDeviceModel();
+            this.bleDeviceScanningIndicatorVisible = Visibility.Collapsed;
+            this.AllSupportedBleDevices = new ObservableCollection<BleDeviceModel>();
+            this.bleDeviceConnectDisconnectCommand = new BleDeviceConnectDisconnectCommand();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -66,7 +69,7 @@ namespace line_sensor.data_collector.ui
             }
         }
 
-        public ObservableCollection<SerialDeviceModel> AllSupportedSerialDevices { get; } = new ObservableCollection<SerialDeviceModel>();
+        public ObservableCollection<SerialDeviceModel> AllSupportedSerialDevices { get; }
 
         public SerialDeviceModel SelectedSerialDevice
         {
@@ -76,20 +79,8 @@ namespace line_sensor.data_collector.ui
                 if (this.selectedSerialDevice != value)
                 {
                     this.selectedSerialDevice = value;
+                    this.serialDeviceConnectDisconnectCommand.UpdateCanExecute(this);
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedSerialDevice)));
-                }
-            }
-        }
-
-        public bool AllSupportedSerialDevicesEnabled
-        {
-            get { return this.allSupportedSerialDevicesEnabled; }
-            set
-            {
-                if (this.allSupportedSerialDevicesEnabled != value)
-                {
-                    this.allSupportedSerialDevicesEnabled = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AllSupportedSerialDevicesEnabled)));
                 }
             }
         }
@@ -107,22 +98,11 @@ namespace line_sensor.data_collector.ui
             }
         }
 
-        public string SerialDeviceConnectCommandTitle
-        {
-            get { return this.serialDeviceConnectCommandTitle; }
-            set
-            {
-                if (this.serialDeviceConnectCommandTitle != value)
-                {
-                    this.serialDeviceConnectCommandTitle = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SerialDeviceConnectCommandTitle)));
-                }
-            }
-        }
+        public ConnectedSerialDeviceModel ConnectedSerialDeviceModel { get; }
 
-        public ICommand SerialDeviceConnectCommand { get; set; }
+        public ICommand SerialDeviceConnectDisconnectCommand { get { return this.serialDeviceConnectDisconnectCommand; } }
 
-        public ObservableCollection<BleDeviceModel> AllSupportedBleDevices { get; } = new ObservableCollection<BleDeviceModel>();
+        public ObservableCollection<BleDeviceModel> AllSupportedBleDevices { get; }
 
         public BleDeviceModel SelectedBleDevice
         {
@@ -132,51 +112,28 @@ namespace line_sensor.data_collector.ui
                 if (this.selectedBleDevice != value)
                 {
                     this.selectedBleDevice = value;
+                    this.bleDeviceConnectDisconnectCommand.UpdateCanExecute(this);
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedBleDevice)));
-                }
-            }
-        }
-
-        public bool AllSupportedBleDevicesEnabled
-        {
-            get { return this.allSupportedBleDevicesEnabled; }
-            set
-            {
-                if (this.allSupportedBleDevicesEnabled != value)
-                {
-                    this.allSupportedBleDevicesEnabled = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AllSupportedBleDevicesEnabled)));
                 }
             }
         }
 
         public Visibility BleDeviceScanningIndicatorVisible
         {
-            get { return this.bleDeviceLoadingVisible; }
+            get { return this.bleDeviceScanningIndicatorVisible; }
             set
             {
-                if (this.bleDeviceLoadingVisible != value)
+                if (this.bleDeviceScanningIndicatorVisible != value)
                 {
-                    this.bleDeviceLoadingVisible = value;
+                    this.bleDeviceScanningIndicatorVisible = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BleDeviceScanningIndicatorVisible)));
                 }
             }
         }
 
-        public string BleDeviceConnectCommandTitle
-        {
-            get { return this.bleDeviceConnectCommandTitle; }
-            set
-            {
-                if (this.bleDeviceConnectCommandTitle != value)
-                {
-                    this.bleDeviceConnectCommandTitle = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BleDeviceConnectCommandTitle)));
-                }
-            }
-        }
+        public ConnectedBleDeviceModel ConnectedBleDeviceModel { get; }
 
-        public ICommand BleDeviceConnectCommand { get; set; }
+        public ICommand BleDeviceConnectCommand { get { return this.bleDeviceConnectDisconnectCommand; } }
 
         private T GetNewSelectedItem<T>(ObservableCollection<T> allItems)
             where T : class, IDeviceModel
@@ -228,7 +185,7 @@ namespace line_sensor.data_collector.ui
         {
             var ignoreContinuation = this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if (sender == this.serialDeviceWatcher && AllSupportedSerialDevices != null)
+                if (sender == this.serialDeviceWatcher)
                 {
                     for (int i = 0; i < AllSupportedSerialDevices.Count; ++i)
                     {
@@ -246,18 +203,21 @@ namespace line_sensor.data_collector.ui
         {
             var ignoreContinuation = this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if (sender == this.serialDeviceWatcher && this.allSerialDevices.Remove(deviceInformationUpdate.Id) && AllSupportedSerialDevices != null)
+                if (sender == this.serialDeviceWatcher && this.allSerialDevices.Remove(deviceInformationUpdate.Id))
                 {
                     for (int i = 0; i < AllSupportedSerialDevices.Count; ++i)
                     {
                         if (AllSupportedSerialDevices[i].Id == deviceInformationUpdate.Id)
                         {
                             AllSupportedSerialDevices.RemoveAt(i);
+                            if (this.ConnectedSerialDeviceModel.Id == deviceInformationUpdate.Id)
+                            {
+                                // disconnect
+                                this.serialDeviceConnectDisconnectCommand.Execute(this);
+                            }
                             if (SelectedSerialDevice.Id == deviceInformationUpdate.Id)
                             {
-                                // TODO disconnect
                                 SelectedSerialDevice = GetNewSelectedItem(AllSupportedSerialDevices);
-                                SerialDeviceConnectCommandTitle = TITLE_CONNECT;
                             }
                             break;
                         }
@@ -301,30 +261,64 @@ namespace line_sensor.data_collector.ui
 
         private void OnBleDeviceUpdated(DeviceWatcher sender, DeviceInformationUpdate deviceInformationUpdate)
         {
+            var ignoreContinuation = this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (sender == this.bleDeviceWatcher)
+                {
+                    for (int i = 0; i < AllSupportedBleDevices.Count; ++i)
+                    {
+                        if (AllSupportedBleDevices[i].Id == deviceInformationUpdate.Id)
+                        {
+                            AllSupportedBleDevices[i].Update(deviceInformationUpdate);
+                            break;
+                        }
+                    }
+                }
+            });
         }
 
         private void OnBleDeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate deviceInformationUpdate)
         {
+            var ignoreContinuation = this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (sender == this.bleDeviceWatcher && this.allBleDevices.Remove(deviceInformationUpdate.Id))
+                {
+                    for (int i = 0; i < AllSupportedBleDevices.Count; ++i)
+                    {
+                        if (AllSupportedBleDevices[i].Id == deviceInformationUpdate.Id)
+                        {
+                            AllSupportedBleDevices.RemoveAt(i);
+                            if (this.ConnectedBleDeviceModel.Id == deviceInformationUpdate.Id)
+                            {
+                                // disconnect
+                                this.bleDeviceConnectDisconnectCommand.Execute(this);
+                            }
+                            if (SelectedBleDevice.Id == deviceInformationUpdate.Id)
+                            {
+                                SelectedBleDevice = GetNewSelectedItem(AllSupportedBleDevices);
+                            }
+                            break;
+                        }
+                    }
+                }
+            });
         }
 
         private DeviceWatcher serialDeviceWatcher;
-        private string serialDeviceConnectCommandTitle;
         private SerialDeviceModel selectedSerialDevice;
-        private ObservableCollection<SerialDeviceModel> allSerialDeviceModels;
+        private Visibility serialDeviceScanningIndicatorVisible;
 
         private DeviceWatcher bleDeviceWatcher;
         private BleDeviceModel selectedBleDevice;
-        private bool allSupportedBleDevicesEnabled;
-        private Visibility bleDeviceLoadingVisible;
-        private string bleDeviceConnectCommandTitle;
-        private ObservableCollection<BleDeviceModel> allBleDeviceModels;
-        private bool allSupportedSerialDevicesEnabled;
-        private Visibility serialDeviceScanningIndicatorVisible;
-        private readonly CoreDispatcher dispatcher;
-        private readonly IDictionary<string, DeviceInformation> allBleDevices = new Dictionary<string, DeviceInformation>();
-        private readonly IDictionary<string, DeviceInformation> allSerialDevices = new Dictionary<string, DeviceInformation>();
+        private Visibility bleDeviceScanningIndicatorVisible;
 
-        private const string TITLE_CONNECT = "Connect";
+        private readonly CoreDispatcher dispatcher;
+
+        private readonly BaseCommandWithParameter<MainModel> bleDeviceConnectDisconnectCommand;
+        private readonly IDictionary<string, DeviceInformation> allBleDevices = new Dictionary<string, DeviceInformation>();
+
+        private readonly BaseCommandWithParameter<MainModel> serialDeviceConnectDisconnectCommand;
+        private readonly IDictionary<string, DeviceInformation> allSerialDevices = new Dictionary<string, DeviceInformation>();
 
         private const string LINE_SENSOR_DATA = "line_sensor_data";
 

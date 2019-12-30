@@ -11,9 +11,17 @@ namespace line_sensor.data_collector.ui
             DisplayName = deviceInformation.Name;
         }
 
+        public string Id { get { return this.deviceInformation.Id; } }
+
         public bool IsDefault { get { return this.deviceInformation.IsDefault; } }
 
         public string DisplayName { get; set; }
+
+        public void Update(DeviceInformationUpdate deviceInformationUpdate)
+        {
+            this.deviceInformation.Update(deviceInformationUpdate);
+            // TODO update properties
+        }
 
         private readonly DeviceInformation deviceInformation;
     }
