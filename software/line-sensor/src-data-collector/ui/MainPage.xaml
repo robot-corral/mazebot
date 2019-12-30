@@ -41,7 +41,7 @@
                   Grid.Column="1"
                   ItemsSource="{Binding AllSupportedSerialDevices}"
                   SelectedItem="{Binding SelectedSerialDevice}"
-                  IsEnabled="{Binding ConnectedSerialDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
+                  IsEnabled="{Binding ConnectedPositionControllerDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
                   Margin="10,5,0,5"
                   HorizontalAlignment="Stretch"
         >
@@ -65,7 +65,7 @@
                    Visibility="{Binding SerialDeviceScanningIndicatorVisible}"
                    Margin="0,0,10,0"
             />
-            <Button Content="{Binding ConnectedSerialDeviceModel.Title}"
+            <Button Content="{Binding ConnectedPositionControllerDeviceModel.Title}"
                     Command="{Binding SerialDeviceConnectDisconnectCommand}"
                     CommandParameter="{Binding}"
                     HorizontalAlignment="Stretch"
@@ -84,7 +84,7 @@
                   Grid.Column="1"
                   ItemsSource="{Binding AllSupportedBleDevices}"
                   SelectedItem="{Binding SelectedBleDevice}"
-                  IsEnabled="{Binding ConnectedBleDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
+                  IsEnabled="{Binding ConnectedWirelessLineSensorDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
                   Margin="10,5,0,5"
                   HorizontalAlignment="Stretch"
         >
@@ -108,8 +108,8 @@
                    Visibility="{Binding BleDeviceScanningIndicatorVisible}"
                    Margin="0,0,10,0"
             />
-            <Button Content="{Binding ConnectedBleDeviceModel.Title}"
-                    Command="{Binding BleDeviceConnectCommand}"
+            <Button Content="{Binding ConnectedWirelessLineSensorDeviceModel.Title}"
+                    Command="{Binding BleDeviceConnectDisconnectCommand}"
                     CommandParameter="{Binding}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"

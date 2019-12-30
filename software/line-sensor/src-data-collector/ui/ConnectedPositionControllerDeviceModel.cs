@@ -1,8 +1,8 @@
 ﻿namespace line_sensor.data_collector.ui
 {
-    public class ConnectedSerialDeviceModel
+    public class ConnectedPositionControllerDeviceModel
     {
-        public ConnectedSerialDeviceModel()
+        public ConnectedPositionControllerDeviceModel()
         {
             Title = "Connect";
         }

@@ -1,8 +1,8 @@
 ﻿namespace line_sensor.data_collector.ui
 {
-    public class ConnectedBleDeviceModel
+    public class ConnectedWirelessLineSensorDeviceModel
     {
-        public ConnectedBleDeviceModel()
+        public ConnectedWirelessLineSensorDeviceModel()
         {
             Title = "Connect";
         }
