@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{CE757F01-A018-4FA2-8462-5CBD6C704C2E}</ProjectGuid>
+    <ProjectGuid>{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
     <BSP_VERSION>2019.12</BSP_VERSION>
     <InPlaceBSPSubdir />
@@ -43,7 +43,7 @@
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DEBUG=1;STM32L496ZG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG=1;STM32L476RG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
@@ -56,7 +56,7 @@
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;STM32L496ZG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;STM32L476RG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLinkerInputs>;%(Link.AdditionalLinkerInputs)</AdditionalLinkerInputs>
@@ -65,29 +65,18 @@
       <LinkerScript />
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\lib-stm32l4\prj-stm32l476rg\lib-stm32l476rg.vcxproj">
+      <Project>{1afb99ea-6c60-4a46-9a3c-b86b53bc7d29}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="main-position-controller-stm32l496zg-Debug.vgdbsettings" />
-    <None Include="main-position-controller-stm32l496zg-Release.vgdbsettings" />
+    <None Include="main-position-controller-stm32l476rg-Debug.vgdbsettings" />
+    <None Include="main-position-controller-stm32l476rg-Release.vgdbsettings" />
     <None Include="stm32.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\common\lib-stm32l4\prj-stm32l496zg\lib-stm32l496zg.vcxproj">
-      <Project>{28e807dd-ce7b-4eef-822d-e5873b182727}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src-position-controller\button.c" />
-    <ClCompile Include="..\src-position-controller\client_communication_uart.c" />
-    <ClCompile Include="..\src-position-controller\client_communication_uart_stm32l496zg.c" />
-    <ClCompile Include="..\src-position-controller\global_data.c" />
-    <ClCompile Include="..\src-position-controller\gpio.c" />
-    <ClCompile Include="..\src-position-controller\led.c" />
-    <ClCompile Include="..\src-position-controller\main.c" />
-    <ClCompile Include="..\src-position-controller\position_controller.c" />
-    <ClCompile Include="..\src-position-controller\system_clock.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-position-controller\arm.h" />
@@ -100,5 +89,16 @@
     <ClInclude Include="..\src-position-controller\led.h" />
     <ClInclude Include="..\src-position-controller\position_controller.h" />
     <ClInclude Include="..\src-position-controller\system_clock.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src-position-controller\button.c" />
+    <ClCompile Include="..\src-position-controller\client_communication_uart.c" />
+    <ClCompile Include="..\src-position-controller\client_communication_uart_stm32l476rg.c" />
+    <ClCompile Include="..\src-position-controller\global_data.c" />
+    <ClCompile Include="..\src-position-controller\gpio.c" />
+    <ClCompile Include="..\src-position-controller\led.c" />
+    <ClCompile Include="..\src-position-controller\main.c" />
+    <ClCompile Include="..\src-position-controller\position_controller.c" />
+    <ClCompile Include="..\src-position-controller\system_clock.c" />
   </ItemGroup>
 </Project>

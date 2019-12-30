@@ -25,6 +25,7 @@
     <ClCompile Include="..\src-position-controller\button.c" />
     <ClCompile Include="..\src-position-controller\client_communication_uart.c" />
     <ClCompile Include="..\src-position-controller\position_controller.c" />
+    <ClCompile Include="..\src-position-controller\client_communication_uart_stm32l496zg.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-position-controller\gpio.h" />
@@ -36,5 +37,6 @@
     <ClInclude Include="..\src-position-controller\client_communication_uart.h" />
     <ClInclude Include="..\src-position-controller\position_controller.h" />
     <ClInclude Include="..\src-position-controller\arm.h" />
+    <ClInclude Include="..\src-position-controller\client_communication_uart_impl.h" />
   </ItemGroup>
 </Project>

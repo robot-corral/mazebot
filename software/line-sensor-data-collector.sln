@@ -13,6 +13,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32wb55rg", "common\l
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src-data-collector", "line-sensor\src-data-collector\src-data-collector.csproj", "{F054648D-B6DD-4253-8652-A87A7F7BEAA6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-position-controller-stm32l476rg", "line-sensor\prj-position-controller-stm32l476rg\main-position-controller-stm32l476rg.vcxproj", "{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-stm32l476rg", "common\lib-stm32l4\prj-stm32l476rg\lib-stm32l476rg.vcxproj", "{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +117,34 @@ Global
 		{F054648D-B6DD-4253-8652-A87A7F7BEAA6}.Release|x86.ActiveCfg = Release|x86
 		{F054648D-B6DD-4253-8652-A87A7F7BEAA6}.Release|x86.Build.0 = Release|x86
 		{F054648D-B6DD-4253-8652-A87A7F7BEAA6}.Release|x86.Deploy.0 = Release|x86
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|Any CPU.ActiveCfg = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|ARM.ActiveCfg = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|ARM64.ActiveCfg = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|x64.ActiveCfg = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Debug|x86.ActiveCfg = Debug|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|Any CPU.ActiveCfg = Release|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|ARM.ActiveCfg = Release|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|ARM64.ActiveCfg = Release|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|x64.ActiveCfg = Release|VisualGDB
+		{5CD92DCA-3032-42AF-A7E6-A184AA1AC5DF}.Release|x86.ActiveCfg = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|Any CPU.ActiveCfg = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|ARM.ActiveCfg = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|ARM64.ActiveCfg = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|x64.ActiveCfg = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Debug|x86.ActiveCfg = Debug|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|Any CPU.ActiveCfg = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|ARM.ActiveCfg = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|ARM64.ActiveCfg = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|x64.ActiveCfg = Release|VisualGDB
+		{1AFB99EA-6C60-4A46-9A3C-B86B53BC7D29}.Release|x86.ActiveCfg = Release|VisualGDB
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
