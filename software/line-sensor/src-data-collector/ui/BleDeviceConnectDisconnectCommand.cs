@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
 
@@ -17,9 +16,9 @@ namespace line_sensor.data_collector.ui
             return parameter != null && parameter.SelectedBleDevice != null;
         }
 
-        protected override Task ExecuteAsyncImpl(MainModel parameter)
+        protected override void ExecuteImpl(MainModel parameter)
         {
-            return Task.CompletedTask;
+            // TODO
         }
 
         private readonly IWirelessLineSensor wirelessLineSensor;

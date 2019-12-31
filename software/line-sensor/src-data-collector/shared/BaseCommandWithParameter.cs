@@ -15,7 +15,7 @@ namespace line_sensor.data_collector.shared
 
         protected abstract bool CanExecuteImpl(T parameter);
 
-        protected abstract Task ExecuteAsyncImpl(T parameter);
+        protected abstract void ExecuteImpl(T parameter);
 
         public bool CanExecute(object parameter)
         {
@@ -24,7 +24,7 @@ namespace line_sensor.data_collector.shared
 
         public void Execute(object parameter)
         {
-            Task.Run(() => ExecuteAsyncImpl((T) parameter));
+            ExecuteImpl((T) parameter);
         }
     }
 }
