@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{9ac09fa9-ec23-40b2-a6a2-45497337a227}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main-position-controller-stm32l476rg-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="main-position-controller-stm32l476rg-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\arm.h" />
+    <ClInclude Include="..\src\button.h" />
+    <ClInclude Include="..\src\client_communication_uart.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\gpio.h" />
+    <ClInclude Include="..\src\interrupt_priorities.h" />
+    <ClInclude Include="..\src\led.h" />
+    <ClInclude Include="..\src\position_controller.h" />
+    <ClInclude Include="..\src\system_clock.h" />
+    <ClInclude Include="..\src\client_communication_uart_impl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\button.c" />
+    <ClCompile Include="..\src\client_communication_uart.c" />
+    <ClCompile Include="..\src\global_data.c" />
+    <ClCompile Include="..\src\gpio.c" />
+    <ClCompile Include="..\src\led.c" />
+    <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\position_controller.c" />
+    <ClCompile Include="..\src\system_clock.c" />
+    <ClCompile Include="..\src\client_communication_uart_stm32l476rg.c" />
+  </ItemGroup>
+</Project>

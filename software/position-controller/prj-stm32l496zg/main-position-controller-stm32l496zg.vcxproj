@@ -79,26 +79,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src-position-controller\button.c" />
-    <ClCompile Include="..\src-position-controller\client_communication_uart.c" />
-    <ClCompile Include="..\src-position-controller\client_communication_uart_stm32l496zg.c" />
-    <ClCompile Include="..\src-position-controller\global_data.c" />
-    <ClCompile Include="..\src-position-controller\gpio.c" />
-    <ClCompile Include="..\src-position-controller\led.c" />
-    <ClCompile Include="..\src-position-controller\main.c" />
-    <ClCompile Include="..\src-position-controller\position_controller.c" />
-    <ClCompile Include="..\src-position-controller\system_clock.c" />
+    <ClCompile Include="..\src\button.c" />
+    <ClCompile Include="..\src\client_communication_uart.c" />
+    <ClCompile Include="..\src\client_communication_uart_stm32l496zg.c" />
+    <ClCompile Include="..\src\global_data.c" />
+    <ClCompile Include="..\src\gpio.c" />
+    <ClCompile Include="..\src\led.c" />
+    <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\position_controller.c" />
+    <ClCompile Include="..\src\system_clock.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src-position-controller\arm.h" />
-    <ClInclude Include="..\src-position-controller\button.h" />
-    <ClInclude Include="..\src-position-controller\client_communication_uart.h" />
-    <ClInclude Include="..\src-position-controller\client_communication_uart_impl.h" />
-    <ClInclude Include="..\src-position-controller\global_data.h" />
-    <ClInclude Include="..\src-position-controller\gpio.h" />
-    <ClInclude Include="..\src-position-controller\interrupt_priorities.h" />
-    <ClInclude Include="..\src-position-controller\led.h" />
-    <ClInclude Include="..\src-position-controller\position_controller.h" />
-    <ClInclude Include="..\src-position-controller\system_clock.h" />
+    <ClInclude Include="..\src\arm.h" />
+    <ClInclude Include="..\src\button.h" />
+    <ClInclude Include="..\src\client_communication_uart.h" />
+    <ClInclude Include="..\src\client_communication_uart_impl.h" />
+    <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\gpio.h" />
+    <ClInclude Include="..\src\interrupt_priorities.h" />
+    <ClInclude Include="..\src\led.h" />
+    <ClInclude Include="..\src\position_controller.h" />
+    <ClInclude Include="..\src\system_clock.h" />
   </ItemGroup>
 </Project>
