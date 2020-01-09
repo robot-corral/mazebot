@@ -1,0 +1,638 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{85174260-4577-4a1a-8547-57af9cb732ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4f3ce806-5aa8-49ab-9748-b5918b3954fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device-specific files">
+      <UniqueIdentifier>{a3b9dd06-60be-4859-97d5-257462d52b60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device-specific files\LL">
+      <UniqueIdentifier>{ee4a2a65-9f05-4a3c-9fac-56389f5b1c89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils">
+      <UniqueIdentifier>{6069faee-c4f1-48b1-83c7-c234c7265fa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\application">
+      <UniqueIdentifier>{a79291fe-949d-4a1e-aaf2-3e1513d235fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble">
+      <UniqueIdentifier>{a26082a2-3e8b-4cba-9e7e-74da86add1e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble\core">
+      <UniqueIdentifier>{cd53b28b-a8ce-4f19-a238-1d9dfb6962cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble\core\auto">
+      <UniqueIdentifier>{eb1a14d7-338f-40f6-859e-423942c37120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble\svc">
+      <UniqueIdentifier>{a0b717b1-ba4e-4560-8e56-c802892f7cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble\svc\inc">
+      <UniqueIdentifier>{02873a8b-404a-40fd-a4a5-b652a548a458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble\svc\src">
+      <UniqueIdentifier>{5568e3ff-6cf5-4fb1-905c-5198b0b29ffa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble_thread">
+      <UniqueIdentifier>{f07c805c-0b7c-40d7-8723-722f82e625b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble_thread\tl">
+      <UniqueIdentifier>{7d0fc572-a8c1-4729-b3ca-366a178b6bfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\ble_thread\schi">
+      <UniqueIdentifier>{03ed37c2-4b22-4845-a21d-4c301090977d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\cmsis">
+      <UniqueIdentifier>{bcc8de64-a6ad-43df-b8e5-f968934799c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\sequencer">
+      <UniqueIdentifier>{c0c45f0d-1c81-43c5-ad86-670a82222373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\stm32">
+      <UniqueIdentifier>{d1bde43e-5761-4d37-9486-23cad4b5aedb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\tiny_lpm">
+      <UniqueIdentifier>{8efb40b6-324f-4e79-a879-f44424c27895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src-utils\utilities">
+      <UniqueIdentifier>{1455023a-8968-405e-8f5e-b5128d967d3a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main-line-sensor-wireless-stm32wb55rg-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="main-line-sensor-wireless-stm32wb55rg-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32wb.xml">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="stm32wb.props">
+      <Filter>Device-specific files</Filter>
+    </None>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\StartupFiles\startup_stm32wb55xx_cm4.c">
+      <Filter>Device-specific files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_adc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_comp.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_crc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_crs.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_dma.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_exti.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_gpio.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_i2c.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_lptim.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_lpuart.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_pka.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_pwr.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_rcc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_rng.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_rtc.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_spi.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_tim.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_usart.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClCompile Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_utils.c">
+      <Filter>Device-specific files\LL</Filter>
+    </ClCompile>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_adc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_bus.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_comp.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_cortex.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_crc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_crs.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_dma.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_dmamux.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_exti.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_gpio.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_hsem.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_i2c.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_ipcc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_iwdg.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_lptim.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_lpuart.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_pka.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_pwr.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_rcc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_rng.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_rtc.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_spi.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_system.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_tim.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_usart.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_utils.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+    <ClInclude Include="$(BSP_ROOT)\STM32WBxxxx\STM32WBxx_HAL_Driver\Inc\stm32wbxx_ll_wwdg.h">
+      <Filter>Device-specific files\LL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src-utils\application\hw_timerserver.c">
+      <Filter>src-utils\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\application\hw_uart.c">
+      <Filter>src-utils\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\utilities\otp.c">
+      <Filter>src-utils\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_cortex.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_dma.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_exti.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_flash.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_gpio.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_hsem.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_ipcc.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_pwr.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rcc.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rtc.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_uart.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_nucleo.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\sequencer\stm32_seq.c">
+      <Filter>src-utils\sequencer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_pwr_ex.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rcc_ex.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\tiny_lpm\stm32_lpm.c">
+      <Filter>src-utils\tiny_lpm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\utilities\dbg_trace.c">
+      <Filter>src-utils\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\utilities\stm_queue.c">
+      <Filter>src-utils\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_uart_ex.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble_thread\tl\shci_tl.c">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble_thread\tl\shci_tl_if.c">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble_thread\tl\tl_mbox.c">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\utilities\stm_list.c">
+      <Filter>src-utils\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\application\hw_ipcc.c">
+      <Filter>src-utils\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\application\app_ble.c">
+      <Filter>src-utils\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\application\p2p_server_app.c">
+      <Filter>src-utils\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\application\osal.c">
+      <Filter>src-utils\application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble_thread\schi\shci.c">
+      <Filter>src-utils\ble_thread\schi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\core\auto\ble_l2cap_aci.c">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble_thread\tl\hci_tl.c">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\core\auto\ble_hal_aci.c">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\svc\src\svc_ctl.c">
+      <Filter>src-utils\ble\svc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\core\auto\ble_hci_le.c">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\core\auto\ble_gap_aci.c">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\core\auto\ble_gatt_aci.c">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble\svc\src\p2p_stm.c">
+      <Filter>src-utils\ble\svc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\ble_thread\tl\hci_tl_if.c">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\application.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\buttons.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\error.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\exti.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\global_data.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\gpio.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\led.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system_clocks.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\uart.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src-utils\application\app_common.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\app_conf.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\hw_conf.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\hw_if.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\utilities\otp.h">
+      <Filter>src-utils\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\utilities\utilities_common.h">
+      <Filter>src-utils\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble_thread\hw.h">
+      <Filter>src-utils\ble_thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rtc.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_conf.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_cortex.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_dma.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_exti.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_flash.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_gpio.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_hsem.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_ipcc.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_pwr.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rcc.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_uart.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_nucleo.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\sequencer\stm32_seq.h">
+      <Filter>src-utils\sequencer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\utilities_conf.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\cmsis\cmsis_compiler.h">
+      <Filter>src-utils\cmsis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_pwr_ex.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rcc_ex.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\tiny_lpm\stm32_lpm.h">
+      <Filter>src-utils\tiny_lpm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\utilities\dbg_trace.h">
+      <Filter>src-utils\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\utilities\stm_queue.h">
+      <Filter>src-utils\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_uart_ex.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble_thread\tl\mbox_def.h">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble_thread\tl\shci_tl.h">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble_thread\tl\tl.h">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32_wpan_common.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\ble_common.h">
+      <Filter>src-utils\ble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\utilities\stm_list.h">
+      <Filter>src-utils\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\ble_conf.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\ble_dbg_conf.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\app_ble.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\p2p_server_app.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\ble.h">
+      <Filter>src-utils\ble</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\ble_bufsize.h">
+      <Filter>src-utils\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\ble_core.h">
+      <Filter>src-utils\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\ble_defs.h">
+      <Filter>src-utils\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\ble_legacy.h">
+      <Filter>src-utils\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\ble_std.h">
+      <Filter>src-utils\ble\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\bls.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\crs_stm.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\dis.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\eds_stm.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\hids.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\hrs.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\hts.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\ias.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\lls.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\mesh.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\motenv_stm.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\otas_stm.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\p2p_stm.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\svc_ctl.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\template_stm.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\tps.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\inc\uuid.h">
+      <Filter>src-utils\ble\svc\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\ble_const.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\compiler.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\application\osal.h">
+      <Filter>src-utils\application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble_thread\tl\hci_tl.h">
+      <Filter>src-utils\ble_thread\tl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble_thread\schi\shci.h">
+      <Filter>src-utils\ble_thread\schi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_events.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_gap_aci.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_gatt_aci.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_hal_aci.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_hci_le.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_l2cap_aci.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\core\auto\ble_types.h">
+      <Filter>src-utils\ble\core\auto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\ble\svc\src\common_blesvc.h">
+      <Filter>src-utils\ble\svc\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\application.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\buttons.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\error.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\exti.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\global_data.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\gpio.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\led.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\system_clocks.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\uart.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
