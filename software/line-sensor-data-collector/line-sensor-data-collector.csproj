@@ -124,6 +124,8 @@
     <Compile Include="logic\WirelessLineSensor.cs" />
     <Compile Include="shared\BaseCommandWithParameter.cs" />
     <Compile Include="shared\BooleanNotConverter.cs" />
+    <Compile Include="shared\ILogger.cs" />
+    <Compile Include="shared\Logger.cs" />
     <Compile Include="ui\BleDeviceConnectDisconnectCommand.cs" />
     <Compile Include="ui\BleDeviceModel.cs" />
     <Compile Include="ui\BleDeviceWatcher.cs" />
