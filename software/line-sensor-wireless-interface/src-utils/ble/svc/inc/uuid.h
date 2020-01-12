@@ -281,7 +281,7 @@
 /* UUIDs for data transfer service */
 #define DATA_TRANSFER_SERVICE_UUID                                     (0xFE80)
 #define DATA_TRANSFER_TX_CHAR_UUID                                     (0xFE81)
-#define DATA_TRANSFER_RX_CHAR_UUID                                     (0xFE82)    
+#define DATA_TRANSFER_RX_CHAR_UUID                                     (0xFE82)
 
 /* UUIDs for custom battery service */ 
 #define CUSTOM_BATTERY_SERVICE_UUID                                    (0xF2F0)
@@ -291,15 +291,14 @@
 /* UUIDs for data transfer service */
 #define LED_BUTTON_SERVICE_UUID                                       (0x1A30)
 #define LED_CHAR_UUID                                                 (0x2B50)
-#define BUTTON_CHAR_UUID                                              (0x2B51)    
+#define BUTTON_CHAR_UUID                                              (0x2B51)
 /*UUIDs for End Device Management Service*/
 #define END_DEVICE_MGT_SERVICE_UUID                                   (0x1A40)
 #define END_DEVICE_STATUS_CHAR_UUID                                   (0x2B60)
 
 #define P2P_SERVICE_UUID                                              (0xFE40)
-#define P2P_WRITE_CHAR_UUID                                           (0xFE41)
-#define P2P_NOTIFY_CHAR_UUID                                          (0xFE42)
-#define P2P_DATA_CHAR_UUID                                            (0xFE43)
+#define P2P_CLIENT_COMMAND_UUID                                       (0xFE41)
+#define P2P_CLIENT_RESPONSE_UUID                                      (0xFE42)
 
 #define HOME_SERVICE_UUID                                              (0xFE90)
 #define HOME_WRITE_CHAR_UUID                                           (0xFE91)

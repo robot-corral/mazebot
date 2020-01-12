@@ -224,7 +224,7 @@ PLACE_IN_SECTION("TAG_OTA_START") const uint32_t MagicKeywordAddress = (uint32_t
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
 
-P2PS_APP_ConnHandle_Not_evt_t handleNotification;
+p2pAppConnectionHandleNotificationEvent_t handleNotification;
 
 #if L2CAP_REQUEST_NEW_CONN_PARAM != 0
 #define SIZE_TAB_CONN_INT            2
@@ -459,7 +459,7 @@ void APP_BLE_Init( void )
   /**
    * Initialize P2P Server Application
    */
-  P2PS_APP_Init();
+  p2pAppInit();
 
   /**
    * Create timer to handle the Advertising Stop
@@ -521,9 +521,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
  /*
 * SPECIFIC to P2P Server APP
 */     
-      handleNotification.P2P_Evt_Opcode = PEER_DISCON_HANDLE_EVT;
-      handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
-      P2PS_APP_Notification(&handleNotification);
+      handleNotification.p2pEvtAppOpcode = P2PAOCE_DISCON_HANDLE_EVT;
+      handleNotification.connectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
+      p2pAppNotification(&handleNotification);
 
       /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
 
@@ -607,16 +607,16 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
  /*
 * SPECIFIC to P2P Server APP
 */             
-          handleNotification.P2P_Evt_Opcode = PEER_CONN_HANDLE_EVT;
-          handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
-          P2PS_APP_Notification(&handleNotification);
+          handleNotification.p2pEvtAppOpcode = P2PAOCE_CONN_HANDLE_EVT;
+          handleNotification.connectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
+          p2pAppNotification(&handleNotification);
           /* USER CODE BEGIN HCI_EVT_LE_CONN_COMPLETE */
  /*
 * SPECIFIC to P2P Server APP
 */             
-          handleNotification.P2P_Evt_Opcode = PEER_CONN_HANDLE_EVT;
-          handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
-          P2PS_APP_Notification(&handleNotification);
+          handleNotification.p2pEvtAppOpcode = P2PAOCE_CONN_HANDLE_EVT;
+          handleNotification.connectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
+          p2pAppNotification(&handleNotification);
 /**/
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
           }
@@ -743,7 +743,6 @@ APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void)
 /* USER CODE BEGIN FD*/
 void APP_BLE_Key_Button1_Action(void)
 {
-  P2PS_APP_SW1_Button_Action();
 }
 
 void APP_BLE_Key_Button2_Action(void)
