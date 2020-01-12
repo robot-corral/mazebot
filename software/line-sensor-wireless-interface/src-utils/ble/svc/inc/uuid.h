@@ -297,7 +297,6 @@
 #define END_DEVICE_STATUS_CHAR_UUID                                   (0x2B60)
 
 #define P2P_SERVICE_UUID                                              (0xFE40)
-#define P2P_CLIENT_COMMAND_UUID                                       (0xFE41)
 #define P2P_CLIENT_RESPONSE_UUID                                      (0xFE42)
 
 #define HOME_SERVICE_UUID                                              (0xFE90)

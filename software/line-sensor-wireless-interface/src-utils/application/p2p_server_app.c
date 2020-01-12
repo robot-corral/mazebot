@@ -30,11 +30,6 @@ void p2pStmAppNotification(p2pStmAppNotification_t* pNotification)
             g_p2pServerAppContext.notificationStatus = 0;
             break;
         }
-        case P2PS_CLIENT_COMMAND:
-        {
-            // TODO
-            break;
-        }
         default:
         {
             break;

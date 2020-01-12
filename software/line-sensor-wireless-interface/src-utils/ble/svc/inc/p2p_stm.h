@@ -2,13 +2,11 @@
 
 #include <line_sensor.h>
 
-#define P2P_CLIENT_COMMAND_LENGTH  2
 #define P2P_CLIENT_RESPONSE_LENGTH ((NUMBER_OF_SENSORS) * sizeof(lineSensorValue_t))
 
 typedef enum
 {
     P2PS_NONE,
-    P2PS_CLIENT_COMMAND,
     P2PS_CLIENT_ENABLE_RESPONSE,
     P2PS_CLIENT_DISABLE_RESPONSE
 } p2pOpcode_t;
@@ -35,6 +33,6 @@ void P2PS_STM_Init();
 void p2pStmAppNotification(p2pStmAppNotification_t* pNotification);
 
 /*
- * uuid - one of {P2P_CLIENT_COMMAND_UUID, P2P_CLIENT_RESPONSE_UUID}
+ * uuid - one of {P2P_CLIENT_RESPONSE_UUID}
  */
 tBleStatus p2pAppUpdateChar(uint16_t uuid, uint8_t* pPayload);

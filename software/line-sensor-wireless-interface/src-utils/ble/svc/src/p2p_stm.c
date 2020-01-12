@@ -2,7 +2,6 @@
 
 typedef struct{
     uint16_t p2pSvcHdle;
-    uint16_t p2pClientCommandCharHdle;
     uint16_t p2pClientResponseCharHdle;
 } p2pContext_t;
 
@@ -19,7 +18,6 @@ do {\
 }while(0)
 
 #define COPY_P2P_SERVICE_UUID(uuid_struct)         COPY_UUID_128(uuid_struct, 0x00, 0x00, 0xfe, 0x40, 0xcc, 0x7a, 0x48, 0x2a, 0x98, 0x4a, 0x7f, 0x2e, 0xd5, 0xb3, 0xe5, 0x8f)
-#define COPY_P2P_CLIENT_COMMAND_UUID(uuid_struct)  COPY_UUID_128(uuid_struct, 0x00, 0x00, 0xfe, 0x41, 0x8e, 0x22, 0x45, 0x41, 0x9d, 0x4c, 0x21, 0xed, 0xae, 0x82, 0xed, 0x19)
 #define COPY_P2P_CLIENT_RESPONSE_UUID(uuid_struct) COPY_UUID_128(uuid_struct, 0x00, 0x00, 0xfe, 0x42, 0x8e, 0x22, 0x45, 0x41, 0x9d, 0x4c, 0x21, 0xed, 0xae, 0x82, 0xed, 0x19)
 
 static SVCCTL_EvtAckStatus_t p2pEventHandler(void* pEvent)
@@ -37,14 +35,7 @@ static SVCCTL_EvtAckStatus_t p2pEventHandler(void* pEvent)
         {
             aci_gatt_attribute_modified_event_rp0* pAttributeModified = (aci_gatt_attribute_modified_event_rp0*) pBlueEvent->data;
 
-            if(pAttributeModified->Attr_Handle == (g_p2pContext.p2pClientCommandCharHdle + 1))
-            {
-                pNotification.p2pOpcode               = P2PS_CLIENT_COMMAND;
-                pNotification.dataTransfered.length   = pAttributeModified->Attr_Data_Length;
-                pNotification.dataTransfered.pPayload = pAttributeModified->Attr_Data;
-                p2pStmAppNotification(&pNotification);
-            }
-            else if(pAttributeModified->Attr_Handle == (g_p2pContext.p2pClientResponseCharHdle + 2))
+            if(pAttributeModified->Attr_Handle == (g_p2pContext.p2pClientResponseCharHdle + 2))
             {
                 returnValue = SVCCTL_EvtAckFlowEnable;
                 if(pAttributeModified->Attr_Data[0] & COMSVC_Notification)
@@ -75,20 +66,8 @@ void P2PS_STM_Init(void)
     status = aci_gatt_add_service(UUID_TYPE_128,
                                   (Service_UUID_t*) &uuid,
                                   PRIMARY_SERVICE,
-                                  8,
+                                  6,
                                   &g_p2pContext.p2pSvcHdle);
-
-    COPY_P2P_CLIENT_COMMAND_UUID(uuid.Char_UUID_128);
-    status = aci_gatt_add_char(g_p2pContext.p2pSvcHdle,
-                               UUID_TYPE_128,
-                               &uuid,
-                               P2P_CLIENT_COMMAND_LENGTH,
-                               CHAR_PROP_WRITE_WITHOUT_RESP | CHAR_PROP_READ,
-                               ATTR_PERMISSION_NONE,
-                               GATT_NOTIFY_ATTRIBUTE_WRITE,
-                               10,
-                               1,
-                               &g_p2pContext.p2pClientCommandCharHdle);
 
     COPY_P2P_CLIENT_RESPONSE_UUID(uuid.Char_UUID_128);
     status = aci_gatt_add_char(g_p2pContext.p2pSvcHdle,
@@ -109,15 +88,6 @@ tBleStatus p2pAppUpdateChar(uint16_t uuid, uint8_t* pPayload)
 
     switch(uuid)
     {
-        case P2P_CLIENT_COMMAND_UUID:
-        {
-            result = aci_gatt_update_char_value(g_p2pContext.p2pSvcHdle,
-                                                g_p2pContext.p2pClientCommandCharHdle,
-                                                0,
-                                                P2P_CLIENT_COMMAND_LENGTH,
-                                                (uint8_t*) pPayload);
-            break;
-        }
         case P2P_CLIENT_RESPONSE_UUID:
         {
             result = aci_gatt_update_char_value(g_p2pContext.p2pSvcHdle,
