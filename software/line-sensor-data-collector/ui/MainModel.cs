@@ -10,10 +10,10 @@ namespace line_sensor.data_collector.ui
 {
     public class MainModel : INotifyPropertyChanged
     {
-        public MainModel(CoreDispatcher dispatcher)
+        public MainModel(CoreDispatcher dispatcher, ILogger logger)
         {
             this.positionController = new PositionController();
-            this.wirelessLineSensor = new WirelessLineSensor();
+            this.wirelessLineSensor = new WirelessLineSensor(logger);
 
             this.serialDeviceScanningIndicatorVisible = Visibility.Collapsed;
             this.AllSupportedSerialDevices = new ObservableCollection<SerialDeviceModel>();

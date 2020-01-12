@@ -13,14 +13,20 @@ namespace line_sensor.data_collector
 {
     sealed partial class App : Application
     {
+        static App()
+        {
+            logger.Initialize();
+        }
+
         public App()
         {
-            this.logger.Initialize();
             InitializeComponent();
             Resuming += OnResuming;
             Suspending += OnSuspending;
             UnhandledException += OnUnhandledException;
         }
+
+        public static ILogger Logger { get { return logger;  } }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
@@ -56,13 +62,13 @@ namespace line_sensor.data_collector
 
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            this.logger.Error(e.Exception, "unhandled navigation error");
+            logger.Error(e.Exception, "unhandled navigation error");
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
         private void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            this.logger.Error(e.Exception, "unhandled error");
+            logger.Error(e.Exception, "unhandled error");
             MessageDialog dialog = new MessageDialog(e.Exception.ToString(), "Error");
             dialog.ShowAsync().AsTask().Wait();
         }
@@ -70,10 +76,10 @@ namespace line_sensor.data_collector
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            Task.WaitAll(this.logger.OnSuspending());
+            Task.WaitAll(logger.OnSuspending());
             deferral.Complete();
         }
 
-        private readonly Logger logger = new Logger();
+        private static readonly Logger logger = new Logger();
     }
 }

@@ -7,7 +7,7 @@ namespace line_sensor.data_collector.ui
     {
         public MainPage()
         {
-            MainModel model = new MainModel(Dispatcher);
+            MainModel model = new MainModel(Dispatcher, App.Logger);
             DataContext = model;
             this.model = model;
             InitializeComponent();

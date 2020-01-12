@@ -43,6 +43,11 @@ namespace line_sensor.data_collector.shared
             }
         }
 
+        public void Error(string message)
+        {
+            // TODO
+        }
+
         public void Error(Exception exception, string message)
         {
             // TODO

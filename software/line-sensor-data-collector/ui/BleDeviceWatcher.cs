@@ -100,16 +100,22 @@ namespace line_sensor.data_collector.ui
                     {
                         if (this.model.AllSupportedBleDevices[i].Id == deviceInformationUpdate.Id)
                         {
+                            if (this.model.SelectedBleDevice != null && this.model.SelectedBleDevice.Id == deviceInformationUpdate.Id)
+                            {
+                                if (this.model.SelectedBleDevice.IsBusy)
+                                {
+                                    // when we connect to device it will be removed from list of available devices
+                                    // so we mark it as busy and keep it in the list.
+                                    // once device is actally disconnected / removed model will be notified about this
+                                    // by IWirelessLineSensor implementation
+                                    continue;
+                                }
+                                else
+                                {
+                                    this.model.SelectedBleDevice = this.model.AllSupportedBleDevices.Count <= 0 ? null : this.model.AllSupportedBleDevices[0];
+                                }
+                            }
                             this.model.AllSupportedBleDevices.RemoveAt(i);
-                            if (this.model.ConnectedWirelessLineSensorDeviceModel.Id == deviceInformationUpdate.Id)
-                            {
-                                // disconnect
-                                this.model.BleDeviceConnectDisconnectCommand.Execute(this);
-                            }
-                            if (this.model.SelectedBleDevice.Id == deviceInformationUpdate.Id)
-                            {
-                                this.model.SelectedBleDevice = this.model.AllSupportedBleDevices.Count <= 0 ? null : this.model.AllSupportedBleDevices[0];
-                            }
                             break;
                         }
                     }

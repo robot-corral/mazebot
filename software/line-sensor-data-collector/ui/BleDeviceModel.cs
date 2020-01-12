@@ -17,6 +17,8 @@ namespace line_sensor.data_collector.ui
 
         public string DisplayName { get; set; }
 
+        public bool IsBusy { get; set; }
+
         public void Update(DeviceInformationUpdate deviceInformationUpdate)
         {
             this.deviceInformation.Update(deviceInformationUpdate);

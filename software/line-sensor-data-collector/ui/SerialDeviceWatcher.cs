@@ -95,16 +95,16 @@ namespace line_sensor.data_collector.ui
                     {
                         if (this.model.AllSupportedSerialDevices[i].Id == deviceInformationUpdate.Id)
                         {
-                            this.model.AllSupportedSerialDevices.RemoveAt(i);
                             if (this.model.ConnectedPositionControllerDeviceModel.Id == deviceInformationUpdate.Id)
                             {
                                 // disconnect
                                 this.model.SerialDeviceConnectDisconnectCommand.Execute(this);
                             }
-                            if (this.model.SelectedSerialDevice.Id == deviceInformationUpdate.Id)
+                            if (this.model.SelectedSerialDevice != null && this.model.SelectedSerialDevice.Id == deviceInformationUpdate.Id)
                             {
                                 this.model.SelectedSerialDevice = this.model.AllSupportedSerialDevices.Count <= 0 ? null : this.model.AllSupportedSerialDevices[0];
                             }
+                            this.model.AllSupportedSerialDevices.RemoveAt(i);
                             break;
                         }
                     }
