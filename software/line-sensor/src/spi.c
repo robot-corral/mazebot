@@ -24,11 +24,11 @@ static lineSensorDetailedStatus_t decodeCommand(uint16_t encodedCommandWithParam
 {
     const lineSensorCommandCode_t command1 = encodedCommandWithParameter & DECODE_MASK;
     encodedCommandWithParameter >>= 4;
-    const lineSensorCommandCode_t command2 = encodedCommandWithParameter & DECODE_MASK;
+    const lineSensorCommandCode_t command2 = ~((encodedCommandWithParameter & DECODE_MASK) | 0xF0);
     encodedCommandWithParameter >>= 4;
     const lineSensorCommandParameter_t parameter1 = encodedCommandWithParameter & DECODE_MASK;
     encodedCommandWithParameter >>= 4;
-    const lineSensorCommandParameter_t parameter2 = encodedCommandWithParameter & DECODE_MASK;
+    const lineSensorCommandParameter_t parameter2 = ~((encodedCommandWithParameter & DECODE_MASK) | 0xF0);
     if (command1 != command2 || parameter1 != parameter2)
     {
         *pResultParam = 0;

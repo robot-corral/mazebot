@@ -2,17 +2,17 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="VisualGDB settings">
-      <UniqueIdentifier>{c8435c81-3c16-4ca4-9907-73fc7d2e959f}</UniqueIdentifier>
+      <UniqueIdentifier>{0518d547-3bb2-4be5-aa3d-8249d920386e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{e32e2da6-3681-49a4-a020-8a9b7a8fb619}</UniqueIdentifier>
+      <UniqueIdentifier>{e716866b-7eb5-46e8-8f5a-d792d750a13c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="main-line-sensor-test-client-stm32l496ze-Debug.vgdbsettings">
+    <None Include="main-line-sensor-test-client-stm32l476rg-Debug.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
-    <None Include="main-line-sensor-test-client-stm32l496ze-Release.vgdbsettings">
+    <None Include="main-line-sensor-test-client-stm32l476rg-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
     <None Include="stm32.xml">

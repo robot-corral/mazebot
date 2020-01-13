@@ -39,32 +39,25 @@ static void setSlaveSelected(bool isSelected);
 void SystemClock_Config()
 {
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR  |
-                             LL_APB1_GRP1_PERIPH_SPI3);
+                             LL_APB1_GRP1_PERIPH_SPI3 |
+                             LL_APB1_GRP1_PERIPH_TIM5);
 
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA2);
 
-    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB |
-                             LL_AHB2_GRP1_PERIPH_GPIOC |
-                             LL_AHB2_GRP1_PERIPH_GPIOD);
+    LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA |
+                             LL_AHB2_GRP1_PERIPH_GPIOC);
 
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);
     LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
 
     LL_RCC_HSI_Enable();
     while (LL_RCC_HSI_IsReady() != 1) ;
+    LL_RCC_HSI_SetCalibTrimming(16);
 
-    LL_RCC_MSI_Enable();
-    while (LL_RCC_MSI_IsReady() != 1) ;
-
-    LL_RCC_MSI_EnableRangeSelection();
-    LL_RCC_MSI_SetRange(LL_RCC_MSIRANGE_6);
-    LL_RCC_MSI_SetCalibTrimming(0);
-
-    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_MSI, LL_RCC_PLLM_DIV_1, 40, LL_RCC_PLLR_DIV_2);
+    LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_1, 10, LL_RCC_PLLR_DIV_2);
     LL_RCC_PLL_EnableDomain_SYS();
-
     LL_RCC_PLL_Enable();
     while (LL_RCC_PLL_IsReady() != 1) ;
 
@@ -83,66 +76,44 @@ void SystemClock_Config()
     LL_TIM_SetAutoReload(TIM5, 0xFFFFFFFF); // reload 32 bit value (TIM5 is 32 bit)
     LL_TIM_EnableCounter(TIM5);
     LL_TIM_GenerateEvent_UPDATE(TIM5);
-
-    LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 }
 
 void initializeLed()
 {
-    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_5, LL_GPIO_MODE_OUTPUT);
 
-    LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
-
-    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
-
-    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
-    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_14);
+    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_5);
 }
 
 void setGreenLedEnabled(bool isEnabled)
 {
     if (isEnabled)
     {
-        LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_7);
+        LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_5);
     }
     else
     {
-        LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_5);
     }
 }
 
 void setBlueLedEnabled(bool isEnabled)
 {
-    if (isEnabled)
-    {
-        LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_7);
-    }
-    else
-    {
-        LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_7);
-    }
+    // TODO need to add extra LEDs
 }
 
 void setRedLedEnabled(bool isEnabled)
 {
-    if (isEnabled)
-    {
-        LL_GPIO_SetOutputPin(GPIOB, LL_GPIO_PIN_14);
-    }
-    else
-    {
-        LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_14);
-    }
+    // TODO need to add extra LEDs
 }
 
 void initializeControlPins()
 {
-    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_5, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_5, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_0, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinOutputType(GPIOC, LL_GPIO_PIN_0, LL_GPIO_OUTPUT_PUSHPULL);
 
-    LL_GPIO_SetPinMode(GPIOD, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinOutputType(GPIOD, LL_GPIO_PIN_7, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_3, LL_GPIO_MODE_OUTPUT);
+    LL_GPIO_SetPinOutputType(GPIOC, LL_GPIO_PIN_3, LL_GPIO_OUTPUT_PUSHPULL);
 
     setSlavePowerEnabled(true);
     setSlaveSelected(false);
@@ -152,28 +123,28 @@ void setSlavePowerEnabled(bool isEnabled)
 {
     if (isEnabled)
     {
-        LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_7);
+        LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_3);
     }
     else
     {
-        LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_7);
+        LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_3);
     }
 }
 
 bool isSlaveSelected()
 {
-    return !LL_GPIO_IsOutputPinSet(GPIOD, LL_GPIO_PIN_5);
+    return !LL_GPIO_IsOutputPinSet(GPIOC, LL_GPIO_PIN_0);
 }
 
 void setSlaveSelected(bool isSelected)
 {
     if (isSelected)
     {
-        LL_GPIO_ResetOutputPin(GPIOD, LL_GPIO_PIN_5);
+        LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_0);
     }
     else
     {
-        LL_GPIO_SetOutputPin(GPIOD, LL_GPIO_PIN_5);
+        LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_0);
     }
 }
 
@@ -279,6 +250,7 @@ int main()
     initializeControlPins();
     initializeSpi();
     initializeButton();
+    setGreenLedEnabled(true);
 
     for (;;) ;
 }
@@ -328,7 +300,6 @@ void DMA2_Channel2_IRQHandler(void)
     {
         LL_DMA_ClearFlag_TC2(DMA2);
         LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_2);
-        setGreenLedEnabled(false);
         g_isTransmitting = false;
         checkIfSpiCommunicationHasFinished();
     }
@@ -389,8 +360,8 @@ void sendCommand()
     uint16_t rxLength = 0;
     uint16_t txLength = 0;
 
-    // createGetSensorValuesCommand(&rxLength, &txLength);
-    createStartCalibrationCommand(&rxLength, &txLength, LSR_SC_P_WHITE_CALIBRATION);
+    createGetSensorValuesCommand(&rxLength, &txLength);
+    // createStartCalibrationCommand(&rxLength, &txLength, LSR_SC_P_WHITE_CALIBRATION);
     // createGetCalibrationValuesCommand(&rxLength, &txLength);
     // createFinishCalibrationCommand(&rxLength, &txLength);
     // createResetCommand(&rxLength, &txLength);
@@ -409,7 +380,6 @@ void sendCommand()
 
     // TX
 
-    setGreenLedEnabled(true);
     LL_DMA_ConfigAddresses(DMA2,
                            LL_DMA_CHANNEL_2,
                            (uint32_t) &g_txBuffer,

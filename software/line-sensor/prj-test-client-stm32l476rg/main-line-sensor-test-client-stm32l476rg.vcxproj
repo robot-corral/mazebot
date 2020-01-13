@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|VisualGDB">
       <Configuration>Debug</Configuration>
@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{F71BE47E-C8C7-46D3-AE55-F32BB0AAFDA0}</ProjectGuid>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{0C7B7731-0970-423A-90A3-F723EEA216F2}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
     <BSP_VERSION>2019.12</BSP_VERSION>
     <InPlaceBSPSubdir />
@@ -51,18 +51,18 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\lib-stm32l4\prj-stm32l476rg\lib-stm32l476rg.vcxproj">
+      <Project>{1afb99ea-6c60-4a46-9a3c-b86b53bc7d29}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
-    <None Include="main-line-sensor-test-client-stm32l496ze-Debug.vgdbsettings" />
-    <None Include="main-line-sensor-test-client-stm32l496ze-Release.vgdbsettings" />
+    <None Include="main-line-sensor-test-client-stm32l476rg-Debug.vgdbsettings" />
+    <None Include="main-line-sensor-test-client-stm32l476rg-Release.vgdbsettings" />
     <None Include="stm32.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\common\lib-stm32l4\prj-stm32l496ze\lib-stm32l496ze.vcxproj">
-      <Project>{0bd90c29-1fe5-4f60-b90d-250ea8217c84}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src-test-client\main.c" />
