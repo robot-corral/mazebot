@@ -25,11 +25,7 @@ static lineSensorDetailedStatus_t decodeCommand(uint16_t encodedCommandWithParam
     const lineSensorCommandCode_t command1 = encodedCommandWithParameter & DECODE_MASK;
     encodedCommandWithParameter >>= 4;
     const lineSensorCommandCode_t command2 = ~((encodedCommandWithParameter & DECODE_MASK) | 0xF0);
-    encodedCommandWithParameter >>= 4;
-    const lineSensorCommandParameter_t parameter1 = encodedCommandWithParameter & DECODE_MASK;
-    encodedCommandWithParameter >>= 4;
-    const lineSensorCommandParameter_t parameter2 = ~((encodedCommandWithParameter & DECODE_MASK) | 0xF0);
-    if (command1 != command2 || parameter1 != parameter2)
+    if (command1 != command2)
     {
         *pResultParam = 0;
         *pResultCmd = LSC_NONE;
@@ -43,15 +39,32 @@ static lineSensorDetailedStatus_t decodeCommand(uint16_t encodedCommandWithParam
     }
     if (command1 == LSC_START_CALIBRATION)
     {
+        encodedCommandWithParameter >>= 4;
+        const lineSensorCommandParameter_t parameter1 = encodedCommandWithParameter & DECODE_MASK;
+        encodedCommandWithParameter >>= 4;
+        const lineSensorCommandParameter_t parameter2 = ~((encodedCommandWithParameter & DECODE_MASK) | 0xF0);
+
+        if (parameter1 != parameter2)
+        {
+            *pResultParam = 0;
+            *pResultCmd = LSC_NONE;
+            return LSDS_ERR_FLAG_SPI_RX_ERROR;
+        }
         if (parameter1 > 3)
         {
             *pResultParam = 0;
             *pResultCmd = LSC_NONE;
             return LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER;
         }
+
+        *pResultParam = parameter1;
     }
+    else
+    {
+        *pResultParam = 0;
+    }
+
     *pResultCmd = command1;
-    *pResultParam = parameter1;
     return LSDS_OK;
 }
 
