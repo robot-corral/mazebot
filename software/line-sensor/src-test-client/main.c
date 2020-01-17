@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2019 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #include "line_sensor.h"
 
 #include <stdbool.h>
@@ -173,7 +177,8 @@ void initializeSpi()
 
     LL_SPI_EnableIT_ERR(SPI3);
 
-    LL_SPI_SetBaudRatePrescaler(SPI3, LL_SPI_BAUDRATEPRESCALER_DIV256);
+    // max speed for slave is 2.5 MBits/s
+    LL_SPI_SetBaudRatePrescaler(SPI3, LL_SPI_BAUDRATEPRESCALER_DIV32);
     LL_SPI_SetTransferDirection(SPI3, LL_SPI_FULL_DUPLEX);
     LL_SPI_SetClockPhase(SPI3, LL_SPI_PHASE_2EDGE);
     LL_SPI_SetClockPolarity(SPI3, LL_SPI_POLARITY_HIGH);
@@ -266,6 +271,7 @@ void checkIfSpiCommunicationHasFinished()
             LL_SPI_ReceiveData16(SPI3);
         }
 
+        LL_mDelay(1);
         setSlaveSelected(false);
     }
 }
@@ -389,6 +395,8 @@ void sendCommand()
     LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_2, txLength);
 
     setSlaveSelected(true);
+
+    LL_mDelay(1);
 
     // enable rx 1st
     LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_1);

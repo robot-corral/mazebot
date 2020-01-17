@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2019 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #include "status.h"
 
 #include "global_data.h"
@@ -6,12 +10,12 @@
 
 lineSensorDetailedStatus_t getDetailedSensorStatus()
 {
-    return atomic_load(&g_statusDetailedInternal);
+    return g_statusDetailedInternal;
 }
 
 lineSensorDetailedStatus_t getCumulitiveDetailedSensorStatus()
 {
-    return atomic_load(&g_statusCumulativeDetailedInternal);
+    return g_statusCumulativeDetailedInternal;
 }
 
 lineSensorDetailedStatus_t setSensorStatusFlags(lineSensorDetailedStatus_t flags)

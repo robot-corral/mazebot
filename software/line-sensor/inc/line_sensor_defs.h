@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2018 Pavel Krupets                                            *
+ *******************************************************************************/
+
 #pragma once
 
 #include <stdint.h>
@@ -46,21 +50,24 @@
  * Line sensor detailed status (lineSensorDetailedStatus_t)
  ******************************************************************************/
 
-#define LSDS_OK                                     ((uint32_t) 0x00000000)
-
-#define LSDS_ERR_FLAG_WATCHDOG_RESET_DETECTED       ((uint32_t) 0x00000001)
-
-#define LSDS_ERR_FLAG_ADC_DMA_FAILURE               ((uint32_t) 0x00000002)
-#define LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED     ((uint32_t) 0x00000004)
-
-#define LSDS_ERR_FLAG_SPI_RX_ERROR                  ((uint32_t) 0x00000008)
-#define LSDS_ERR_FLAG_SPI_DMA_FAILURE               ((uint32_t) 0x00000010)
-#define LSDS_ERR_FLAG_SPI_ERROR_MODE_FAULT          ((uint32_t) 0x00000020)
-#define LSDS_ERR_FLAG_SPI_ERROR_OVERRUN             ((uint32_t) 0x00000040)
-#define LSDS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT        ((uint32_t) 0x00000080)
-#define LSDS_ERR_FLAG_SPI_STATE_MACHINE_FAILURE     ((uint32_t) 0x00000100)
-#define LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED ((uint32_t) 0x00000200)
-#define LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER ((uint32_t) 0x00000400)
+#define LSDS_OK                                              ((uint32_t) 0x00000000)
+                                                             
+#define LSDS_ERR_FLAG_WATCHDOG_RESET_DETECTED                ((uint32_t) 0x00000001)
+                                                             
+#define LSDS_ERR_FLAG_ADC_DMA_FAILURE                        ((uint32_t) 0x00000002)
+#define LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED              ((uint32_t) 0x00000004)
+                                                             
+#define LSDS_ERR_FLAG_SPI_RX_ERROR                           ((uint32_t) 0x00000008)
+#define LSDS_ERR_FLAG_SPI_DMA_FAILURE                        ((uint32_t) 0x00000010)
+#define LSDS_ERR_FLAG_SPI_ERROR_MODE_FAULT                   ((uint32_t) 0x00000020)
+#define LSDS_ERR_FLAG_SPI_ERROR_OVERRUN                      ((uint32_t) 0x00000040)
+#define LSDS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT                 ((uint32_t) 0x00000080)
+#define LSDS_ERR_FLAG_SPI_STATE_MACHINE_FAILURE              ((uint32_t) 0x00000100)
+#define LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED          ((uint32_t) 0x00000200)
+#define LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER          ((uint32_t) 0x00000400)
+#define LSDS_ERR_FLAG_SPI_NOT_ENOUGH_TIME_TO_PROCESS_COMMAND ((uint32_t) 0x00000800)
+#define LSDS_ERR_FLAG_SPI_FAILURE_WHILE_TRANSMITTING_FILLER  ((uint32_t) 0x00001000)
+#define LSDS_ERR_FLAG_SPI_TASK_SCHEDULER_IS_BUSY             ((uint32_t) 0x00002000)
 
 #define LSDS_ERR_FLAG_ADC_ALL                       ((LSDS_ERR_FLAG_ADC_DMA_FAILURE) | \
                                                      (LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED))
@@ -72,4 +79,7 @@
                                                      (LSDS_ERR_FLAG_SPI_ERROR_FRAME_FORMAT) | \
                                                      (LSDS_ERR_FLAG_SPI_STATE_MACHINE_FAILURE) | \
                                                      (LSDS_ERR_FLAG_SPI_UNKNOWN_COMMAND_REQUESTED) | \
-                                                     (LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER))
+                                                     (LSDS_ERR_FLAG_SPI_INVALID_COMMAND_PARAMETER) | \
+                                                     (LSDS_ERR_FLAG_SPI_NOT_ENOUGH_TIME_TO_PROCESS_COMMAND) | \
+                                                     (LSDS_ERR_FLAG_SPI_FAILURE_WHILE_TRANSMITTING_FILLER) | \
+                                                     (LSDS_ERR_FLAG_SPI_TASK_SCHEDULER_IS_BUSY))

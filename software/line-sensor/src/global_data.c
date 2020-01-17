@@ -41,8 +41,10 @@ volatile lineSensorResponseGetSensorValues_t g_lineSensorValuesBuffers[NUMBER_OF
 volatile spiState_t g_spiState;
 volatile lineSensorCommandCode_t g_spiCurrentCommand;
 
-volatile bool g_spiReceivingFillerFinished;
-volatile bool g_spiTransmittingResponseFinished;
+volatile void* g_spiTxData;
+volatile uint32_t g_spiTxDataHalfWordLength;
+
+volatile uint32_t g_spiFillerHalfWordsTransmitted;
 
 volatile uint8_t g_spiRxBuffer[MAX_RX_SIZE_BYTES];
 volatile lineSensorResponse_t g_spiTxBuffer;
@@ -61,3 +63,9 @@ void initializeGlobalData()
     consumerProducerBuffer_reset(&g_lineSensorValuesBuffersProducerConsumerIndexes);
     consumerProducerBuffer_reset(&g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes);
 }
+
+/*******************************************************************************
+ * Task scheduler
+ *******************************************************************************/
+
+volatile taskFunction_t g_taskSchedulerCurrentTask;

@@ -98,23 +98,23 @@ void initializeGpio()
                    GPIO_MODE_14(GPIO_MODE_ANALOG)    | // UNUSED
                    GPIO_MODE_15(GPIO_MODE_ANALOG);     // UNUSED
 
-    GPIOD->OSPEEDR = GPIO_OSPEED_00(GPIO_OSPEED_HIGH_SPEED) | // SPI2_NSS
-                     GPIO_OSPEED_01(GPIO_OSPEED_HIGH_SPEED) | // SPI2_SCK
-                     GPIO_OSPEED_02(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_03(GPIO_OSPEED_HIGH_SPEED) | // SPI2_MISO
-                     GPIO_OSPEED_04(GPIO_OSPEED_HIGH_SPEED) | // SPI2_MOSI
-                     GPIO_OSPEED_05(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_06(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_07(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_08(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_09(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_10(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_11(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_12(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_13(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_14(GPIO_OSPEED_LOW_SPEED)  | // UNUSED
-                     GPIO_OSPEED_15(GPIO_OSPEED_LOW_SPEED);   // UNUSED
-
+    GPIOD->OSPEEDR = GPIO_OSPEED_00(GPIO_OSPEED_VERY_HIGH_SPEED) | // SPI2_NSS
+                     GPIO_OSPEED_01(GPIO_OSPEED_VERY_HIGH_SPEED) | // SPI2_SCK
+                     GPIO_OSPEED_02(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_03(GPIO_OSPEED_VERY_HIGH_SPEED) | // SPI2_MISO
+                     GPIO_OSPEED_04(GPIO_OSPEED_VERY_HIGH_SPEED) | // SPI2_MOSI
+                     GPIO_OSPEED_05(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_06(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_07(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_08(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_09(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_10(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_11(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_12(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_13(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_14(GPIO_OSPEED_LOW_SPEED)       | // UNUSED
+                     GPIO_OSPEED_15(GPIO_OSPEED_LOW_SPEED);        // UNUSED
+    
     GPIOD->AFR[0] = GPIO_AF_00(GPIO_AF05) | // SPI2_NSS
                     GPIO_AF_01(GPIO_AF05) | // SPI2_SCK
                     GPIO_AF_02(GPIO_AF00) | // UNUSED

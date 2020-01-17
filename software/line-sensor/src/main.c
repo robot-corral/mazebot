@@ -8,6 +8,7 @@
 #include "gpio.h"
 #include "watchdog.h"
 #include "global_data.h"
+#include "simple_tasks.h"
 #include "system_clocks.h"
 #include "line_sensor_defs.h"
 
@@ -22,5 +23,5 @@ int main()
     initializeAdc();
     startQueryingAdc();
     activateSpi();
-    for (;;) ;
+    runTasks();
 }

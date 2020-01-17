@@ -50,6 +50,9 @@
     <ClCompile Include="..\src\status.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\simple_tasks.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\adc.h">
@@ -89,6 +92,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\status.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_tasks.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\mcu.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

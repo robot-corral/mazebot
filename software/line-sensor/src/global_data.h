@@ -10,6 +10,7 @@
 #include "adc.h"
 #include "spi.h"
 #include "line_sensor.h"
+#include "simple_tasks.h"
 #include "consumer_producer_buffer.h"
 
 #define NUMBER_OF_TX_DATA_BUFFERS DATA_BUFFER_LENGTH
@@ -57,8 +58,10 @@ extern volatile lineSensorResponseGetSensorValues_t g_lineSensorValuesBuffers[NU
 extern volatile spiState_t g_spiState;
 extern volatile lineSensorCommandCode_t g_spiCurrentCommand;
 
-extern volatile bool g_spiReceivingFillerFinished;
-extern volatile bool g_spiTransmittingResponseFinished;
+extern volatile void* g_spiTxData;
+extern volatile uint32_t g_spiTxDataHalfWordLength;
+
+extern volatile uint32_t g_spiFillerHalfWordsTransmitted;
 
 extern volatile uint8_t g_spiRxBuffer[MAX_RX_SIZE_BYTES];
 extern volatile lineSensorResponse_t g_spiTxBuffer;
@@ -69,3 +72,9 @@ extern volatile lineSensorResponse_t g_spiTxBuffer;
 
 extern volatile lineSensorDetailedStatus_t g_statusDetailedInternal; // do not read directly
 extern volatile lineSensorDetailedStatus_t g_statusCumulativeDetailedInternal; // do not read directly
+
+/*******************************************************************************
+ * Task scheduler
+ *******************************************************************************/
+
+extern volatile taskFunction_t g_taskSchedulerCurrentTask;

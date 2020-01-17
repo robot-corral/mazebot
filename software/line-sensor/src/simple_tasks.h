@@ -4,4 +4,12 @@
 
 #pragma once
 
-void initializeDma();
+#include <stdbool.h>
+
+typedef void (*taskFunction_t)();
+
+bool hasScheduledTasks();
+
+bool scheduleTask(taskFunction_t task);
+
+void runTasks();

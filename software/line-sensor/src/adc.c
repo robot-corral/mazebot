@@ -259,15 +259,12 @@ bool collectSensorValues()
         return false;
     }
 
-    volatile lineSensorValue_t* const sensorData = g_lineSensorValuesBuffers[producerBufferIndex].sensorValues;
-
     for (uint8_t i = ADC_BUFFER_1_START_IDX; i < ADC_BUFFER_1_LENGTH; ++i)
     {
-        sensorData[i - ADC_BUFFER_1_START_IDX] = g_adcBuffer1[i];
+        g_lineSensorValuesBuffers[producerBufferIndex].sensorValues[i - ADC_BUFFER_1_START_IDX] = g_adcBuffer1[i];
     }
 
-    sensorData[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
-
+    g_lineSensorValuesBuffers[producerBufferIndex].sensorValues[ADC_BUFFER_2_SENSOR_INDEX] = g_adcBuffer2[ADC_BUFFER_2_START_IDX];
     g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSS_OK_FLAG_DATA_AVAILABLE | LSS_OK_FLAG_NEW_DATA_AVAILABLE;
 
     return consumerProducerBuffer_setLastReadIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
