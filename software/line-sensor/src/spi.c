@@ -493,11 +493,11 @@ void computeCommandCrc()
 
     switch (g_spiCurrentCommand)
     {
-        case LSC_GET_SENSOR_VALUES          : g_spiTxBuffer.getSensorValues.crc = LL_CRC_ReadData32(CRC); break;
-        case LSC_START_CALIBRATION          : g_spiTxBuffer.startCalibration.crc = LL_CRC_ReadData32(CRC); break;
-        case LSC_GET_CALIBRATION_VALUES     : g_spiTxBuffer.getCalibrationValues.crc = LL_CRC_ReadData32(CRC); break;
-        case LSC_FINISH_CALIBRATION         : g_spiTxBuffer.finishCalibration.crc = LL_CRC_ReadData32(CRC); break;
-        case LSC_GET_DETAILED_SENSOR_STATUS : g_spiTxBuffer.getDetailedSensorStatus.crc = LL_CRC_ReadData32(CRC); break;
-        case LSC_RESET                      : g_spiTxBuffer.reset.crc = LL_CRC_ReadData32(CRC); break;
+        case LSC_GET_SENSOR_VALUES          : ((lineSensorResponseGetSensorValues_t*) g_spiTxData)->crc = LL_CRC_ReadData32(CRC); break;
+        case LSC_START_CALIBRATION          : ((lineSensorResponseStartCalibration_t*) g_spiTxData)->crc = LL_CRC_ReadData32(CRC); break;
+        case LSC_GET_CALIBRATION_VALUES     : ((lineSensorResponseGetCalibrationValues_t*) g_spiTxData)->crc = LL_CRC_ReadData32(CRC); break;
+        case LSC_FINISH_CALIBRATION         : ((lineSensorResponseFinishCalibration_t*) g_spiTxData)->crc = LL_CRC_ReadData32(CRC); break;
+        case LSC_GET_DETAILED_SENSOR_STATUS : ((lineSensorResponseGetDetailedSensorStatus_t*) g_spiTxData)->crc = LL_CRC_ReadData32(CRC); break;
+        case LSC_RESET                      : ((lineSensorResponseReset_t*) g_spiTxData)->crc = LL_CRC_ReadData32(CRC); break;
     }
 }

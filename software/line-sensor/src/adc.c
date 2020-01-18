@@ -7,6 +7,7 @@
 #include "status.h"
 #include "watchdog.h"
 #include "global_data.h"
+#include "interrupt_priorities.h"
 #include "consumer_producer_buffer.h"
 
 #include <math_utils.h>
@@ -14,6 +15,7 @@
 #include <stm32/stm32l1xx_ll_adc.h>
 #include <stm32/stm32l1xx_ll_bus.h>
 #include <stm32/stm32l1xx_ll_dma.h>
+#include <stm32/stm32l1xx_ll_tim.h>
 
 static void configureBankA();
 static void configureBankB();
@@ -22,6 +24,10 @@ static bool processAdcData();
 static void startCalibration();
 static bool collectCalibrationData();
 static bool collectSensorValues();
+
+static void initializeClockTimer();
+
+static void adcError(lineSensorDetailedStatus_t status);
 
 void initializeAdc()
 {
@@ -88,6 +94,19 @@ void initializeAdc()
     COMP->CSR = COMP_CSR_FCH3 | COMP_CSR_FCH8;
 
     LL_ADC_Enable(ADC1);
+
+    initializeClockTimer();
+}
+
+void initializeClockTimer()
+{
+    NVIC_SetPriority(TIM5_IRQn, INTERRUPT_PRIORITY_ADC1);
+    NVIC_EnableIRQ(TIM5_IRQn);
+
+    LL_TIM_EnableIT_CC1(TIM5);
+    LL_TIM_SetPrescaler(TIM5, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
+    LL_TIM_SetAutoReload(TIM5, 1000);
+    LL_TIM_EnableCounter(TIM5);
 }
 
 void configureBankA()
@@ -120,17 +139,7 @@ void configureBankB()
 
 void startQueryingAdc()
 {
-    configureBankA();
-    // DMA must be disabled before calling LL_DMA_ConfigAddresses / LL_DMA_SetDataLength
-    LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
-    LL_DMA_ConfigAddresses(DMA1,
-                           LL_DMA_CHANNEL_1,
-                           LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
-                           (uint32_t) g_adcBuffer1,
-                           LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, ADC_BUFFER_1_LENGTH);
-    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
-    LL_ADC_REG_StartConversionSWStart(ADC1);
+    LL_TIM_GenerateEvent_UPDATE(TIM5);
 }
 
 void DMA1_Channel1_IRQHandler()
@@ -138,8 +147,7 @@ void DMA1_Channel1_IRQHandler()
     if (LL_DMA_IsActiveFlag_TE1(DMA1) == 1)
     {
         LL_DMA_ClearFlag_TE1(DMA1);
-        setSensorStatusFlags(LSDS_ERR_FLAG_ADC_DMA_FAILURE);
-        startQueryingAdc();
+        adcError(LSDS_ERR_FLAG_ADC_DMA_FAILURE);
     }
     else if (LL_DMA_IsActiveFlag_TC1(DMA1) == 1)
     {
@@ -164,15 +172,13 @@ void DMA1_Channel1_IRQHandler()
             if (processAdcData())
             {
                 resetSensorStatusFlags(LSDS_ERR_FLAG_ADC_ALL);
-                startQueryingAdc();
                 resetWatchdog();
             }
             else
             {
-                setSensorStatusFlags(LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
+                adcError(LSDS_ERR_FLAG_ADC_DATA_BUFFER_CORRUPTED);
                 // even if it breaks data which is being sent we should reset to ground zero so we can send good data next time
                 consumerProducerBuffer_reset(&g_lineSensorValuesBuffersProducerConsumerIndexes);
-                startQueryingAdc();
             }
         }
     }
@@ -268,4 +274,30 @@ bool collectSensorValues()
     g_lineSensorValuesBuffers[producerBufferIndex].currentStatus = LSS_OK_FLAG_DATA_AVAILABLE | LSS_OK_FLAG_NEW_DATA_AVAILABLE;
 
     return consumerProducerBuffer_setLastReadIndex(&g_lineSensorValuesBuffersProducerConsumerIndexes, producerBufferIndex);
+}
+
+void TIM5_IRQHandler()
+{
+    if (LL_TIM_IsActiveFlag_CC1(TIM5) == 1)
+    {
+        LL_TIM_ClearFlag_CC1(TIM5);
+        // query ADC
+        configureBankA();
+        // DMA must be disabled before calling LL_DMA_ConfigAddresses / LL_DMA_SetDataLength
+        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
+        LL_DMA_ConfigAddresses(DMA1,
+                               LL_DMA_CHANNEL_1,
+                               LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA),
+                               (uint32_t) g_adcBuffer1,
+                               LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, ADC_BUFFER_1_LENGTH);
+        LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
+        LL_ADC_REG_StartConversionSWStart(ADC1);
+    }
+}
+
+void adcError(lineSensorDetailedStatus_t status)
+{
+    setSensorStatusFlags(status);
+    // TODO reset ADC / DMA
 }

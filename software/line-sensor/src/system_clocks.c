@@ -10,12 +10,9 @@
 #include <stm32/stm32l1xx_ll_bus.h>
 #include <stm32/stm32l1xx_ll_pwr.h>
 #include <stm32/stm32l1xx_ll_rcc.h>
-#include <stm32/stm32l1xx_ll_tim.h>
 #include <stm32/stm32l1xx_ll_utils.h>
 #include <stm32/stm32l1xx_ll_cortex.h>
 #include <stm32/stm32l1xx_ll_system.h>
-
-static void initializeClockTimer();
 
 void initializeSystemClocks()
 {
@@ -69,19 +66,4 @@ void initializeSystemClocks()
 
     LL_Init1msTick(32000000);
     LL_SetSystemCoreClock(32000000);
-
-    initializeClockTimer();
-}
-
-static void initializeClockTimer()
-{
-    LL_TIM_SetPrescaler(TIM5, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
-    LL_TIM_SetAutoReload(TIM5, 0xFFFFFFFF); // reload 32 bit value (TIM5 is 32 bit)
-    LL_TIM_EnableCounter(TIM5);
-    LL_TIM_GenerateEvent_UPDATE(TIM5);
-}
-
-uint32_t getCurrentTimeInMicroseconds()
-{
-    return LL_TIM_GetCounter(TIM5);
 }
