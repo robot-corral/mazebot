@@ -111,7 +111,7 @@ typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     lineSensorEncodedCommandParameter_t encodedCommandParameter;
-    uint8_t filler[sizeof(lineSensorResponseGetSensorValues_t)];
+    uint8_t filler[sizeof(lineSensorResponseGetSensorValues_t) - sizeof(lineSensorEncodedCommandCode_t) - sizeof(lineSensorEncodedCommandParameter_t)];
 } lineSensorRequestGetSensorValues_t;
 
 typedef enum
@@ -127,35 +127,35 @@ typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     lineSensorEncodedCommandParameter_t encodedCommandParameter;
-    uint8_t filler[sizeof(lineSensorResponseStartCalibration_t)];
+    uint8_t filler[sizeof(lineSensorResponseStartCalibration_t) - sizeof(lineSensorEncodedCommandCode_t) - sizeof(lineSensorEncodedCommandParameter_t)];
 } lineSensorRequestStartCalibration_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     lineSensorEncodedCommandParameter_t encodedCommandParameter;
-    uint8_t filler[sizeof(lineSensorResponseGetCalibrationValues_t)];
+    uint8_t filler[sizeof(lineSensorResponseGetCalibrationValues_t) - sizeof(lineSensorEncodedCommandCode_t) - sizeof(lineSensorEncodedCommandParameter_t)];
 } lineSensorRequestGetCalibrationValues_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     lineSensorEncodedCommandParameter_t encodedCommandParameter;
-    uint8_t filler[sizeof(lineSensorResponseFinishCalibration_t)];
+    uint8_t filler[sizeof(lineSensorResponseFinishCalibration_t) - sizeof(lineSensorEncodedCommandCode_t) - sizeof(lineSensorEncodedCommandParameter_t)];
 } lineSensorRequestFinishCalibration_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     lineSensorEncodedCommandParameter_t encodedCommandParameter;
-    uint8_t filler[sizeof(lineSensorResponseGetDetailedSensorStatus_t)];
+    uint8_t filler[sizeof(lineSensorResponseGetDetailedSensorStatus_t) - sizeof(lineSensorEncodedCommandCode_t) - sizeof(lineSensorEncodedCommandParameter_t)];
 } lineSensorRequestGetDetailedSensorStatus_t;
 
 typedef struct __attribute__((packed))
 {
     lineSensorEncodedCommandCode_t encodedCommandCode;
     lineSensorEncodedCommandParameter_t encodedCommandParameter;
-    uint8_t filler[sizeof(lineSensorResponseReset_t)];
+    uint8_t filler[sizeof(lineSensorResponseReset_t) - sizeof(lineSensorEncodedCommandCode_t) - sizeof(lineSensorEncodedCommandParameter_t)];
 } lineSensorRequestReset_t;
 
 /*******************************************************************************
