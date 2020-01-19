@@ -2,7 +2,7 @@
 
 #include <line_sensor.h>
 
-#define P2P_CLIENT_RESPONSE_LENGTH ((NUMBER_OF_SENSORS) * sizeof(lineSensorValue_t))
+#define P2P_CLIENT_RESPONSE_LENGTH ((LINE_SENSOR_NUMBER_OF_SENSORS) * sizeof(lineSensorValue_t))
 
 typedef enum
 {

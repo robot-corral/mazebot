@@ -21,8 +21,8 @@ volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH] __attribute__((aligned(2)));
  * Calibration data
  *******************************************************************************/
 
-volatile uint16_t g_calibrationMinValues[NUMBER_OF_SENSORS];
-volatile uint16_t g_calibrationMaxValues[NUMBER_OF_SENSORS];
+volatile uint16_t g_calibrationMinValues[LINE_SENSOR_NUMBER_OF_SENSORS];
+volatile uint16_t g_calibrationMaxValues[LINE_SENSOR_NUMBER_OF_SENSORS];
 
 volatile uint32_t g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes;
 volatile lineSensorResponseGetCalibrationValues_t g_lineSensorCalibrationValuesBuffers[NUMBER_OF_TX_DATA_BUFFERS];

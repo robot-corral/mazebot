@@ -42,7 +42,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src-utils;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\line-sensor\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src;$(ProjectDir)\..\src-utils;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\line-sensor\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;USE_STM32WBXX_NUCLEO=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -55,7 +55,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src-utils;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\line-sensor\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src;$(ProjectDir)\..\src-utils;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\line-sensor\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;USE_STM32WBXX_NUCLEO=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -107,6 +107,8 @@
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rcc.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rcc_ex.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rtc.c" />
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi.c" />
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_uart.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_uart_ex.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_nucleo.c" />
@@ -123,6 +125,7 @@
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\gpio.c" />
     <ClCompile Include="..\src\led.c" />
+    <ClCompile Include="..\src\line_sensor_client.c" />
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\system_clocks.c" />
     <ClCompile Include="..\src\uart.c" />
@@ -192,6 +195,8 @@
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rcc.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rcc_ex.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rtc.h" />
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_spi.h" />
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_uart.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_uart_ex.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_nucleo.h" />
@@ -209,7 +214,9 @@
     <ClInclude Include="..\src\exti.h" />
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\gpio.h" />
+    <ClInclude Include="..\src\interrupt_priorities.h" />
     <ClInclude Include="..\src\led.h" />
+    <ClInclude Include="..\src\line_sensor_client.h" />
     <ClInclude Include="..\src\system_clocks.h" />
     <ClInclude Include="..\src\uart.h" />
     <None Include="stm32wb.props" />

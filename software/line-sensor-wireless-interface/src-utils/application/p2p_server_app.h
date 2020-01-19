@@ -15,5 +15,3 @@ typedef struct
 void p2pAppInit();
 
 void p2pAppNotification(p2pAppConnectionHandleNotificationEvent_t* pNotification);
-
-void p2pLineSensorDataAvailable();

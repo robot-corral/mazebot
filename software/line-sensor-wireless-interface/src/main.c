@@ -5,6 +5,7 @@
 #include "buttons.h"
 #include "application.h"
 #include "system_clocks.h"
+#include "line_sensor_client.h"
 
 #include "stm32wbxx_hal.h"
 
@@ -18,6 +19,7 @@ int main()
     initializeSystemClock();
     initializeExti();
     initializeGpio();
+    initializeLineSensor();
     initializeLed();
     initializeButtons();
     initializeDebug();

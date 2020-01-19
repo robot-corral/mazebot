@@ -10,9 +10,9 @@
  * Hardware revision: line-sensor-var1a-r3-2019-10-06
  ******************************************************************************/
 
-#define NUMBER_OF_SENSORS ((uint8_t) 25)
+#define LINE_SENSOR_NUMBER_OF_SENSORS ((uint8_t) 25)
 
-#define CRC_POLYNOMIAL    ((uint16_t) 0xE5CC)
+#define LINE_SENSOR_CRC_POLYNOMIAL ((uint32_t) 0x4C11DB7)
 
 /*******************************************************************************
  * Line sensor commands (lineSensorCommandCode_t)

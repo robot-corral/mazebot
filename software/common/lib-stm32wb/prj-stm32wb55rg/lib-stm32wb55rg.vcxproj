@@ -72,6 +72,7 @@
     <ClInclude Include="..\stm32\stm32wb55xx.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_bus.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_cortex.h" />
+    <ClInclude Include="..\stm32\stm32wbxx_ll_crc.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_dma.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_exti.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_gpio.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="..\stm32\stm32wbxx_ll_rtc.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_spi.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_system.h" />
+    <ClInclude Include="..\stm32\stm32wbxx_ll_tim.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_utils.h" />
     <ClInclude Include="..\stm32\stm32wbxx_ll_wwdg.h" />
   </ItemGroup>

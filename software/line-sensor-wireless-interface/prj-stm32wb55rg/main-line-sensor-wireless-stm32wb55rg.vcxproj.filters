@@ -374,6 +374,15 @@
     <ClCompile Include="..\src\uart.c">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\line_sensor_client.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-utils\application\app_common.h">
@@ -632,6 +641,18 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\uart.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\line_sensor_client.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_spi.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.h">
+      <Filter>src-utils\stm32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\interrupt_priorities.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

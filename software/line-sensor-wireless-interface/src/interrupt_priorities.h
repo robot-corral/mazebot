@@ -1,0 +1,5 @@
+#pragma once
+
+#define LINE_SENSOR_CLIENT_SPI_RX_DMA      0
+#define LINE_SENSOR_CLIENT_SPI_TX_DMA      0
+#define LINE_SENSOR_CLIENT_SCHEDULER_TIMER 1

@@ -14,7 +14,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef uint8_t sensorIndex_t;
 // up to 15 commands are supported
 typedef uint8_t lineSensorCommandCode_t;
 typedef uint8_t lineSensorEncodedCommandCode_t;
@@ -27,9 +26,9 @@ typedef uint32_t lineSensorCrcValue_t;
 typedef uint16_t lineSensorValue_t;
 
 #ifndef SLAVE
-    #define COMMAND_PROCESSING_DELAY uint8_t filler1[4];
+    #define LINE_SENSOR_COMMAND_PROCESSING_DELAY uint8_t filler1[4];
 #else
-    #define COMMAND_PROCESSING_DELAY ;
+    #define LINE_SENSOR_COMMAND_PROCESSING_DELAY ;
 #endif
 
 /*******************************************************************************
@@ -50,58 +49,87 @@ static lineSensorEncodedCommandParameter_t encodeCommandParameter(lineSensorComm
  * Responses
  *******************************************************************************/
 
+/*
+ * For preformance reasons crc calculation is done as if data is an array of uint32_t with occasional 
+ * remainder of uint16_t (if data length isn't divisible by 4)
+ */
+
 typedef struct __attribute__((packed))
 {
-    COMMAND_PROCESSING_DELAY;
+    LINE_SENSOR_COMMAND_PROCESSING_DELAY;
+    // crc calculation starts from the next line
     lineSensorCommandCode_t respondingToCommandCode;
     lineSensorStatus_t currentStatus;
-    lineSensorValue_t sensorValues[NUMBER_OF_SENSORS];
+    lineSensorValue_t sensorValues[LINE_SENSOR_NUMBER_OF_SENSORS];
+    // crc calculation stops at the previous line
     lineSensorCrcValue_t crc;
 } lineSensorResponseGetSensorValues_t;
 
+#define LINE_SENSOR_RESPONSE_GET_SENSOR_VALUES_CRC_PROTECTED_DATA_LENGTH_BYTES (sizeof(lineSensorCommandCode_t) + sizeof(lineSensorStatus_t) + sizeof(lineSensorValue_t) * LINE_SENSOR_NUMBER_OF_SENSORS)
+
 typedef struct __attribute__((packed))
 {
-    COMMAND_PROCESSING_DELAY;
+    LINE_SENSOR_COMMAND_PROCESSING_DELAY;
+    // crc calculation starts from the next line
     lineSensorCommandCode_t respondingToCommandCode;
     lineSensorStatus_t currentStatus;
+    // crc calculation stops at the previous line
     lineSensorCrcValue_t crc;
 } lineSensorResponseStartCalibration_t;
 
+#define LINE_SENSOR_RESPONSE_START_CALIBRATION_CRC_PROTECTED_DATA_LENGTH_BYTES (sizeof(lineSensorCommandCode_t) + sizeof(lineSensorStatus_t))
+
 typedef struct __attribute__((packed))
 {
-    COMMAND_PROCESSING_DELAY;
+    LINE_SENSOR_COMMAND_PROCESSING_DELAY;
+    // crc calculation starts from the next line
     lineSensorCommandCode_t respondingToCommandCode;
     lineSensorStatus_t currentStatus;
-    lineSensorValue_t minSensorCalibrationValues[NUMBER_OF_SENSORS];
-    lineSensorValue_t maxSensorCalibrationValues[NUMBER_OF_SENSORS];
+    lineSensorValue_t minSensorCalibrationValues[LINE_SENSOR_NUMBER_OF_SENSORS];
+    lineSensorValue_t maxSensorCalibrationValues[LINE_SENSOR_NUMBER_OF_SENSORS];
+    // crc calculation stops at the previous line
     lineSensorCrcValue_t crc;
 } lineSensorResponseGetCalibrationValues_t;
 
-typedef struct __attribute__((packed))
-{
-    COMMAND_PROCESSING_DELAY;
-    lineSensorCommandCode_t respondingToCommandCode;
-    lineSensorStatus_t currentStatus;
-    lineSensorCrcValue_t crc;
-} lineSensorResponseFinishCalibration_t;
+#define LINE_SENSOR_RESPONSE_GET_CALIBRATION_VALUES_CRC_PROTECTED_DATA_LENGTH_BYTES (sizeof(lineSensorCommandCode_t) + sizeof(lineSensorStatus_t) + 2 * sizeof(lineSensorValue_t) * LINE_SENSOR_NUMBER_OF_SENSORS)
 
 typedef struct __attribute__((packed))
 {
-    COMMAND_PROCESSING_DELAY;
+    LINE_SENSOR_COMMAND_PROCESSING_DELAY;
+    // crc calculation starts from the next line
+    lineSensorCommandCode_t respondingToCommandCode;
+    lineSensorStatus_t currentStatus;
+    // crc calculation stops at the previous line
+    lineSensorCrcValue_t crc;
+} lineSensorResponseFinishCalibration_t;
+
+#define LINE_SENSOR_RESPONSE_FINISH_CALIBRATION_CRC_PROTECTED_DATA_LENGTH_BYTES (sizeof(lineSensorCommandCode_t) + sizeof(lineSensorStatus_t))
+
+typedef struct __attribute__((packed))
+{
+    LINE_SENSOR_COMMAND_PROCESSING_DELAY;
+    // crc calculation starts from the next line
     lineSensorCommandCode_t respondingToCommandCode;
     lineSensorStatus_t currentStatus;
     lineSensorDetailedStatus_t currentDetailedStatus;
     lineSensorDetailedStatus_t cumulativeDetailedStatusSinceLastReset;
+    // crc calculation stops at the previous line
     lineSensorCrcValue_t crc;
 } lineSensorResponseGetDetailedSensorStatus_t;
 
+#define LINE_SENSOR_RESPONSE_GET_DETAILED_SENSOR_STATUS_CRC_PROTECTED_DATA_LENGTH_BYTES (sizeof(lineSensorCommandCode_t) + sizeof(lineSensorStatus_t) + sizeof(lineSensorDetailedStatus_t) + sizeof(lineSensorDetailedStatus_t))
+
 typedef struct __attribute__((packed))
 {
-    COMMAND_PROCESSING_DELAY;
+    LINE_SENSOR_COMMAND_PROCESSING_DELAY;
+    // crc calculation starts from the next line
     lineSensorCommandCode_t respondingToCommandCode;
     lineSensorStatus_t currentStatus;
+    // crc calculation stops at the previous line
     lineSensorCrcValue_t crc;
 } lineSensorResponseReset_t;
+
+#define LINE_SENSOR_RESPONSE_RESET_CRC_PROTECTED_DATA_LENGTH_BYTES (sizeof(lineSensorCommandCode_t) + sizeof(lineSensorStatus_t))
 
 /*******************************************************************************
  * Requests

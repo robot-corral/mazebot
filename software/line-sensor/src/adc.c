@@ -106,7 +106,6 @@ void initializeClockTimer()
     LL_TIM_EnableIT_CC1(TIM5);
     LL_TIM_SetPrescaler(TIM5, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
     LL_TIM_SetAutoReload(TIM5, 1000);
-    LL_TIM_EnableCounter(TIM5);
 }
 
 void configureBankA()
@@ -139,6 +138,7 @@ void configureBankB()
 
 void startQueryingAdc()
 {
+    LL_TIM_EnableCounter(TIM5);
     LL_TIM_GenerateEvent_UPDATE(TIM5);
 }
 
@@ -199,14 +199,14 @@ void startCalibration()
 {
     if (g_adcCalibrationParameter == (LSR_SC_P_FLAG_RESET_PREVIOUS_CALIBRATION_DATA | LSR_SC_P_WHITE_CALIBRATION))
     {
-        for (int i = 0; i < NUMBER_OF_SENSORS; ++i)
+        for (int i = 0; i < LINE_SENSOR_NUMBER_OF_SENSORS; ++i)
         {
             g_calibrationMinValues[i] = 0;
         }
     }
     else if (g_adcCalibrationParameter == (LSR_SC_P_FLAG_RESET_PREVIOUS_CALIBRATION_DATA | LSR_SC_P_BLACK_CALIBRATION))
     {
-        for (int i = 0; i < NUMBER_OF_SENSORS; ++i)
+        for (int i = 0; i < LINE_SENSOR_NUMBER_OF_SENSORS; ++i)
         {
             g_calibrationMaxValues[i] = 0;
         }

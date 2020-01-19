@@ -38,8 +38,8 @@ extern volatile uint16_t g_adcBuffer2[ADC_BUFFER_2_LENGTH];
  * Calibration values
  *******************************************************************************/
 
-extern volatile uint16_t g_calibrationMinValues[NUMBER_OF_SENSORS];
-extern volatile uint16_t g_calibrationMaxValues[NUMBER_OF_SENSORS];
+extern volatile uint16_t g_calibrationMinValues[LINE_SENSOR_NUMBER_OF_SENSORS];
+extern volatile uint16_t g_calibrationMaxValues[LINE_SENSOR_NUMBER_OF_SENSORS];
 
 extern volatile uint32_t g_lineSensorCalibrationValuesBuffersProducerConsumerIndexes;
 extern volatile lineSensorResponseGetCalibrationValues_t g_lineSensorCalibrationValuesBuffers[NUMBER_OF_TX_DATA_BUFFERS];

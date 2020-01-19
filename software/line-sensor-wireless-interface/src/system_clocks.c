@@ -89,6 +89,12 @@ void initializeClocks()
     {
         fatalError();
     }
+
+    __HAL_RCC_SPI1_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1 | LL_AHB1_GRP1_PERIPH_CRC | LL_AHB1_GRP1_PERIPH_DMAMUX1);
 }
 
 void initializeRtc()
