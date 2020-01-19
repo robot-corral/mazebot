@@ -99,7 +99,6 @@
     <ClInclude Include="..\inc\line_sensor.h" />
     <ClInclude Include="..\inc\line_sensor_defs.h" />
     <ClInclude Include="..\src\adc.h" />
-    <ClInclude Include="..\src\consumer_producer_buffer.h" />
     <ClInclude Include="..\src\dma.h" />
     <ClInclude Include="..\src\global_data.h" />
     <ClInclude Include="..\src\global_settings.h" />

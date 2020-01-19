@@ -26,7 +26,9 @@ typedef uint32_t lineSensorCrcValue_t;
 typedef uint16_t lineSensorValue_t;
 
 #ifndef SLAVE
-    #define LINE_SENSOR_COMMAND_PROCESSING_DELAY uint8_t filler1[4];
+    #define LINE_SENSOR_FILLER_HALF_WORD_LENGTH 2
+    #define LINE_SENSOR_COMMAND_PROCESSING_DELAY uint16_t filler1[LINE_SENSOR_FILLER_HALF_WORD_LENGTH];
+    #define LINE_SENSOR_ADDRESS_OF_SENSOR_VALUES(pData) (((uint16_t*) (pData)) + (LINE_SENSOR_FILLER_HALF_WORD_LENGTH + 1))
 #else
     #define LINE_SENSOR_COMMAND_PROCESSING_DELAY ;
 #endif

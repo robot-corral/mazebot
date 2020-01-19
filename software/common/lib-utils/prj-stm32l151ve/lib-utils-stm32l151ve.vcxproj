@@ -65,6 +65,7 @@
     <ClCompile Include="..\src\rolling_values.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\consumer_producer_buffer.h" />
     <ClInclude Include="..\inc\math_utils.h" />
     <ClInclude Include="..\inc\rolling_values.h" />
   </ItemGroup>

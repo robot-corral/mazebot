@@ -8,9 +8,9 @@
 #include "watchdog.h"
 #include "global_data.h"
 #include "interrupt_priorities.h"
-#include "consumer_producer_buffer.h"
 
 #include <math_utils.h>
+#include <consumer_producer_buffer.h>
 
 #include <stm32/stm32l1xx_ll_adc.h>
 #include <stm32/stm32l1xx_ll_bus.h>

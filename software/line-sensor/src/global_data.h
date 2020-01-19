@@ -7,11 +7,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <consumer_producer_buffer.h>
+
 #include "adc.h"
 #include "spi.h"
 #include "line_sensor.h"
 #include "simple_tasks.h"
-#include "consumer_producer_buffer.h"
 
 #define NUMBER_OF_TX_DATA_BUFFERS DATA_BUFFER_LENGTH
 

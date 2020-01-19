@@ -34,5 +34,8 @@
     <ClInclude Include="..\inc\rolling_values.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\consumer_producer_buffer.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

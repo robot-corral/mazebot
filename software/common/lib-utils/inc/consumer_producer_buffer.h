@@ -5,6 +5,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdatomic.h>
 
 #define DATA_BUFFER_EMPTY_INDEXES        0b1111
