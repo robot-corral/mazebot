@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "line-sensor-data-collector"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main-line-sensor-wireless-stm32wb55rg", "line-sensor-wireless-interface\prj-stm32wb55rg\main-line-sensor-wireless-stm32wb55rg.vcxproj", "{D81D3971-C186-4D3C-8B2B-9580CFDBA190}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-utils-stm32wb55rg", "common\lib-utils\prj-stm32wb55rg\lib-utils-stm32wb55rg.vcxproj", "{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,20 @@ Global
 		{D81D3971-C186-4D3C-8B2B-9580CFDBA190}.Release|VisualGDB.Build.0 = Release|VisualGDB
 		{D81D3971-C186-4D3C-8B2B-9580CFDBA190}.Release|x64.ActiveCfg = Release|VisualGDB
 		{D81D3971-C186-4D3C-8B2B-9580CFDBA190}.Release|x86.ActiveCfg = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|Any CPU.ActiveCfg = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|ARM.ActiveCfg = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|ARM64.ActiveCfg = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|x64.ActiveCfg = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Debug|x86.ActiveCfg = Debug|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|Any CPU.ActiveCfg = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|ARM.ActiveCfg = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|ARM64.ActiveCfg = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|VisualGDB.Build.0 = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|x64.ActiveCfg = Release|VisualGDB
+		{455F7F2B-83CE-4C8E-AC0E-4F4F84E31483}.Release|x86.ActiveCfg = Release|VisualGDB
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

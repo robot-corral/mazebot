@@ -13,21 +13,23 @@
 
 #include <string.h>
 
-#define PIN_POWER      GPIO_PIN_11
-#define PIN_POWER_PORT GPIOB
+#define PIN_POWER      GPIO_PIN_3
+#define PIN_POWER_PORT GPIOC
 
-#define PIN_WAKE_UP      GPIO_PIN_2
-#define PIN_WAKE_UP_PORT GPIOB
+#define PIN_WAKE_UP      GPIO_PIN_5
+#define PIN_WAKE_UP_PORT GPIOC
 
-#define PIN_NOT_SLAVE_SELECT      GPIO_PIN_12
-#define PIN_NOT_SLAVE_SELECT_PORT GPIOB
+#define PIN_NOT_SLAVE_SELECT      GPIO_PIN_0
+#define PIN_NOT_SLAVE_SELECT_PORT GPIOD
 
-#define PIN_SPI1_SCK       GPIO_PIN_5
-#define PIN_SPI1_SCK_PORT  GPIOA
-#define PIN_SPI1_MISO      GPIO_PIN_6
-#define PIN_SPI1_MISO_PORT GPIOA
-#define PIN_SPI1_MOSI      GPIO_PIN_7
-#define PIN_SPI1_MOSI_PORT GPIOA
+#define PIN_SPI_SCK       GPIO_PIN_1
+#define PIN_SPI_SCK_PORT  GPIOD
+#define PIN_SPI_MISO      GPIO_PIN_2
+#define PIN_SPI_MISO_PORT GPIOC
+#define PIN_SPI_MOSI      GPIO_PIN_1
+#define PIN_SPI_MOSI_PORT GPIOC
+
+#define SPI SPI2
 
 static void initializeCrc();
 static void initializeSpi();
@@ -41,6 +43,10 @@ static uint32_t calculateCrc(volatile void* pData, uint32_t sizeBytes);
 static void checkIfSpiCommunicationWasFinished();
 
 static void sendLineSensorCommand();
+
+static void sendCrcErrorToClient();
+static void sendErrorToClient(lineSensorStatus_t status, lineSensorDetailedStatus_t currentDetailedStatus, lineSensorDetailedStatus_t cumulativeDetailedStatus);
+static void sendSensorValuesToClient(volatile lineSensorValue_t* pSensorValues, lineSensorStatus_t status);
 
 static inline void setSlaveSelected(bool isSelected)
 {
@@ -80,10 +86,6 @@ void initializeLineSensor()
     initializeSpiDma();
 
     setSlavePower(true);
-
-    // TODO
-    startQueryingLineSensor();
-    // TODO
 }
 
 void startQueryingLineSensor()
@@ -142,7 +144,7 @@ void sendLineSensorCommand()
 
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_1,
-                           LL_SPI_DMA_GetRegAddr(SPI1),
+                           LL_SPI_DMA_GetRegAddr(SPI),
                            (uint32_t) &g_lscRxBuffer,
                            LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
 
@@ -153,7 +155,7 @@ void sendLineSensorCommand()
     LL_DMA_ConfigAddresses(DMA1,
                            LL_DMA_CHANNEL_2,
                            (uint32_t) &g_lscTxBuffer,
-                           LL_SPI_DMA_GetRegAddr(SPI1),
+                           LL_SPI_DMA_GetRegAddr(SPI),
                            LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
 
     LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, lscDataLength);
@@ -183,13 +185,13 @@ void initializeTriggerTimer()
 
     LL_TIM_EnableIT_CC1(TIM2);
     LL_TIM_SetPrescaler(TIM2, __LL_TIM_CALC_PSC(SystemCoreClock, 1000000));
-    LL_TIM_SetAutoReload(TIM2, 1000);
+    LL_TIM_SetAutoReload(TIM2, 5000);
 }
 
 void initializeControlPins()
 {
-    LL_GPIO_SetPinMode(PIN_WAKE_UP_PORT, PIN_WAKE_UP, LL_GPIO_MODE_OUTPUT);
-    LL_GPIO_SetPinOutputType(PIN_WAKE_UP_PORT, PIN_WAKE_UP, LL_GPIO_OUTPUT_PUSHPULL);
+     LL_GPIO_SetPinMode(PIN_WAKE_UP_PORT, PIN_WAKE_UP, LL_GPIO_MODE_OUTPUT);
+     LL_GPIO_SetPinOutputType(PIN_WAKE_UP_PORT, PIN_WAKE_UP, LL_GPIO_OUTPUT_PUSHPULL);
 
     LL_GPIO_SetPinMode(PIN_POWER_PORT, PIN_POWER, LL_GPIO_MODE_OUTPUT);
     LL_GPIO_SetPinOutputType(PIN_POWER_PORT, PIN_POWER, LL_GPIO_OUTPUT_PUSHPULL);
@@ -201,34 +203,34 @@ void initializeControlPins()
 
 void initializeSpi()
 {
-    LL_GPIO_SetPinMode(PIN_SPI1_SCK_PORT, PIN_SPI1_SCK, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinOutputType(PIN_SPI1_SCK_PORT, PIN_SPI1_SCK, LL_GPIO_OUTPUT_PUSHPULL);
-    LL_GPIO_SetPinPull(PIN_SPI1_SCK_PORT, PIN_SPI1_SCK, LL_GPIO_PULL_DOWN);
-    LL_GPIO_SetAFPin_0_7(PIN_SPI1_SCK_PORT, PIN_SPI1_SCK, LL_GPIO_AF_5);
-    LL_GPIO_SetPinSpeed(PIN_SPI1_SCK_PORT, PIN_SPI1_SCK, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinMode(PIN_SPI_SCK_PORT, PIN_SPI_SCK, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinOutputType(PIN_SPI_SCK_PORT, PIN_SPI_SCK, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(PIN_SPI_SCK_PORT, PIN_SPI_SCK, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetAFPin_0_7(PIN_SPI_SCK_PORT, PIN_SPI_SCK, LL_GPIO_AF_5);
+    LL_GPIO_SetPinSpeed(PIN_SPI_SCK_PORT, PIN_SPI_SCK, LL_GPIO_SPEED_FREQ_HIGH);
 
-    LL_GPIO_SetPinMode(PIN_SPI1_MISO_PORT, PIN_SPI1_MISO, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinOutputType(PIN_SPI1_MISO_PORT, PIN_SPI1_MISO, LL_GPIO_OUTPUT_PUSHPULL);
-    LL_GPIO_SetPinPull(PIN_SPI1_MISO_PORT, PIN_SPI1_MISO, LL_GPIO_PULL_DOWN);
-    LL_GPIO_SetAFPin_0_7(PIN_SPI1_MISO_PORT, PIN_SPI1_MISO, LL_GPIO_AF_5);
-    LL_GPIO_SetPinSpeed(PIN_SPI1_MISO_PORT, PIN_SPI1_MISO, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinMode(PIN_SPI_MISO_PORT, PIN_SPI_MISO, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinOutputType(PIN_SPI_MISO_PORT, PIN_SPI_MISO, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(PIN_SPI_MISO_PORT, PIN_SPI_MISO, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetAFPin_0_7(PIN_SPI_MISO_PORT, PIN_SPI_MISO, LL_GPIO_AF_5);
+    LL_GPIO_SetPinSpeed(PIN_SPI_MISO_PORT, PIN_SPI_MISO, LL_GPIO_SPEED_FREQ_HIGH);
 
-    LL_GPIO_SetPinMode(PIN_SPI1_MOSI_PORT, PIN_SPI1_MOSI, LL_GPIO_MODE_ALTERNATE);
-    LL_GPIO_SetPinOutputType(PIN_SPI1_MOSI_PORT, PIN_SPI1_MOSI, LL_GPIO_OUTPUT_PUSHPULL);
-    LL_GPIO_SetPinPull(PIN_SPI1_MOSI_PORT, PIN_SPI1_MOSI, LL_GPIO_PULL_DOWN);
-    LL_GPIO_SetAFPin_0_7(PIN_SPI1_MOSI_PORT, PIN_SPI1_MOSI, LL_GPIO_AF_5);
-    LL_GPIO_SetPinSpeed(PIN_SPI1_MOSI_PORT, PIN_SPI1_MOSI, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinMode(PIN_SPI_MOSI_PORT, PIN_SPI_MOSI, LL_GPIO_MODE_ALTERNATE);
+    LL_GPIO_SetPinOutputType(PIN_SPI_MOSI_PORT, PIN_SPI_MOSI, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(PIN_SPI_MOSI_PORT, PIN_SPI_MOSI, LL_GPIO_PULL_DOWN);
+    LL_GPIO_SetAFPin_0_7(PIN_SPI_MOSI_PORT, PIN_SPI_MOSI, LL_GPIO_AF_3);
+    LL_GPIO_SetPinSpeed(PIN_SPI_MOSI_PORT, PIN_SPI_MOSI, LL_GPIO_SPEED_FREQ_HIGH);
 
     // max speed for slave is 2 MBits/s
-    LL_SPI_SetBaudRatePrescaler(SPI1, LL_SPI_BAUDRATEPRESCALER_DIV32);
-    LL_SPI_SetTransferDirection(SPI1, LL_SPI_FULL_DUPLEX);
-    LL_SPI_SetClockPhase(SPI1, LL_SPI_PHASE_2EDGE);
-    LL_SPI_SetClockPolarity(SPI1, LL_SPI_POLARITY_HIGH);
-    LL_SPI_SetDataWidth(SPI1, LL_SPI_DATAWIDTH_16BIT);
-    LL_SPI_SetNSSMode(SPI1, LL_SPI_NSS_SOFT);
-    LL_SPI_SetTransferBitOrder(SPI1, LL_SPI_LSB_FIRST);
-    LL_SPI_SetStandard(SPI1, LL_SPI_PROTOCOL_MOTOROLA);
-    LL_SPI_SetMode(SPI1, LL_SPI_MODE_MASTER);
+    LL_SPI_SetBaudRatePrescaler(SPI, LL_SPI_BAUDRATEPRESCALER_DIV32);
+    LL_SPI_SetTransferDirection(SPI, LL_SPI_FULL_DUPLEX);
+    LL_SPI_SetClockPhase(SPI, LL_SPI_PHASE_2EDGE);
+    LL_SPI_SetClockPolarity(SPI, LL_SPI_POLARITY_HIGH);
+    LL_SPI_SetDataWidth(SPI, LL_SPI_DATAWIDTH_16BIT);
+    LL_SPI_SetNSSMode(SPI, LL_SPI_NSS_SOFT);
+    LL_SPI_SetTransferBitOrder(SPI, LL_SPI_LSB_FIRST);
+    LL_SPI_SetStandard(SPI, LL_SPI_PROTOCOL_MOTOROLA);
+    LL_SPI_SetMode(SPI, LL_SPI_MODE_MASTER);
 }
 
 void initializeSpiDma()
@@ -248,7 +250,7 @@ void initializeSpiDma()
                           LL_DMA_PDATAALIGN_HALFWORD        |
                           LL_DMA_MDATAALIGN_HALFWORD);
 
-    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_1, LL_DMAMUX_REQ_SPI1_RX);
+    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_1, LL_DMAMUX_REQ_SPI2_RX);
 
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_1);
@@ -268,17 +270,17 @@ void initializeSpiDma()
                           LL_DMA_PDATAALIGN_HALFWORD        |
                           LL_DMA_MDATAALIGN_HALFWORD);
 
-    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_2, LL_DMAMUX_REQ_SPI1_TX);
+    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_2, LL_DMAMUX_REQ_SPI2_TX);
 
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
 
     // enabled device
 
-    LL_SPI_Enable(SPI1);
+    LL_SPI_Enable(SPI);
 
-    LL_SPI_EnableDMAReq_RX(SPI1);
-    LL_SPI_EnableDMAReq_TX(SPI1);
+    LL_SPI_EnableDMAReq_RX(SPI);
+    LL_SPI_EnableDMAReq_TX(SPI);
 }
 
 void resetSpiDevice()
@@ -286,14 +288,14 @@ void resetSpiDevice()
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1);
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
 
-    while (LL_SPI_GetTxFIFOLevel(SPI1) != LL_SPI_TX_FIFO_EMPTY) ;
-    while (LL_SPI_IsActiveFlag_BSY(SPI1)) ;
+    while (LL_SPI_GetTxFIFOLevel(SPI) != LL_SPI_TX_FIFO_EMPTY) ;
+    while (LL_SPI_IsActiveFlag_BSY(SPI)) ;
 
-    LL_SPI_Disable(SPI1);
+    LL_SPI_Disable(SPI);
 
-    while (LL_SPI_GetRxFIFOLevel(SPI1) != LL_SPI_RX_FIFO_EMPTY)
+    while (LL_SPI_GetRxFIFOLevel(SPI) != LL_SPI_RX_FIFO_EMPTY)
     {
-        LL_SPI_ReceiveData16(SPI1);
+        LL_SPI_ReceiveData16(SPI);
     }
 
     initializeSpi();
@@ -403,17 +405,17 @@ void checkIfSpiCommunicationWasFinished()
         {
             if (calculateCrc(&g_lscRxBuffer.getSensorValues.respondingToCommandCode, LINE_SENSOR_RESPONSE_GET_SENSOR_VALUES_CRC_PROTECTED_DATA_LENGTH_BYTES) != g_lscRxBuffer.getSensorValues.crc)
             {
-                // TODO send error to client
+                sendCrcErrorToClient();
                 g_lscCurrentCommandCode = LSC_GET_SENSOR_VALUES;
             }
             else if (g_lscRxBuffer.getSensorValues.currentStatus & LSS_ERROR)
             {
-                // TODO send error to client
+                sendErrorToClient(g_lscRxBuffer.getSensorValues.currentStatus, 0, 0);
                 g_lscCurrentCommandCode = LSC_GET_DETAILED_SENSOR_STATUS;
             }
             else
             {
-                // TODO send sensor values to client
+                sendSensorValuesToClient(LINE_SENSOR_ADDRESS_OF_SENSOR_VALUES(&g_lscRxBuffer.getSensorValues), g_lscRxBuffer.getSensorValues.currentStatus);
                 g_lscCurrentCommandCode = LSC_GET_SENSOR_VALUES;
             }
         }
@@ -421,12 +423,14 @@ void checkIfSpiCommunicationWasFinished()
         {
             if (calculateCrc(&g_lscRxBuffer.getDetailedSensorStatus.respondingToCommandCode, LINE_SENSOR_RESPONSE_GET_DETAILED_SENSOR_STATUS_CRC_PROTECTED_DATA_LENGTH_BYTES) != g_lscRxBuffer.getDetailedSensorStatus.crc)
             {
-                // TODO send error to client
+                sendCrcErrorToClient();
                 g_lscCurrentCommandCode = LSC_GET_DETAILED_SENSOR_STATUS;
             }
             else
             {
-                // TODO send detailed errors to client
+                sendErrorToClient(g_lscRxBuffer.getDetailedSensorStatus.currentStatus,
+                                  g_lscRxBuffer.getDetailedSensorStatus.currentDetailedStatus,
+                                  g_lscRxBuffer.getDetailedSensorStatus.cumulativeDetailedStatusSinceLastReset);
                 g_lscCurrentCommandCode = LSC_GET_SENSOR_VALUES;
             }
         }
@@ -434,5 +438,74 @@ void checkIfSpiCommunicationWasFinished()
         {
             g_lscCurrentCommandCode = LSC_GET_SENSOR_VALUES;
         }
+    }
+}
+
+void sendCrcErrorToClient()
+{
+    const uint8_t producerBufferIndex = consumerProducerBuffer_getProducerIndex(&g_lineSensorDataQueueProducerConsumerIndexes);
+
+    if (producerBufferIndex == DATA_BUFFER_LENGTH)
+    {
+        return;
+    }
+
+    ++g_lineSensorDataQueue[producerBufferIndex].numberOfCalls;
+    ++g_lineSensorDataQueue[producerBufferIndex].numberOfCrcErrors;
+
+    if (consumerProducerBuffer_setLastReadIndex(&g_lineSensorDataQueueProducerConsumerIndexes, producerBufferIndex))
+    {
+        lineSensorDataAvailable();
+    }
+}
+
+void sendErrorToClient(lineSensorStatus_t status, lineSensorDetailedStatus_t currentDetailedStatus, lineSensorDetailedStatus_t cumulativeDetailedStatus)
+{
+    const uint8_t producerBufferIndex = consumerProducerBuffer_getProducerIndex(&g_lineSensorDataQueueProducerConsumerIndexes);
+
+    if (producerBufferIndex == DATA_BUFFER_LENGTH)
+    {
+        return;
+    }
+
+    ++g_lineSensorDataQueue[producerBufferIndex].numberOfCalls;
+    ++g_lineSensorDataQueue[producerBufferIndex].numberOfFailures;
+    g_lineSensorDataQueue[producerBufferIndex].currentStatus = status;
+    g_lineSensorDataQueue[producerBufferIndex].currentDetailedStatus = currentDetailedStatus;
+    g_lineSensorDataQueue[producerBufferIndex].cumulativeDetailedStatusSinceLastReset = cumulativeDetailedStatus;
+
+    if (consumerProducerBuffer_setLastReadIndex(&g_lineSensorDataQueueProducerConsumerIndexes, producerBufferIndex))
+    {
+        lineSensorDataAvailable();
+    }
+}
+
+void sendSensorValuesToClient(volatile lineSensorValue_t* pSensorValues, lineSensorStatus_t status)
+{
+    const uint8_t producerBufferIndex = consumerProducerBuffer_getProducerIndex(&g_lineSensorDataQueueProducerConsumerIndexes);
+
+    if (producerBufferIndex == DATA_BUFFER_LENGTH)
+    {
+        return;
+    }
+
+    ++g_lineSensorDataQueue[producerBufferIndex].numberOfCalls;
+    g_lineSensorDataQueue[producerBufferIndex].currentStatus = status;
+
+    const uint32_t numberOfWords = LINE_SENSOR_NUMBER_OF_SENSORS >> 1;
+
+    uint32_t* pSourceData = (uint32_t*) pSensorValues;
+    uint32_t* pDestinationData = (uint32_t*) &g_lineSensorDataQueue[producerBufferIndex];
+
+    for (uint32_t i = 0; i < numberOfWords; ++i)
+    {
+        pDestinationData[i] = pSourceData[i];
+    }
+    
+    g_lineSensorDataQueue[producerBufferIndex].sensorValues[LINE_SENSOR_NUMBER_OF_SENSORS - 1] = pSensorValues[LINE_SENSOR_NUMBER_OF_SENSORS - 1];
+
+    if (consumerProducerBuffer_setLastReadIndex(&g_lineSensorDataQueueProducerConsumerIndexes, producerBufferIndex))
+    {
+        lineSensorDataAvailable();
     }
 }

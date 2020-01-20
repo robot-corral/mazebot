@@ -90,9 +90,7 @@ void initializeClocks()
         fatalError();
     }
 
-    __HAL_RCC_SPI1_CLK_ENABLE();
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_SPI2_CLK_ENABLE();
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1 | LL_AHB1_GRP1_PERIPH_CRC | LL_AHB1_GRP1_PERIPH_DMAMUX1);
 }
@@ -122,7 +120,19 @@ void initializeSystemClock()
 {
     initializeHse();
     initializeClocks();
-    // initializeRtc();
+    initializeRtc();
 
     LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
+}
+
+void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
+{
+    if(hrtc->Instance==RTC)
+    {
+        HAL_PWR_EnableBkUpAccess();
+        HAL_PWR_EnableBkUpAccess();
+        __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE);
+        __HAL_RCC_RTC_ENABLE();
+        HAL_RTCEx_EnableBypassShadow(hrtc);
+    }
 }

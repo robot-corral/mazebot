@@ -42,7 +42,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src;$(ProjectDir)\..\src-utils;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\line-sensor\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src;$(ProjectDir)\..\src-utils;$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\common\lib-utils\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;USE_STM32WBXX_NUCLEO=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -55,7 +55,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>C11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src;$(ProjectDir)\..\src-utils;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\line-sensor\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\src-utils\stm32;$(ProjectDir)\..\src-utils\application;$(ProjectDir)\..\src-utils\ble;$(ProjectDir)\..\src-utils\ble\core;$(ProjectDir)\..\src-utils\ble_thread;$(ProjectDir)\..\src-utils\ble_thread\tl;$(ProjectDir)\..\src-utils\ble_thread\schi;$(ProjectDir)\..\src-utils\cmsis;$(ProjectDir)\..\src-utils\utilities;$(ProjectDir)\..\src-utils\sequencer;$(ProjectDir)\..\src-utils\tiny_lpm;$(ProjectDir)\..\src;$(ProjectDir)\..\src-utils;$(SolutionDir)\line-sensor\inc;$(SolutionDir)\common\lib-stm32wb;$(SolutionDir)\common\lib-utils\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;USE_STM32WBXX_NUCLEO=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -107,6 +107,7 @@
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rcc.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rcc_ex.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rtc.c" />
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rtc_ex.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.c" />
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_uart.c" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rcc.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rcc_ex.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rtc.h" />
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rtc_ex.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_spi.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.h" />
     <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_uart.h" />
@@ -271,6 +273,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\lib-stm32wb\prj-stm32wb55rg\lib-stm32wb55rg.vcxproj">
       <Project>{50cb8853-df20-4367-a74c-6f9e93764c59}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\common\lib-utils\prj-stm32wb55rg\lib-utils-stm32wb55rg.vcxproj">
+      <Project>{455f7f2b-83ce-4c8e-ac0e-4f4f84e31483}</Project>
     </ProjectReference>
   </ItemGroup>
 </Project>

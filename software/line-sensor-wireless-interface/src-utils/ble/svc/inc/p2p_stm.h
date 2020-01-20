@@ -1,8 +1,8 @@
 #pragma once
 
-#include <line_sensor.h>
+#include "global_data.h"
 
-#define P2P_CLIENT_RESPONSE_LENGTH ((LINE_SENSOR_NUMBER_OF_SENSORS) * sizeof(lineSensorValue_t))
+#define P2P_CLIENT_RESPONSE_LENGTH sizeof(lineSensorData_t)
 
 typedef enum
 {

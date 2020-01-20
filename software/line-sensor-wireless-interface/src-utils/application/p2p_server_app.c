@@ -5,12 +5,12 @@
 #include "stm32_seq.h"
 #include "line_sensor_client.h"
 
+#include <string.h>
 #include <line_sensor.h>
 
 typedef struct
 {
     uint8_t           notificationStatus;
-    lineSensorValue_t lineSensorValues[LINE_SENSOR_NUMBER_OF_SENSORS];
     uint16_t          connectionHandle;
 } p2pServerAppContext_t;
 
@@ -61,10 +61,8 @@ void p2pAppInit()
     g_p2pServerAppContext.notificationStatus = 0; 
 }
 
-void lineSensorDataAvailable(lineSensorValue_t sensorValues[LINE_SENSOR_NUMBER_OF_SENSORS])
+void lineSensorDataAvailable()
 {
-    // TODO copy sensor values
-
     UTIL_SEQ_SetTask(1 << CFG_TASK_LINE_SENSOR_DATA_AVAILABLE, CFG_SCH_PRIO_0);
 }
 
@@ -72,7 +70,11 @@ void p2pSendNotification()
 {
     if(g_p2pServerAppContext.notificationStatus)
     {
-        p2pAppUpdateChar(P2P_CLIENT_RESPONSE_UUID, (uint8_t*) &g_p2pServerAppContext.lineSensorValues);
+        const uint8_t idx = consumerProducerBuffer_moveConsumerIndexToLastReadIndex(&g_lineSensorDataQueueProducerConsumerIndexes);
+        if (idx < DATA_BUFFER_LENGTH && g_lineSensorDataQueue[idx].numberOfCalls > 0)
+        {
+            p2pAppUpdateChar(P2P_CLIENT_RESPONSE_UUID, (uint8_t*) &g_lineSensorDataQueue[idx]);
+            memset((void*) &g_lineSensorDataQueue[idx], 0, sizeof(lineSensorData_t));
+        }
     }
 }
-  

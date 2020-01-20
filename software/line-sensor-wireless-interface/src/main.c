@@ -19,12 +19,12 @@ int main()
     initializeSystemClock();
     initializeExti();
     initializeGpio();
-    initializeLineSensor();
     initializeLed();
     initializeButtons();
     initializeDebug();
-
     initializeApplication();
+    // for some reason if initializeApplication goes after initializeLineSensor then I couldn't connect to device
+    initializeLineSensor();
 
     while (1)
     {

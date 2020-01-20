@@ -383,6 +383,9 @@
     <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_spi_ex.c">
       <Filter>src-utils\stm32</Filter>
     </ClCompile>
+    <ClCompile Include="..\src-utils\stm32\stm32wbxx_hal_rtc_ex.c">
+      <Filter>src-utils\stm32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src-utils\application\app_common.h">
@@ -654,6 +657,9 @@
     </ClInclude>
     <ClInclude Include="..\src\interrupt_priorities.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src-utils\stm32\stm32wbxx_hal_rtc_ex.h">
+      <Filter>src-utils\stm32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
