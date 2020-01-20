@@ -717,7 +717,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 #if(RADIO_ACTIVITY_EVENT != 0)
         case 0x0004:
         /* USER CODE BEGIN RADIO_ACTIVITY_EVENT*/
-          BSP_LED_On(LED_GREEN);
+          // BSP_LED_On(LED_GREEN);
           HW_TS_Start(BleApplicationContext.SwitchOffGPIO_timer_Id, (uint32_t)LED_ON_TIMEOUT);
         /* USER CODE END RADIO_ACTIVITY_EVENT*/
         break; /* RADIO_ACTIVITY_EVENT */
@@ -1057,7 +1057,7 @@ const uint8_t* BleGetBdAddress( void )
 static void Adv_Cancel( void )
 {
 /* USER CODE BEGIN Adv_Cancel_1 */
-  BSP_LED_Off(LED_GREEN);
+  // BSP_LED_Off(LED_GREEN);
 /* USER CODE END Adv_Cancel_1 */
 
   if (BleApplicationContext.Device_Connection_Status != APP_BLE_CONNECTED_SERVER)
@@ -1100,7 +1100,7 @@ static void Adv_Cancel_Req( void )
 
 static void Switch_OFF_GPIO(){
 /* USER CODE BEGIN Switch_OFF_GPIO */
-  BSP_LED_Off(LED_GREEN);
+  // BSP_LED_Off(LED_GREEN);
 /* USER CODE END Switch_OFF_GPIO */
 }
 
