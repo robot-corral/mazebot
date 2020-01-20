@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="logic\IWirelessLineSensor.cs" />
+    <Compile Include="logic\LineSensorData.cs" />
     <Compile Include="logic\PositionController.cs" />
     <Compile Include="logic\WirelessLineSensor.cs" />
     <Compile Include="shared\BaseCommandWithParameter.cs" />

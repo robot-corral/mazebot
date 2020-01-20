@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -16,6 +18,7 @@ namespace line_sensor.data_collector.logic
         }
 
         public event DeviceRemovedEvent DeviceRemovedEvent;
+        public event DeviceSentDataEvent DeviceSentDataEvent;
 
         public bool IsConnected { get; private set; }
 
@@ -112,6 +115,8 @@ namespace line_sensor.data_collector.logic
                 this.responseCharacteristic = responseCharacteristic;
                 this.responseCharacteristic.ValueChanged += OnCharacteristicValueChanged;
 
+                await StartQueryingLineSensor().ConfigureAwait(false);
+
                 IsConnected = true;
 
                 success = true;
@@ -185,7 +190,41 @@ namespace line_sensor.data_collector.logic
 
         private void OnCharacteristicValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            // TODO
+            try
+            {
+                using (Stream s = args.CharacteristicValue.AsStream())
+                {
+                    using (BinaryReader br = new BinaryReader(s))
+                    {
+                        LineSensorData lsd = CreateLineSensorData(br);
+                        DeviceSentDataEvent?.Invoke(this, lsd);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                this.logger.Error(e, "unexpected exception while receiving data from BLE device");
+            }
+        }
+
+        internal static LineSensorData CreateLineSensorData(BinaryReader br)
+        {
+            LineSensorData lineSensorData = new LineSensorData();
+            lineSensorData.SensorValues = new ushort[NUMBER_OF_SENSORS];
+
+            for (int i = 0; i < NUMBER_OF_SENSORS; ++i)
+            {
+                lineSensorData.SensorValues[i] = br.ReadUInt16();
+            }
+
+            lineSensorData.NumberOfCalls = br.ReadByte();
+            lineSensorData.NumberOfFailures = br.ReadByte();
+            lineSensorData.NumberOfCrcErrors = br.ReadByte();
+            lineSensorData.CurrentStatus = br.ReadByte();
+            lineSensorData.CurrentDetailedStatus = br.ReadUInt32();
+            lineSensorData.CumulativeDetailedStatusSinceLastReset = br.ReadUInt32();
+
+            return lineSensorData;
         }
 
         private GattDeviceService service;
@@ -193,6 +232,8 @@ namespace line_sensor.data_collector.logic
         private GattCharacteristic responseCharacteristic;
 
         private readonly ILogger logger;
+
+        private const int NUMBER_OF_SENSORS = 25;
 
         private static readonly Guid SERVICE_GUID                  = new Guid("0000fe40-cc7a-482a-984a-7f2ed5b3e58f");
         private static readonly Guid RESPONSE_CHARACTERISTICS_GUID = new Guid("0000fe42-8e22-4541-9d4c-21edae82ed19");
