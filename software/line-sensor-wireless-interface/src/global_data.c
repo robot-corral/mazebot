@@ -1,10 +1,13 @@
 #include "global_data.h"
 
-RTC_HandleTypeDef g_rtc;
-UART_HandleTypeDef g_uart1;
+/*******************************************************************************
+ * Nucleo hardware configuration
+ *******************************************************************************/
+
+OTP_ID0_t* g_pNucleoHardwareConfiguration;
 
 /*******************************************************************************
- * Task scheduler
+ * Line sensor client
  *******************************************************************************/
 
 volatile bool g_lcsRestart;

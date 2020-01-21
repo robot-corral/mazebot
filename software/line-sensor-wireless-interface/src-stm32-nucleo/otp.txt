@@ -1,0 +1,6 @@
+otp is -> one time programming
+
+library reads hardware configuration of a nucleo-wb55rg board which contains:
+1) ble device address
+2) hse frequency tunning parameter
+3) some sort of id (no idea what is it)

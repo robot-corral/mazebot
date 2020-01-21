@@ -4,29 +4,29 @@
 #include "global_data.h"
 #include "interrupt_priorities.h"
 
-#include <stm32\stm32wbxx_ll_crc.h>
-#include <stm32\stm32wbxx_ll_dma.h>
-#include <stm32\stm32wbxx_ll_spi.h>
-#include <stm32\stm32wbxx_ll_tim.h>
-#include <stm32\stm32wbxx_ll_exti.h>
-#include <stm32\stm32wbxx_ll_gpio.h>
+#include <stm32/stm32wbxx_ll_crc.h>
+#include <stm32/stm32wbxx_ll_dma.h>
+#include <stm32/stm32wbxx_ll_spi.h>
+#include <stm32/stm32wbxx_ll_tim.h>
+#include <stm32/stm32wbxx_ll_exti.h>
+#include <stm32/stm32wbxx_ll_gpio.h>
 
 #include <string.h>
 
-#define PIN_POWER      GPIO_PIN_3
+#define PIN_POWER      LL_GPIO_PIN_3
 #define PIN_POWER_PORT GPIOC
 
-#define PIN_WAKE_UP      GPIO_PIN_5
+#define PIN_WAKE_UP      LL_GPIO_PIN_5
 #define PIN_WAKE_UP_PORT GPIOC
 
-#define PIN_NOT_SLAVE_SELECT      GPIO_PIN_12
+#define PIN_NOT_SLAVE_SELECT      LL_GPIO_PIN_12
 #define PIN_NOT_SLAVE_SELECT_PORT GPIOB
 
-#define PIN_SPI_SCK       GPIO_PIN_13
+#define PIN_SPI_SCK       LL_GPIO_PIN_13
 #define PIN_SPI_SCK_PORT  GPIOB
-#define PIN_SPI_MISO      GPIO_PIN_2
+#define PIN_SPI_MISO      LL_GPIO_PIN_2
 #define PIN_SPI_MISO_PORT GPIOC
-#define PIN_SPI_MOSI      GPIO_PIN_1
+#define PIN_SPI_MOSI      LL_GPIO_PIN_1
 #define PIN_SPI_MOSI_PORT GPIOC
 
 #define SPI SPI2
@@ -170,11 +170,10 @@ void initializeCrc()
 {
     LL_CRC_SetInputDataReverseMode(CRC, LL_CRC_INDATA_REVERSE_NONE);
     LL_CRC_SetOutputDataReverseMode(CRC, LL_CRC_OUTDATA_REVERSE_NONE);
-    LL_CRC_SetPolynomialCoef(CRC, LL_CRC_DEFAULT_CRC32_POLY);
+    LL_CRC_SetPolynomialCoef(CRC, LINE_SENSOR_CRC_POLYNOMIAL);
     LL_CRC_SetPolynomialSize(CRC, LL_CRC_POLYLENGTH_32B);
     LL_CRC_SetInitialData(CRC, LL_CRC_DEFAULT_CRC_INITVALUE);
 
-    LL_CRC_SetPolynomialCoef(CRC, LINE_SENSOR_CRC_POLYNOMIAL);
     LL_CRC_SetPolynomialSize(CRC, LL_CRC_POLYLENGTH_32B);
 }
 
@@ -508,4 +507,9 @@ void sendSensorValuesToClient(volatile lineSensorValue_t* pSensorValues, lineSen
     {
         lineSensorDataAvailable();
     }
+}
+
+void lineSensorDataAvailable()
+{
+    // TODO pkrupets
 }
