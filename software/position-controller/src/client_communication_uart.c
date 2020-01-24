@@ -1,11 +1,15 @@
 #include "client_communication_uart.h"
 #include "client_communication_uart_impl.h"
 
+#include <stm32\stm32l4xx_ll_crc.h>
 #include <stm32\stm32l4xx_ll_rcc.h>
 
 #include "led.h"
 #include "global_data.h"
 #include "position_controller.h"
+
+static uint32_t calculateRequestCrc(volatile clientUartRequest_t* pRequest);
+static uint32_t calculateResponseCrc(volatile clientUartResponse_t* pResponse);
 
 void initializeClientCommunicationUart()
 {
@@ -14,6 +18,8 @@ void initializeClientCommunicationUart()
 #endif
     initializeUart();
     setRxActiveLedEnabled(true);
+
+    LL_CRC_SetPolynomialCoef(CRC, CRC32_POLYNOMIAL);
 }
 
 void processCommand(volatile clientUartRequest_t* pRequest)
@@ -31,9 +37,19 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
     }
 
+    const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
+
+    if (calculatedCrc != pRequest->crc)
+    {
+        g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_CRC;
+        g_clientUartTxBuffer.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+        return;
+    }
+
     if (pRequest == nullptr || pRequest->header != CLIENT_UART_REQUEST_HEADER)
     {
-        g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_TX_ERROR;
+        g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_COMMUNICATION_ERROR;
+        g_clientUartTxBuffer.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
 
@@ -78,4 +94,24 @@ void processCommand(volatile clientUartRequest_t* pRequest)
             break;
         }
     }
+
+    g_clientUartTxBuffer.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+}
+
+uint32_t calculateRequestCrc(volatile clientUartRequest_t* pRequest)
+{
+    LL_CRC_ResetCRCCalculationUnit(CRC);
+    const uint32_t * const pData = (uint32_t*) pRequest;
+    LL_CRC_FeedData32(CRC, pData[0]);
+    LL_CRC_FeedData32(CRC, pData[1]);
+    return LL_CRC_ReadData32(CRC);
+}
+
+uint32_t calculateResponseCrc(volatile clientUartResponse_t* pResponse)
+{
+    LL_CRC_ResetCRCCalculationUnit(CRC);
+    const uint32_t * const pData = (uint32_t*) pResponse;
+    LL_CRC_FeedData32(CRC, pData[0]);
+    LL_CRC_FeedData32(CRC, pData[1]);
+    return LL_CRC_ReadData32(CRC);
 }
