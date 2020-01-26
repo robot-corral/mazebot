@@ -24,48 +24,48 @@ void initializeClientCommunicationUart()
 
 void processCommand(volatile clientUartRequest_t* pRequest)
 {
-    g_clientUartTxBuffer.header = CLIENT_UART_RESPONSE_HEADER;
-    g_clientUartTxBuffer.position = getPosition();
-    g_clientUartTxBuffer.resultFlags = 0;
+    g_clientUartTxBuffer.unpacked.header = CLIENT_UART_RESPONSE_HEADER;
+    g_clientUartTxBuffer.unpacked.position = getPosition();
+    g_clientUartTxBuffer.unpacked.resultFlags = 0;
 
     if (isPositionControllerBusy())
     {
-        g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_BUSY;
+        g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_BUSY;
     }
     if (isPositionControllerInEmergency())
     {
-        g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
+        g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
     }
 
     const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
 
-    if (calculatedCrc != pRequest->crc)
+    if (calculatedCrc != pRequest->unpacked.crc)
     {
-        g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_CRC;
-        g_clientUartTxBuffer.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+        g_clientUartTxBuffer.unpacked.resultFlags = (uint8_t) ERR_CRC;
+        g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
 
-    if (pRequest == nullptr || pRequest->header != CLIENT_UART_REQUEST_HEADER)
+    if (pRequest == nullptr || pRequest->unpacked.header != CLIENT_UART_REQUEST_HEADER)
     {
-        g_clientUartTxBuffer.resultFlags = (uint8_t) ERR_COMMUNICATION_ERROR;
-        g_clientUartTxBuffer.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+        g_clientUartTxBuffer.unpacked.resultFlags = (uint8_t) ERR_COMMUNICATION_ERROR;
+        g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
 
-    switch (pRequest->motorCommand)
+    switch (pRequest->unpacked.motorCommand)
     {
         case MCMD_EMERGENCY_STOP:
         {
             positionControllerEmergencyStop();
-            g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
+            g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
             break;
         }
         case MCMD_MOVE_IF_IDLE:
         {
-            if (!setPosition(pRequest->direction, pRequest->steps))
+            if (!setPosition(pRequest->unpacked.direction, pRequest->unpacked.steps))
             {
-                g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_BUSY;
+                g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_BUSY;
             }
             break;
         }
@@ -73,7 +73,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         {
             if (!calibratePositionController())
             {
-                g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_BUSY;
+                g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_BUSY;
             }
             break;
         }
@@ -90,18 +90,18 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         }
         default:
         {
-            g_clientUartTxBuffer.resultFlags |= (uint8_t) ERR_UNKNOWN_COMMAND;
+            g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_UNKNOWN_COMMAND;
             break;
         }
     }
 
-    g_clientUartTxBuffer.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+    g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
 }
 
 uint32_t calculateRequestCrc(volatile clientUartRequest_t* pRequest)
 {
     LL_CRC_ResetCRCCalculationUnit(CRC);
-    const uint32_t * const pData = (uint32_t*) pRequest;
+    volatile uint32_t* pData = (uint32_t*) pRequest;
     LL_CRC_FeedData32(CRC, pData[0]);
     LL_CRC_FeedData32(CRC, pData[1]);
     return LL_CRC_ReadData32(CRC);
@@ -110,7 +110,7 @@ uint32_t calculateRequestCrc(volatile clientUartRequest_t* pRequest)
 uint32_t calculateResponseCrc(volatile clientUartResponse_t* pResponse)
 {
     LL_CRC_ResetCRCCalculationUnit(CRC);
-    const uint32_t * const pData = (uint32_t*) pResponse;
+    const volatile uint32_t * const pData = (volatile uint32_t*) pResponse;
     LL_CRC_FeedData32(CRC, pData[0]);
     LL_CRC_FeedData32(CRC, pData[1]);
     return LL_CRC_ReadData32(CRC);

@@ -4,7 +4,7 @@
 
 void initializeClientCommunicationUart();
 
-#define CRC32_POLYNOMIAL ((uint32_t) 0x4C11DB7)
+#define CRC32_POLYNOMIAL ((uint32_t) 0x04C11DB7)
 
 #define CLIENT_UART_REQUEST_HEADER  ((uint16_t) 0x5441)
 #define CLIENT_UART_RESPONSE_HEADER ((uint16_t) 0x5441)
@@ -36,6 +36,12 @@ typedef struct __attribute__((packed))
     uint8_t direction;
     uint32_t steps;
     uint32_t crc;
+} clientUartRequestUnpacked_t;
+
+typedef union
+{
+    uint32_t packed[3];
+    clientUartRequestUnpacked_t unpacked;
 } clientUartRequest_t;
 
 typedef struct __attribute__((packed))
@@ -45,4 +51,10 @@ typedef struct __attribute__((packed))
     uint8_t filler;
     uint32_t position;
     uint32_t crc;
+} clientUartResponseUnpacked_t;
+
+typedef union
+{
+    uint32_t packed[3];
+    clientUartResponseUnpacked_t unpacked;
 } clientUartResponse_t;

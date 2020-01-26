@@ -48,6 +48,7 @@ void p2pAppNotification(p2pAppConnectionHandleNotificationEvent_t* pNotification
         case P2PAOCE_CONN_HANDLE_EVT:
             break;
         case P2PAOCE_DISCON_HANDLE_EVT :
+            g_p2pServerAppContext.notificationStatus = 0;
             stopQueryingLineSensor();
             break;
         default:
