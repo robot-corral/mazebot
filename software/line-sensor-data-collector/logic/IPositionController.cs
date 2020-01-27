@@ -4,8 +4,18 @@ namespace line_sensor.data_collector.logic
 {
     public interface IPositionController
     {
-        bool IsConnected { get; }
+        Task<PositionControllerStatus> TryToConnect(string serialDeviceId);
 
-        Task<bool> TryToConnect(string serialDeviceId);
+        void Disconnect();
+
+        Task<PositionControllerResponse> Calibrate();
+
+        Task<PositionControllerResponse> EmergencyStop();
+
+        Task<PositionControllerResponse> MoveIfIdle(PositionControllerDirection direction, uint steps);
+
+        Task<PositionControllerResponse> GetPosition();
+
+        Task Reset();
     }
 }

@@ -1,5 +1,8 @@
 ﻿namespace line_sensor.data_collector.shared
 {
+    /*
+     * as described in AN4187
+     */
     public class Stm32Crc32
     {
         public Stm32Crc32(uint initialValue, uint polynomial)

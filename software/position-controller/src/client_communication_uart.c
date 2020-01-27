@@ -30,25 +30,25 @@ void processCommand(volatile clientUartRequest_t* pRequest)
 
     if (isPositionControllerBusy())
     {
-        g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_BUSY;
+        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_BUSY;
     }
     if (isPositionControllerInEmergency())
     {
-        g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
+        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_EMERGENCY_STOP;
     }
 
     const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
 
     if (calculatedCrc != pRequest->unpacked.crc)
     {
-        g_clientUartTxBuffer.unpacked.resultFlags = (uint8_t) ERR_CRC;
+        g_clientUartTxBuffer.unpacked.resultFlags = (uint16_t) ERR_CRC;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
 
     if (pRequest == nullptr || pRequest->unpacked.header != CLIENT_UART_REQUEST_HEADER)
     {
-        g_clientUartTxBuffer.unpacked.resultFlags = (uint8_t) ERR_COMMUNICATION_ERROR;
+        g_clientUartTxBuffer.unpacked.resultFlags = (uint16_t) ERR_COMMUNICATION_ERROR;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
@@ -58,14 +58,14 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         case MCMD_EMERGENCY_STOP:
         {
             positionControllerEmergencyStop();
-            g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_EMERGENCY_STOP;
+            g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_EMERGENCY_STOP;
             break;
         }
         case MCMD_MOVE_IF_IDLE:
         {
             if (!setPosition(pRequest->unpacked.direction, pRequest->unpacked.steps))
             {
-                g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_BUSY;
+                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_BUSY;
             }
             break;
         }
@@ -73,7 +73,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         {
             if (!calibratePositionController())
             {
-                g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_BUSY;
+                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_BUSY;
             }
             break;
         }
@@ -90,7 +90,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         }
         default:
         {
-            g_clientUartTxBuffer.unpacked.resultFlags |= (uint8_t) ERR_UNKNOWN_COMMAND;
+            g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_UNKNOWN_COMMAND;
             break;
         }
     }

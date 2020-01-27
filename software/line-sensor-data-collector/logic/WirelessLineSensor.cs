@@ -20,13 +20,11 @@ namespace line_sensor.data_collector.logic
         public event DeviceRemovedEvent DeviceRemovedEvent;
         public event DeviceSentDataEvent DeviceSentDataEvent;
 
-        public bool IsConnected { get; private set; }
-
         public async Task<bool> TryToConnect(string deviceId)
         {
             if (string.IsNullOrWhiteSpace(deviceId))
             {
-                this.logger.Error($"deviceId argument is null or empty");
+                this.logger.Error($"'{nameof(deviceId)}' argument is null or empty");
                 return false;
             }
 
@@ -117,8 +115,6 @@ namespace line_sensor.data_collector.logic
 
                 await StartQueryingLineSensor().ConfigureAwait(false);
 
-                IsConnected = true;
-
                 success = true;
 
                 return true;
@@ -132,24 +128,30 @@ namespace line_sensor.data_collector.logic
             {
                 if (!success)
                 {
-                    // TODO move to disconnect
-
-                    if (this.responseCharacteristic != null)
-                    {
-                        this.responseCharacteristic.ValueChanged -= OnCharacteristicValueChanged;
-                        this.responseCharacteristic = null;
-                    }
-
-                    if (this.service != null)
-                    {
-                        this.service.Dispose();
-                        this.service = null;
-                    }
-
-                    this.bluetoothLeDevice.ConnectionStatusChanged -= OnConnectionStatusChanged;
-                    this.bluetoothLeDevice.Dispose();
-                    this.bluetoothLeDevice = null;
+                    Disconnect();
                 }
+            }
+        }
+
+        public void Disconnect()
+        {
+            if (this.responseCharacteristic != null)
+            {
+                this.responseCharacteristic.ValueChanged -= OnCharacteristicValueChanged;
+                this.responseCharacteristic = null;
+            }
+
+            if (this.service != null)
+            {
+                this.service.Dispose();
+                this.service = null;
+            }
+
+            if (this.bluetoothLeDevice != null)
+            {
+                this.bluetoothLeDevice.ConnectionStatusChanged -= OnConnectionStatusChanged;
+                this.bluetoothLeDevice.Dispose();
+                this.bluetoothLeDevice = null;
             }
         }
 
@@ -185,7 +187,11 @@ namespace line_sensor.data_collector.logic
 
         private void OnConnectionStatusChanged(BluetoothLEDevice sender, object args)
         {
-            // TODO
+            if (sender.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
+            {
+                Disconnect();
+                DeviceRemovedEvent?.Invoke(this, sender.DeviceId);
+            }
         }
 
         private void OnCharacteristicValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)

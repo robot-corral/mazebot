@@ -21,12 +21,12 @@ typedef enum
 
 typedef enum
 {
-    OK                      = 0x00,
-    ERR_COMMUNICATION_ERROR = 0x01,
-    ERR_UNKNOWN_COMMAND     = 0x02,
-    ERR_BUSY                = 0x04,
-    ERR_EMERGENCY_STOP      = 0x08,
-    ERR_CRC                 = 0x10,
+    OK                      = 0x0000,
+    ERR_COMMUNICATION_ERROR = 0x0001,
+    ERR_UNKNOWN_COMMAND     = 0x0002,
+    ERR_BUSY                = 0x0004,
+    ERR_EMERGENCY_STOP      = 0x0008,
+    ERR_CRC                 = 0x0010,
 } commandResultFlags_t;
 
 typedef struct __attribute__((packed))
@@ -47,8 +47,7 @@ typedef union
 typedef struct __attribute__((packed))
 {
     uint16_t header;
-    uint8_t resultFlags;
-    uint8_t filler;
+    uint16_t resultFlags;
     uint32_t position;
     uint32_t crc;
 } clientUartResponseUnpacked_t;
