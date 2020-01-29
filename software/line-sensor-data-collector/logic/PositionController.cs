@@ -41,13 +41,13 @@ namespace line_sensor.data_collector.logic
             if (string.IsNullOrWhiteSpace(serialDeviceId))
             {
                 this.logger.Error($"'{nameof(serialDeviceId)}' is null, empty or whitespace");
-                return PositionControllerStatus.CS_INVALID_ARGUMENT;
+                return PositionControllerStatus.CS_ERR_INVALID_ARGUMENT;
             }
+
+            this.semaphore.WaitOne();
 
             try
             {
-                this.semaphore.WaitOne();
-
                 this.deviceId = serialDeviceId;
                 this.serialDevice = await SerialDevice.FromIdAsync(serialDeviceId);
 
@@ -77,13 +77,13 @@ namespace line_sensor.data_collector.logic
             {
                 this.logger.Error($"'{nameof(serialDeviceId)}' get position controller status request timed out");
                 DisconnectUnsafe();
-                return PositionControllerStatus.CS_COMMUNICATION_TIMEOUT;
+                return PositionControllerStatus.CS_ERR_COMMUNICATION_TIMEOUT;
             }
             catch (Exception e)
             {
                 this.logger.Error(e, $"unexpected exception while getting '{nameof(serialDeviceId)}' position controller status");
                 DisconnectUnsafe();
-                return PositionControllerStatus.CS_UNEXPECTED_ERROR;
+                return PositionControllerStatus.CS_ERR_UNEXPECTED;
             }
             finally
             {
@@ -93,9 +93,10 @@ namespace line_sensor.data_collector.logic
 
         public void Disconnect()
         {
+            this.semaphore.WaitOne();
+
             try
             {
-                this.semaphore.WaitOne();
                 DisconnectUnsafe();
             }
             finally
@@ -138,6 +139,54 @@ namespace line_sensor.data_collector.logic
         public Task Reset()
         {
             return ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.RESET]);
+        }
+
+        public async Task<bool> StrongEmergencyStop(uint maxAttempts = 10)
+        {
+            this.semaphore.WaitOne();
+
+            try
+            {
+                if (this.serialDevice == null)
+                {
+                    return false;
+                }
+
+                for (uint i = 0; i < maxAttempts; ++i)
+                {
+                    try
+                    {
+                        PositionControllerResponse result = await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.EMERGENCY_STOP], false).ConfigureAwait(false);
+
+                        if (IsOkStatus(result.Status))
+                        {
+                            return true;
+                        }
+
+                        await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.RESET], false).ConfigureAwait(false);
+
+                        await Task.Delay(50)
+                                  .ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+                        this.logger.Error(e, $"unexpected exception while trying to emergency stop '{nameof(this.deviceId)}' position controller");
+                    }
+                }
+
+                return false;
+            }
+            finally
+            {
+                this.semaphore.Release();
+            }
+        }
+
+        public bool IsOkStatus(PositionControllerStatus status)
+        {
+            return status == PositionControllerStatus.OK ||
+                   status == PositionControllerStatus.PC_OK_BUSY ||
+                   status == PositionControllerStatus.PC_OK_EMERGENCY_STOP;
         }
 
         private static IBuffer CreateRequest(PositionControllerCommand command, PositionControllerDirection direction, uint steps, byte[] buffer)
@@ -190,7 +239,7 @@ namespace line_sensor.data_collector.logic
 
                     if (header != DATA_HEADER)
                     {
-                        return new PositionControllerResponse(PositionControllerStatus.CS_COMMUNICATION_ERROR);
+                        return new PositionControllerResponse(PositionControllerStatus.CS_ERR_COMMUNICATION);
                     }
 
                     ushort status = br.ReadUInt16();
@@ -206,7 +255,7 @@ namespace line_sensor.data_collector.logic
 
                     if (crc32.GetValue() != crc)
                     {
-                        return new PositionControllerResponse(PositionControllerStatus.CS_CRC_ERROR);
+                        return new PositionControllerResponse(PositionControllerStatus.CS_ERR_CRC);
                     }
 
                     return new PositionControllerResponse((PositionControllerStatus) status, position);
@@ -214,21 +263,24 @@ namespace line_sensor.data_collector.logic
             }
         }
 
-        private async Task<PositionControllerResponse> ExecutePrebuiltCommand(byte[] commandRequestBuffer)
+        private async Task<PositionControllerResponse> ExecutePrebuiltCommand(byte[] commandRequestBuffer, bool useLock = true)
         {
             if (commandRequestBuffer == null || commandRequestBuffer.Length != REQUEST_LENGTH)
             {
                 this.logger.Error($"'{nameof(commandRequestBuffer)}' parameter is null or too small");
-                return new PositionControllerResponse(PositionControllerStatus.CS_INVALID_ARGUMENT);
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_INVALID_ARGUMENT);
+            }
+
+            if (useLock)
+            {
+                this.semaphore.WaitOne();
             }
 
             try
             {
-                this.semaphore.WaitOne();
-
                 if (this.serialDevice == null)
                 {
-                    return new PositionControllerResponse(PositionControllerStatus.CS_DEVICE_NOT_CONNTECTED);
+                    return new PositionControllerResponse(PositionControllerStatus.CS_ERR_DEVICE_NOT_CONNTECTED);
                 }
 
                 using (CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(1)))
@@ -248,17 +300,20 @@ namespace line_sensor.data_collector.logic
             {
                 this.logger.Error($"'{nameof(this.deviceId)}' position controller calibration request timed out");
                 DisconnectUnsafe();
-                return new PositionControllerResponse(PositionControllerStatus.CS_COMMUNICATION_TIMEOUT);
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_COMMUNICATION_TIMEOUT);
             }
             catch (Exception e)
             {
                 this.logger.Error(e, $"unexpected exception while calibrating '{nameof(this.deviceId)}' position controller");
                 DisconnectUnsafe();
-                return new PositionControllerResponse(PositionControllerStatus.CS_UNEXPECTED_ERROR);
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_UNEXPECTED);
             }
             finally
             {
-                this.semaphore.Release();
+                if (useLock)
+                {
+                    this.semaphore.Release();
+                }
             }
         }
 

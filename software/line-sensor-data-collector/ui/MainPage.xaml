@@ -10,7 +10,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="Page_Loaded"
     d:DesignWidth="640"
-    d:DesignHeight="480"
+    d:DesignHeight="480" FocusVisualPrimaryBrush="Black" Foreground="White"
 >
     <Page.Resources>
         <shared:BooleanNotConverter x:Key="NotConverter" />
@@ -21,99 +21,359 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0"
-                   Grid.Column="0"
-                   Text="Serial Devices:"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Right"
-                   Margin="10,5,0,5"
-        />
-        <ComboBox Grid.Row="0"
-                  Grid.Column="1"
-                  ItemsSource="{Binding AllSupportedSerialDevices}"
-                  SelectedItem="{Binding SelectedSerialDevice, Mode=TwoWay}"
-                  IsEnabled="{Binding ConnectedPositionControllerDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
-                  Margin="10,5,0,5"
-                  HorizontalAlignment="Stretch"
+        <Grid Grid.Row="0"
+              Grid.Column="0"
         >
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        <StackPanel Orientation="Horizontal"
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    Margin="10,5,10,5"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-        >
-            <Image Width="32"
-                   Height="32"
-                   VerticalAlignment="Center"
-                   Source="/Assets/spinning.gif"
-                   Visibility="{Binding SerialDeviceScanningIndicatorVisible}"
-                   Margin="0,0,10,0"
-            />
-            <Button Content="{Binding ConnectedPositionControllerDeviceModel.Title}"
-                    Command="{Binding SerialDeviceConnectDisconnectCommand}"
-                    CommandParameter="{Binding}"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-            />
-        </StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="1"
-                   Grid.Column="0"
-                   Text="Bluetooth LE Devices:"
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       Text="Serial Devices:"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,0,0,0"
+            />
+
+            <ComboBox Grid.Row="0"
+                      Grid.Column="1"
+                      Margin="10,5,10,5"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding AllSupportedSerialDevices}"
+                      SelectedItem="{Binding SelectedSerialDevice, Mode=TwoWay}"
+                      IsEnabled="{Binding IsAllSupportedSerialDevicesEnabled}"
+            >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Image Grid.Row="0"
+                   Grid.Column="2"
+                   Source="/Assets/spinning.gif"
+                   HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   HorizontalAlignment="Right"
-                   Margin="10,5,0,5"
-        />
-        <ComboBox Grid.Row="1"
-                  Grid.Column="1"
-                  ItemsSource="{Binding AllSupportedBleDevices}"
-                  SelectedItem="{Binding SelectedBleDevice, Mode=TwoWay}"
-                  IsEnabled="{Binding ConnectedWirelessLineSensorDeviceModel.IsConnected, Converter={StaticResource NotConverter}}"
-                  Margin="10,5,0,5"
-                  HorizontalAlignment="Stretch"
-        >
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        <StackPanel Orientation="Horizontal"
-                    Grid.Row="1"
+                   Visibility="{Binding SerialDeviceScanningIndicatorVisible}"
+            />
+
+            <Button Grid.Row="0"
                     Grid.Column="3"
-                    Margin="10,5,10,5"
-                    HorizontalAlignment="Right"
+                    Grid.ColumnSpan="2"
+                    Margin="10,10,10,5"
                     VerticalAlignment="Center"
-        >
-            <Image Width="32"
-                   Height="32"
+                    HorizontalAlignment="Stretch"
+                    Content="{Binding PositionControllerDeviceModel.ConnectDisconnectTitle}"
+                    Command="{Binding SerialDeviceToggleConnectionCommand}"
+                    CommandParameter="{Binding}"
+            />
+
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Margin="10,0,0,0"
+                       Text="Bluetooth LE Devices:"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+            />
+
+            <ComboBox Grid.Row="1"
+                      Grid.Column="1"
+                      HorizontalAlignment="Stretch"
+                      Margin="10,5,10,5"
+                      ItemsSource="{Binding AllSupportedBleDevices}"
+                      SelectedItem="{Binding SelectedBleDevice, Mode=TwoWay}"
+                      IsEnabled="{Binding IsAllSupportedBleDevicesEnabled}"
+            >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Image Grid.Row="1"
+                   Grid.Column="2"
                    VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
                    Source="/Assets/spinning.gif"
                    Visibility="{Binding BleDeviceScanningIndicatorVisible}"
-                   Margin="0,0,10,0"
             />
-            <Button Content="{Binding ConnectedWirelessLineSensorDeviceModel.Title}"
-                    Command="{Binding BleDeviceConnectDisconnectCommand}"
+
+            <Button Grid.Row="1"
+                    Grid.Column="3"
+                    Margin="10,5,5,5"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Content="{Binding BleDeviceToggleScanningCommandTitle}"
+                    Command="{Binding BleDeviceToggleScanningCommand}"
                     CommandParameter="{Binding}"
+            />
+
+            <Button Grid.Row="1"
+                    Grid.Column="4"
+                    Margin="5,5,10,5"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Content="{Binding BleDeviceToggleConnectionCommandTitle}"
+                    Command="{Binding BleDeviceToggleConnectionCommand}"
+                    CommandParameter="{Binding}"
+            />
+        </Grid>
+
+        <Grid Grid.Row="2"
+              Grid.Column="0"
+        >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Margin="10,10,5,10"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    Background="Green"
+                    Foreground="Black"
+                    FontWeight="Bold"
+                    FontSize="16"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding CollectDataCommand}"
+                    CommandParameter="{Binding}"
+            >
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                    Collect Data
+                </TextBlock>
+            </Button>
+
+            <Button Margin="5,10,5,10"
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="1"
+                    Background="Red"
+                    Foreground="Black"
+                    FontWeight="Bold"
+                    FontSize="16"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding PositionControllerDeviceModel.EmergencyStopCommand}"
+                    CommandParameter="{Binding PositionControllerDeviceModel}"
+            >
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                    EMERGENCY STOP
+                </TextBlock>
+            </Button>
+
+            <Button Margin="5,10,10,10"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Background="Blue" 
+                    Foreground="Yellow"
+                    FontSize="12"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
+                    Command="{Binding PositionControllerDeviceModel.ResetPositionControllerCommand}"
+                    CommandParameter="{Binding PositionControllerDeviceModel}"
+            >
+                Reset Position Controller
+            </Button>
+
+            <Button Margin="5,10,10,10"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Background="Blue" 
+                    Foreground="Yellow"
+                    FontSize="12"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Command="{Binding ConnectedWirelessLineSensorDeviceModel.ResetWirelessLineSensorCommand}"
+                    CommandParameter="{Binding ConnectedWirelessLineSensorDeviceModel}"
+            >
+                Reset Wireless Line Sensor
+            </Button>
+
+            <Button Margin="5,10,10,10"
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Background="Blue" 
+                    Foreground="Yellow"
+                    FontSize="12"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Command="{Binding ConnectedWirelessLineSensorDeviceModel.ResetLineSensorCommand}"
+                    CommandParameter="{Binding ConnectedWirelessLineSensorDeviceModel}"
+            >
+                Reset Line Sensor
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="3"
+              Grid.Column="0"
+              Background="#FF2E2E2E"
+        >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,5,0,5"
+            >
+                Position Controller Total:
+            </TextBlock>
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     IsReadOnly="True"
+                     Margin="10,5,0,5"
+                     Text="{Binding PositionControllerDeviceModel.PacketsTotalNumber}"
             />
-        </StackPanel>
+
+            <TextBlock Grid.Row="0"
+                       Grid.Column="2"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,5,0,5"
+            >
+                CRC:
+            </TextBlock>
+            <TextBox Grid.Row="0"
+                     Grid.Column="3"
+                     IsReadOnly="True"
+                     Margin="10,5,0,5"
+                     Text="{Binding PositionControllerDeviceModel.PacketsCrcFailuresNumber}"
+            />
+
+            <TextBlock Grid.Row="0"
+                       Grid.Column="4"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,5,0,5"
+            >
+                Failures:
+            </TextBlock>
+            <TextBox Grid.Row="0"
+                     Grid.Column="5"
+                     IsReadOnly="True"
+                     Margin="10,5,10,5"
+                     Text="{Binding PositionControllerDeviceModel.PacketsFailuresNumber}"
+            />
+
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,5,0,5"
+            >
+                Line Sensor Total:
+            </TextBlock>
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     IsReadOnly="True"
+                     Margin="10,5,0,5"
+                     Text="{Binding ConnectedWirelessLineSensorDeviceModel.PacketsTotalNumber}"
+            />
+
+            <TextBlock Grid.Row="1"
+                       Grid.Column="2"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,5,0,5"
+            >
+                CRC:
+            </TextBlock>
+            <TextBox Grid.Row="1"
+                     Grid.Column="3"
+                     IsReadOnly="True"
+                     Margin="10,5,0,5"
+                     Text="{Binding ConnectedWirelessLineSensorDeviceModel.PacketsCrcFailuresNumber}"
+            />
+
+            <TextBlock Grid.Row="1"
+                       Grid.Column="4"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Margin="10,5,0,5"
+            >
+                Failures:
+            </TextBlock>
+            <TextBox Grid.Row="1"
+                     Grid.Column="5"
+                     IsReadOnly="True"
+                     Margin="10,5,10,5"
+                     Text="{Binding ConnectedWirelessLineSensorDeviceModel.PacketsFailuresNumber}"
+            />
+        </Grid>
+
+        <ScrollViewer Grid.Row="4"
+                      Grid.Column="0"
+                      Margin="10,10,10,5"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollMode="Auto"
+                      VerticalScrollMode="Auto" 
+        >
+            <ListView ItemsSource="{Binding LogEntries}">
+            </ListView>
+        </ScrollViewer>
+
+        <Grid Grid.Row="5"
+              Grid.Column="0"
+              Margin="10,5,10,10"
+        >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"
+            >
+                Saving to:
+            </TextBlock>
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     HorizontalAlignment="Stretch"
+                     IsReadOnly="True"
+            />
+        </Grid>
     </Grid>
 </Page>

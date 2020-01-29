@@ -22,10 +22,11 @@ typedef enum
 typedef enum
 {
     OK                      = 0x0000,
-    ERR_COMMUNICATION_ERROR = 0x0001,
-    ERR_UNKNOWN_COMMAND     = 0x0002,
-    ERR_BUSY                = 0x0004,
-    ERR_EMERGENCY_STOP      = 0x0008,
+    OK_BUSY                 = 0x0001,
+    OK_EMERGENCY_STOP       = 0x0002,
+
+    ERR_COMMUNICATION_ERROR = 0x0004,
+    ERR_UNKNOWN_COMMAND     = 0x0008,
     ERR_CRC                 = 0x0010,
 } commandResultFlags_t;
 

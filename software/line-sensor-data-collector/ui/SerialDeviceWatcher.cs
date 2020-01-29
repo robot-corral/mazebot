@@ -95,10 +95,9 @@ namespace line_sensor.data_collector.ui
                     {
                         if (this.model.AllSupportedSerialDevices[i].Id == deviceInformationUpdate.Id)
                         {
-                            if (this.model.ConnectedPositionControllerDeviceModel.Id == deviceInformationUpdate.Id)
+                            if (this.model.PositionControllerDeviceModel.Id == deviceInformationUpdate.Id)
                             {
-                                // disconnect
-                                this.model.SerialDeviceConnectDisconnectCommand.Execute(this);
+                                this.model.PositionControllerDeviceModel.DisconnectCommand.Execute(this.model.PositionControllerDeviceModel);
                             }
                             if (this.model.SelectedSerialDevice != null && this.model.SelectedSerialDevice.Id == deviceInformationUpdate.Id)
                             {

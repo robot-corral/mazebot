@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace line_sensor.data_collector.shared
@@ -13,18 +12,36 @@ namespace line_sensor.data_collector.shared
             CanExecuteChanged?.Invoke(parameter, null);
         }
 
-        protected abstract bool CanExecuteImpl(T parameter);
+        public abstract bool CanExecute(T parameter);
 
-        protected abstract void ExecuteImpl(T parameter);
+        public abstract void Execute(T parameter);
 
-        public bool CanExecute(object parameter)
+        bool ICommand.CanExecute(object parameter)
         {
-            return CanExecuteImpl((T) parameter);
+            if (parameter == null)
+            {
+                return CanExecute(default(T));
+            }
+            else
+            {
+                if (parameter is T == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    return CanExecute((T) parameter);
+                }
+            }
         }
 
-        public void Execute(object parameter)
+        void ICommand.Execute(object parameter)
         {
-            ExecuteImpl((T) parameter);
+            if (!((ICommand) this).CanExecute(parameter))
+            {
+                return;
+            }
+            Execute((T) parameter);
         }
     }
 }

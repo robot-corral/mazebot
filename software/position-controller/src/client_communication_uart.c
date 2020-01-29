@@ -30,11 +30,11 @@ void processCommand(volatile clientUartRequest_t* pRequest)
 
     if (isPositionControllerBusy())
     {
-        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_BUSY;
+        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_BUSY;
     }
     if (isPositionControllerInEmergency())
     {
-        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_EMERGENCY_STOP;
+        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_EMERGENCY_STOP;
     }
 
     const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
@@ -58,14 +58,14 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         case MCMD_EMERGENCY_STOP:
         {
             positionControllerEmergencyStop();
-            g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_EMERGENCY_STOP;
+            g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_EMERGENCY_STOP;
             break;
         }
         case MCMD_MOVE_IF_IDLE:
         {
             if (!setPosition(pRequest->unpacked.direction, pRequest->unpacked.steps))
             {
-                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_BUSY;
+                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_BUSY;
             }
             break;
         }
@@ -73,7 +73,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         {
             if (!calibratePositionController())
             {
-                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_BUSY;
+                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_BUSY;
             }
             break;
         }

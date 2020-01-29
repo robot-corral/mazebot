@@ -14,6 +14,7 @@ namespace line_sensor.data_collector.ui
 
         private void SetDisplayName(string id, string portName)
         {
+            // TODO update once serial device is connected
             Match match = DEVICE_UNIQUE_ID_REGEX.Match(id);
 
             if (match.Success)

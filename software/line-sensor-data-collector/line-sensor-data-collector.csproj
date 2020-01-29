@@ -122,16 +122,26 @@
     <Compile Include="logic\IWirelessLineSensor.cs" />
     <Compile Include="logic\LineSensorData.cs" />
     <Compile Include="logic\PositionController.cs" />
+    <Compile Include="logic\PositionControllerCommand.cs" />
+    <Compile Include="logic\PositionControllerDirection.cs" />
+    <Compile Include="logic\PositionControllerResponse.cs" />
+    <Compile Include="logic\PositionControllerStatus.cs" />
     <Compile Include="logic\WirelessLineSensor.cs" />
     <Compile Include="shared\BaseCommandWithParameter.cs" />
     <Compile Include="shared\BooleanNotConverter.cs" />
+    <Compile Include="shared\Stm32Crc32.cs" />
     <Compile Include="shared\ILogger.cs" />
     <Compile Include="shared\Logger.cs" />
-    <Compile Include="ui\BleDeviceConnectDisconnectCommand.cs" />
+    <Compile Include="ui\log\ILogEntryModel.cs" />
+    <Compile Include="ui\BleDeviceToggleConnectionCommand.cs" />
     <Compile Include="ui\BleDeviceModel.cs" />
+    <Compile Include="ui\BleDeviceToggleScanningCommand.cs" />
     <Compile Include="ui\BleDeviceWatcher.cs" />
+    <Compile Include="ui\CollectDataCommand.cs" />
     <Compile Include="ui\ConnectedWirelessLineSensorDeviceModel.cs" />
-    <Compile Include="ui\ConnectedPositionControllerDeviceModel.cs" />
+    <Compile Include="ui\ui_component\IUiComponent.cs" />
+    <Compile Include="ui\position_controller\IPositionControllerDeviceModel.cs" />
+    <Compile Include="ui\position_controller\PositionControllerDeviceModel.cs" />
     <Compile Include="ui\IDeviceModel.cs" />
     <Compile Include="logic\IPositionController.cs" />
     <Compile Include="ui\MainModel.cs" />
@@ -139,9 +149,14 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ui\SerialDeviceConnectDisconnectCommand.cs" />
+    <Compile Include="ui\position_controller\PositionControllerDisconnectCommand.cs" />
+    <Compile Include="ui\position_controller\PositionControllerEmergencyStopCommand.cs" />
+    <Compile Include="ui\position_controller\PositionControllerErrorStatusLogEntry.cs" />
+    <Compile Include="ui\position_controller\PositionControllerResetCommand.cs" />
+    <Compile Include="ui\SerialDeviceToggleConnectionCommand.cs" />
     <Compile Include="ui\SerialDeviceModel.cs" />
     <Compile Include="ui\SerialDeviceWatcher.cs" />
+    <Compile Include="ui\ui_component\UiComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

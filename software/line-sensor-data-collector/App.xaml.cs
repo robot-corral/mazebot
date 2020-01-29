@@ -16,6 +16,7 @@ namespace line_sensor.data_collector
         static App()
         {
             logger.Initialize();
+            MainModel = new MainModel(logger);
         }
 
         public App()
@@ -26,7 +27,9 @@ namespace line_sensor.data_collector
             UnhandledException += OnUnhandledException;
         }
 
-        public static ILogger Logger { get { return logger;  } }
+        public static ILogger Logger { get { return logger; } }
+
+        public static MainModel MainModel { get; }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
@@ -76,8 +79,31 @@ namespace line_sensor.data_collector
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+            DisconnectAllDevices();
             Task.WaitAll(logger.OnSuspending());
             deferral.Complete();
+        }
+
+        private void DisconnectAllDevices()
+        {
+            MainModel.PositionControllerDeviceModel.EmergencyStopCommand.Execute(MainModel.PositionControllerDeviceModel);
+            MainModel.PositionControllerDeviceModel.DisconnectCommand.Execute(MainModel.PositionControllerDeviceModel);
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // TODO pkrupets
+            // MainModel.BleDeviceDisconnectCommand.Execute(MainModel);
         }
 
         private static readonly Logger logger = new Logger();

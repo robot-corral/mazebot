@@ -7,15 +7,14 @@ namespace line_sensor.data_collector.ui
     {
         public MainPage()
         {
-            MainModel model = new MainModel(Dispatcher, App.Logger);
-            DataContext = model;
-            this.model = model;
+            DataContext = App.MainModel;
+            this.model = App.MainModel;
             InitializeComponent();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            this.model.Initialize();
+            this.model.Initialize(Dispatcher);
         }
 
         private readonly MainModel model;

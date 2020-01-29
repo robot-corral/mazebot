@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Input;
 
 namespace line_sensor.data_collector.ui
 {
@@ -7,14 +8,6 @@ namespace line_sensor.data_collector.ui
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Id { get; set; }
-
-        public string Title
-        {
-            get
-            {
-                return IsConnected ? "Disconnect" : "Connect";
-            }
-        }
 
         public bool IsConnected
         {
@@ -25,11 +18,58 @@ namespace line_sensor.data_collector.ui
                 {
                     this.isConnected = value;
                     PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(IsConnected)));
-                    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
                 }
             }
         }
 
+        public int PacketsTotalNumber
+        {
+            get { return this.packetsTotalNumber; }
+            set
+            {
+                if (this.packetsTotalNumber != value)
+                {
+                    this.packetsTotalNumber = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketsTotalNumber)));
+                }
+            }
+        }
+
+        public int PacketsCrcFailuresNumber
+        {
+            get { return this.packetsCrcFailuresNumber; }
+            set
+            {
+                if (this.packetsCrcFailuresNumber != value)
+                {
+                    this.packetsCrcFailuresNumber = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketsCrcFailuresNumber)));
+                }
+            }
+        }
+
+        public int PacketsFailuresNumber
+        {
+            get { return this.packetsFailuresNumber; }
+            set
+            {
+                if (this.packetsFailuresNumber != value)
+                {
+                    this.packetsFailuresNumber = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketsFailuresNumber)));
+                }
+            }
+        }
+
+        // TODO pkrupets
+        public ICommand ResetLineSensorCommand { get; }
+
+        // TODO pkrupets
+        public ICommand ResetWirelessLineSensorCommand { get; }
+
         private bool isConnected;
+        private int packetsTotalNumber;
+        private int packetsFailuresNumber;
+        private int packetsCrcFailuresNumber;
     }
 }

@@ -5,19 +5,19 @@ using line_sensor.data_collector.shared;
 
 namespace line_sensor.data_collector.ui
 {
-    public class BleDeviceConnectDisconnectCommand : BaseCommandWithParameter<MainModel>
+    public class BleDeviceToggleConnectionCommand : BaseCommandWithParameter<MainModel>
     {
-        public BleDeviceConnectDisconnectCommand(IWirelessLineSensor wirelessLineSensor)
+        public BleDeviceToggleConnectionCommand(IWirelessLineSensor wirelessLineSensor)
         {
             this.wirelessLineSensor = wirelessLineSensor ?? throw new ArgumentNullException(nameof(wirelessLineSensor));
         }
 
-        protected override bool CanExecuteImpl(MainModel parameter)
+        public override bool CanExecute(MainModel parameter)
         {
             return !this.isBusy && parameter != null && parameter.SelectedBleDevice != null;
         }
 
-        protected override void ExecuteImpl(MainModel parameter)
+        public override void Execute(MainModel parameter)
         {
             if (parameter == null ||
                 parameter.SelectedSerialDevice == null)
@@ -25,9 +25,10 @@ namespace line_sensor.data_collector.ui
                 return;
             }
 
-            if (this.wirelessLineSensor.IsConnected)
+            if (parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected)
             {
-                // TODO add disconnect
+                this.wirelessLineSensor.Disconnect();
+                parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected = false;
             }
             else
             {
