@@ -5,8 +5,9 @@ namespace line_sensor.data_collector.ui.position_controller
 {
     public class PositionControllerErrorStatusLogEntry : ILogEntryModel
     {
-        public PositionControllerErrorStatusLogEntry(PositionControllerStatus status)
+        public PositionControllerErrorStatusLogEntry(string message, PositionControllerStatus status)
         {
+            // TODO pkrupets
         }
     }
 }

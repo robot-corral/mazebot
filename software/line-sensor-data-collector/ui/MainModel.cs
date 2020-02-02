@@ -3,11 +3,13 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+
 using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
 using line_sensor.data_collector.ui.log;
 using line_sensor.data_collector.ui.position_controller;
 using line_sensor.data_collector.ui.ui_component;
+using line_sensor.data_collector.ui.wireless_line_sensor;
 
 namespace line_sensor.data_collector.ui
 {
@@ -28,12 +30,12 @@ namespace line_sensor.data_collector.ui
             this.BleDeviceToggleScanningCommand = new BleDeviceToggleScanningCommand();
             this.BleDeviceToggleConnectionCommand = new BleDeviceToggleConnectionCommand(this.wirelessLineSensor);
 
-            this.positionControllerDeviceModel = new PositionControllerDeviceModel(this, this.positionController);
+            this.CollectDataCommand = new CollectDataCommand(this.positionController, this.wirelessLineSensor);
+
+            this.positionControllerDeviceModel = new PositionControllerDeviceModel(this.positionController);
             this.positionControllerDeviceModel.PropertyChanged += PositionControllerDeviceModelChanged;
 
-            this.ConnectedWirelessLineSensorDeviceModel = new ConnectedWirelessLineSensorDeviceModel();
-
-            this.CollectDataCommand = new CollectDataCommand(this.positionController, this.wirelessLineSensor);
+            this.wirelessLineSensorDeviceModel = new WirelessLineSensorDeviceModel(this, this.wirelessLineSensor);
 
             this.LogEntries = new ObservableCollection<ILogEntryModel>();
 
@@ -44,6 +46,7 @@ namespace line_sensor.data_collector.ui
 
         public void Initialize(CoreDispatcher dispatcher)
         {
+            this.positionControllerDeviceModel.Initialize(this, dispatcher);
             this.bleDeviceWatcher = new BleDeviceWatcher(dispatcher, this);
             this.serialDeviceWatcher = new SerialDeviceWatcher(dispatcher, this);
             this.bleDeviceWatcher.Start();
@@ -248,7 +251,7 @@ namespace line_sensor.data_collector.ui
 
         public IPositionControllerDeviceModel PositionControllerDeviceModel { get { return this.positionControllerDeviceModel; } }
 
-        public ConnectedWirelessLineSensorDeviceModel ConnectedWirelessLineSensorDeviceModel { get; }
+        public IWirelessLineSensorDeviceModel WirelessLineSensorDeviceModel { get { return this.wirelessLineSensorDeviceModel; } }
 
         public BaseCommandWithParameter<MainModel> CollectDataCommand { get; }
 
@@ -288,9 +291,10 @@ namespace line_sensor.data_collector.ui
         private BleDeviceWatcher bleDeviceWatcher;
         private SerialDeviceWatcher serialDeviceWatcher;
 
-        private PositionControllerDeviceModel positionControllerDeviceModel;
-
         private readonly IPositionController positionController;
         private readonly IWirelessLineSensor wirelessLineSensor;
+
+        private readonly PositionControllerDeviceModel positionControllerDeviceModel;
+        private readonly WirelessLineSensorDeviceModel wirelessLineSensorDeviceModel;
     }
 }

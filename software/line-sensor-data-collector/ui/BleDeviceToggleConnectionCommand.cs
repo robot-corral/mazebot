@@ -19,51 +19,51 @@ namespace line_sensor.data_collector.ui
 
         public override void Execute(MainModel parameter)
         {
-            if (parameter == null ||
-                parameter.SelectedSerialDevice == null)
-            {
-                return;
-            }
+            //if (parameter == null ||
+            //    parameter.SelectedSerialDevice == null)
+            //{
+            //    return;
+            //}
 
-            if (parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected)
-            {
-                this.wirelessLineSensor.Disconnect();
-                parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected = false;
-            }
-            else
-            {
-                SetIsBusy(true, parameter);
+            //if (parameter.WirelessLineSensorDeviceModel.IsConnected)
+            //{
+            //    this.wirelessLineSensor.Disconnect();
+            //    parameter.WirelessLineSensorDeviceModel.IsConnected = false;
+            //}
+            //else
+            //{
+            //    SetIsBusy(true, parameter);
 
-                BleDeviceModel bleDeviceModel = parameter.SelectedBleDevice;
+            //    BleDeviceModel bleDeviceModel = parameter.SelectedBleDevice;
 
-                if (bleDeviceModel == null)
-                {
-                    SetIsBusy(false, parameter);
-                    return;
-                }
+            //    if (bleDeviceModel == null)
+            //    {
+            //        SetIsBusy(false, parameter);
+            //        return;
+            //    }
 
-                bleDeviceModel.IsBusy = true;
+            //    bleDeviceModel.IsBusy = true;
 
-                this.wirelessLineSensor.TryToConnect(bleDeviceModel.Id)
-                    .ContinueWith(t =>
-                    {
-                        try
-                        {
-                            if (t.Result)
-                            {
-                                parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected = true;
-                            }
-                            else
-                            {
-                                // TODO handle errors
-                            }
-                        }
-                        finally
-                        {
-                            SetIsBusy(false, parameter);
-                        }
-                    }, TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
-            }
+            //    this.wirelessLineSensor.TryToConnect(bleDeviceModel.Id)
+            //        .ContinueWith(t =>
+            //        {
+            //            try
+            //            {
+            //                if (t.Result)
+            //                {
+            //                    parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected = true;
+            //                }
+            //                else
+            //                {
+            //                    // TODO handle errors
+            //                }
+            //            }
+            //            finally
+            //            {
+            //                SetIsBusy(false, parameter);
+            //            }
+            //        }, TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
+            //}
         }
 
         private void SetIsBusy(bool isBusy, MainModel parameter)

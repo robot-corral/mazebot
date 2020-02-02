@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
-using line_sensor.data_collector.ui.position_controller;
 using line_sensor.data_collector.ui.ui_component;
 
 namespace line_sensor.data_collector.ui
@@ -42,21 +41,8 @@ namespace line_sensor.data_collector.ui
                 this.positionController.TryToConnect(selectedSerialDevice.Id)
                     .ContinueWith(t =>
                     {
-                        try
-                        {
-                            if (this.positionController.IsOkStatus(t.Result))
-                            {
-                                parameter.PositionControllerDeviceModel.Connected(selectedSerialDevice.Id);
-                            }
-                            else
-                            {
-                                parameter.LogEntries.Add(new PositionControllerErrorStatusLogEntry(t.Result));
-                            }
-                        }
-                        finally
-                        {
-                            parameter.SetBusy(UiComponent.ALL_SERIAL_DEVICES | UiComponent.POSITION_CONTROLLER, false);
-                        }
+                        parameter.PositionControllerDeviceModel.Connected(selectedSerialDevice.Id, t.Result);
+                        parameter.SetBusy(UiComponent.ALL_SERIAL_DEVICES | UiComponent.POSITION_CONTROLLER, false);
                     }, TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
             }
         }

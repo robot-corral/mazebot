@@ -1,10 +1,16 @@
-﻿using System.ComponentModel;
+﻿using line_sensor.data_collector.logic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace line_sensor.data_collector.ui
+namespace line_sensor.data_collector.ui.wireless_line_sensor
 {
-    public class ConnectedWirelessLineSensorDeviceModel : INotifyPropertyChanged
+    public class WirelessLineSensorDeviceModel : IWirelessLineSensorDeviceModel
     {
+        public WirelessLineSensorDeviceModel(MainModel mainModel, IWirelessLineSensor wirelessLineSensor)
+        {
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Id { get; set; }
@@ -59,6 +65,11 @@ namespace line_sensor.data_collector.ui
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketsFailuresNumber)));
                 }
             }
+        }
+
+        public Task Disconnect()
+        {
+            return Task.CompletedTask;
         }
 
         // TODO pkrupets

@@ -1,4 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
+using Windows.UI.Core;
+
+using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
 using line_sensor.data_collector.ui.ui_component;
 
@@ -8,11 +12,15 @@ namespace line_sensor.data_collector.ui.position_controller
     {
         string Id { get; }
 
-        bool IsBusy { get; }
-
         bool IsConnected { get; }
 
+        bool IsDeviceBusy { get; }
+
+        bool IsEmergencyStop { get; }
+
         string ConnectDisconnectTitle { get; }
+
+        double Position { get; }
 
         int PacketsTotalNumber { get; set; }
 
@@ -20,13 +28,26 @@ namespace line_sensor.data_collector.ui.position_controller
 
         int PacketsFailuresNumber { get; set; }
 
+        CoreDispatcher Dispatcher { get; }
+
+        /*
+         * commands below aren't guaranteed to finish execution when Execute method exits (they
+         * can use busy UI flags to continue working without blocking UI thread).
+         */
+
+        BaseCommandWithParameter<IPositionControllerDeviceModel> CalibratePositionControllerCommand { get; }
+
         BaseCommandWithParameter<IPositionControllerDeviceModel> DisconnectCommand { get; }
 
         BaseCommandWithParameter<IPositionControllerDeviceModel> EmergencyStopCommand { get; }
 
         BaseCommandWithParameter<IPositionControllerDeviceModel> ResetPositionControllerCommand { get; }
 
-        void Connected(string deviceId);
+        Task Disconnect();
+
+        void SetStatus(PositionControllerCommand fromCommand, PositionControllerResponse status);
+
+        void Connected(string deviceId, PositionControllerResponse status);
 
         UiComponent GetBusyUIComponents();
 

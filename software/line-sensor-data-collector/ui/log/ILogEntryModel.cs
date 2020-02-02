@@ -2,5 +2,8 @@
 {
     public interface ILogEntryModel
     {
+        string Title { get; }
+
+        string Details { get; }
     }
 }

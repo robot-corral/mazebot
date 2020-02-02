@@ -23,11 +23,13 @@ namespace line_sensor.data_collector.logic
          * these are errors experienced by c# application
          */
 
-        CS_ERR_DEVICE_NOT_CONNTECTED = 0x0400,
-        CS_ERR_COMMUNICATION         = 0x0800,
-        CS_ERR_CRC                   = 0x1000,
-        CS_ERR_COMMUNICATION_TIMEOUT = 0x2000,
-        CS_ERR_INVALID_ARGUMENT      = 0x4000,
-        CS_ERR_UNEXPECTED            = 0x8000,
+        CS_ERR_CALIBRATION_TIMEOUT       = 0x0100,
+        CS_ERR_GAVE_UP_EXECUTING_COMMAND = 0x0200,
+        CS_ERR_DEVICE_NOT_CONNTECTED     = 0x0400,
+        CS_ERR_COMMUNICATION             = 0x0800,
+        CS_ERR_CRC                       = 0x1000,
+        CS_ERR_COMMUNICATION_TIMEOUT     = 0x2000,
+        CS_ERR_INVALID_ARGUMENT          = 0x4000,
+        CS_ERR_UNEXPECTED                = 0x8000,
     }
 }

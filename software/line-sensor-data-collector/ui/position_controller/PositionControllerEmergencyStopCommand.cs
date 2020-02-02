@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
 using line_sensor.data_collector.ui.ui_component;
@@ -17,7 +18,7 @@ namespace line_sensor.data_collector.ui.position_controller
         {
             return parameter != null &&
                    parameter.IsConnected &&
-                   parameter.IsBusy == false;
+                   (parameter.GetBusyUIComponents() & UiComponent.POSITION_CONTROLLER) == 0;
         }
 
         public override void Execute(IPositionControllerDeviceModel parameter)
@@ -32,15 +33,7 @@ namespace line_sensor.data_collector.ui.position_controller
             this.positionController.StrongEmergencyStop()
                 .ContinueWith(t =>
                               {
-                                  if (t.Result)
-                                  {
-                                      // TODO pkrupets report success
-                                  }
-                                  else
-                                  {
-                                      // TODO pkrupets report error
-                                  }
-
+                                  parameter.SetStatus(PositionControllerCommand.EMERGENCY_STOP, t.Result);
                                   parameter.SetBusy(UiComponent.POSITION_CONTROLLER, false);
                               },
                               TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);

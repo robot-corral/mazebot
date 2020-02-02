@@ -79,31 +79,22 @@ namespace line_sensor.data_collector
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            DisconnectAllDevices();
-            Task.WaitAll(logger.OnSuspending());
-            deferral.Complete();
+
+            // make sure not to wait here as it will block a thread and prevent code from finishing executing
+
+            DisconnectAllDevices().ContinueWith(dt =>
+            {
+                logger.OnSuspending().ContinueWith(lt =>
+                {
+                    deferral.Complete();
+                });
+            });
         }
 
-        private void DisconnectAllDevices()
+        private Task DisconnectAllDevices()
         {
-            MainModel.PositionControllerDeviceModel.EmergencyStopCommand.Execute(MainModel.PositionControllerDeviceModel);
-            MainModel.PositionControllerDeviceModel.DisconnectCommand.Execute(MainModel.PositionControllerDeviceModel);
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // TODO pkrupets
-            // MainModel.BleDeviceDisconnectCommand.Execute(MainModel);
+            return Task.WhenAll(MainModel.PositionControllerDeviceModel.Disconnect(),
+                                MainModel.WirelessLineSensorDeviceModel.Disconnect());
         }
 
         private static readonly Logger logger = new Logger();

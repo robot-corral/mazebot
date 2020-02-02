@@ -36,12 +36,12 @@ namespace line_sensor.data_collector.logic
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<PositionControllerStatus> TryToConnect(string serialDeviceId)
+        public async Task<PositionControllerResponse> TryToConnect(string serialDeviceId)
         {
             if (string.IsNullOrWhiteSpace(serialDeviceId))
             {
                 this.logger.Error($"'{nameof(serialDeviceId)}' is null, empty or whitespace");
-                return PositionControllerStatus.CS_ERR_INVALID_ARGUMENT;
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_INVALID_ARGUMENT);
             }
 
             this.semaphore.WaitOne();
@@ -68,22 +68,22 @@ namespace line_sensor.data_collector.logic
                                                                          .AsTask();
 
                     await Task.WhenAll(writeTask, readTask)
-                              .ConfigureAwait(true);
+                              .ConfigureAwait(false);
                 }
 
-                return DecodeResponse(this.response).Status;
+                return DecodeResponse(this.response);
             }
             catch (TaskCanceledException)
             {
                 this.logger.Error($"'{nameof(serialDeviceId)}' get position controller status request timed out");
                 DisconnectUnsafe();
-                return PositionControllerStatus.CS_ERR_COMMUNICATION_TIMEOUT;
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_COMMUNICATION_TIMEOUT);
             }
             catch (Exception e)
             {
                 this.logger.Error(e, $"unexpected exception while getting '{nameof(serialDeviceId)}' position controller status");
                 DisconnectUnsafe();
-                return PositionControllerStatus.CS_ERR_UNEXPECTED;
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_UNEXPECTED);
             }
             finally
             {
@@ -91,12 +91,14 @@ namespace line_sensor.data_collector.logic
             }
         }
 
-        public void Disconnect()
+        public async Task Disconnect()
         {
             this.semaphore.WaitOne();
 
             try
             {
+                await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.EMERGENCY_STOP], false).ConfigureAwait(false);
+
                 DisconnectUnsafe();
             }
             finally
@@ -136,12 +138,12 @@ namespace line_sensor.data_collector.logic
             return ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.GET_STATUS]);
         }
 
-        public Task Reset()
+        public Task<PositionControllerResponse> Reset()
         {
             return ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.RESET]);
         }
 
-        public async Task<bool> StrongEmergencyStop(uint maxAttempts = 10)
+        public async Task<PositionControllerResponse> StrongEmergencyStop(uint maxAttempts = 10)
         {
             this.semaphore.WaitOne();
 
@@ -149,7 +151,7 @@ namespace line_sensor.data_collector.logic
             {
                 if (this.serialDevice == null)
                 {
-                    return false;
+                    return new PositionControllerResponse(PositionControllerStatus.CS_ERR_DEVICE_NOT_CONNTECTED);
                 }
 
                 for (uint i = 0; i < maxAttempts; ++i)
@@ -160,7 +162,7 @@ namespace line_sensor.data_collector.logic
 
                         if (IsOkStatus(result.Status))
                         {
-                            return true;
+                            return result;
                         }
 
                         await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.RESET], false).ConfigureAwait(false);
@@ -174,7 +176,7 @@ namespace line_sensor.data_collector.logic
                     }
                 }
 
-                return false;
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_GAVE_UP_EXECUTING_COMMAND);
             }
             finally
             {
@@ -184,9 +186,7 @@ namespace line_sensor.data_collector.logic
 
         public bool IsOkStatus(PositionControllerStatus status)
         {
-            return status == PositionControllerStatus.OK ||
-                   status == PositionControllerStatus.PC_OK_BUSY ||
-                   status == PositionControllerStatus.PC_OK_EMERGENCY_STOP;
+            return (status & ~(PositionControllerStatus.OK | PositionControllerStatus.PC_OK_BUSY | PositionControllerStatus.PC_OK_EMERGENCY_STOP)) == 0;
         }
 
         private static IBuffer CreateRequest(PositionControllerCommand command, PositionControllerDirection direction, uint steps, byte[] buffer)
@@ -288,10 +288,10 @@ namespace line_sensor.data_collector.logic
                     Task<IBuffer> readTask = this.serialDevice.InputStream.ReadAsync(this.response.AsBuffer(), RESPONSE_LENGTH, InputStreamOptions.None)
                                                                           .AsTask(cancellationTokenSource.Token);
                     Task<uint> writeTask = this.serialDevice.OutputStream.WriteAsync(commandRequestBuffer.AsBuffer())
-                                                                         .AsTask();
+                                                                         .AsTask(cancellationTokenSource.Token);
 
                     await Task.WhenAll(writeTask, readTask)
-                              .ConfigureAwait(true);
+                              .ConfigureAwait(false);
                 }
 
                 return DecodeResponse(this.response);
