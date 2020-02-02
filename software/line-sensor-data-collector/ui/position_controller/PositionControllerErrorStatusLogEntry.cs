@@ -5,9 +5,14 @@ namespace line_sensor.data_collector.ui.position_controller
 {
     public class PositionControllerErrorStatusLogEntry : ILogEntryModel
     {
-        public PositionControllerErrorStatusLogEntry(string message, PositionControllerStatus status)
+        public PositionControllerErrorStatusLogEntry(string message, PositionControllerCommand fromCommand, PositionControllerStatus status)
         {
-            // TODO pkrupets
+            Title = message ?? fromCommand.ToString();
+            Details = status.ToString();
         }
+
+        public string Title { get; }
+
+        public string Details { get; }
     }
 }
