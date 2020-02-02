@@ -4,12 +4,13 @@
 
 #include "spi.h"
 
-#include "mcu.h"
 #include "status.h"
 #include "watchdog.h"
 #include "global_data.h"
 #include "simple_tasks.h"
 #include "interrupt_priorities.h"
+
+#include <mcu_arm.h>
 
 #include <stm32/stm32l1xx_ll_crc.h>
 #include <stm32/stm32l1xx_ll_dma.h>
@@ -138,7 +139,7 @@ void activateSpi()
 
 void spiStart()
 {
-    const uint32_t priMask = getPriMask();
+    const uint32_t priMask = getInterruptMask();
     disableInterrupts();
 
     if (g_spiState != SPI_S_IDLE)
@@ -157,12 +158,12 @@ void spiStart()
                      SPI_CR2_RXNEIE_RX_NOT_EMPTY_INTERRUPT_ENABLED;
     }
 
-    setPriMask(priMask);
+    setInterruptMask(priMask);
 }
 
 void spiStop()
 {
-    const uint32_t priMask = getPriMask();
+    const uint32_t priMask = getInterruptMask();
     disableInterrupts();
 
     LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_5);
@@ -178,12 +179,12 @@ void spiStop()
     g_spiCurrentCommand = LSC_NONE;
     g_spiFillerHalfWordsTransmitted = 0;
 
-    setPriMask(priMask);
+    setInterruptMask(priMask);
 }
 
 void spiError(lineSensorDetailedStatus_t status)
 {
-    const uint32_t priMask = getPriMask();
+    const uint32_t priMask = getInterruptMask();
     disableInterrupts();
 
     setSensorStatusFlags(status);
@@ -201,7 +202,7 @@ void spiError(lineSensorDetailedStatus_t status)
     g_spiCurrentCommand = LSC_NONE;
     g_spiFillerHalfWordsTransmitted = 0;
 
-    setPriMask(priMask);
+    setInterruptMask(priMask);
 }
 
 void SPI2_IRQHandler(void)

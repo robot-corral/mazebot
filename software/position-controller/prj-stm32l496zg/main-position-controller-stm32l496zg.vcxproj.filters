@@ -36,7 +36,6 @@
     <ClInclude Include="..\src\interrupt_priorities.h" />
     <ClInclude Include="..\src\client_communication_uart.h" />
     <ClInclude Include="..\src\position_controller.h" />
-    <ClInclude Include="..\src\arm.h" />
     <ClInclude Include="..\src\client_communication_uart_impl.h" />
   </ItemGroup>
 </Project>

@@ -18,6 +18,9 @@
     <ClInclude Include="..\inc\rolling_values.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\mcu_arm.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\rolling_values.c">

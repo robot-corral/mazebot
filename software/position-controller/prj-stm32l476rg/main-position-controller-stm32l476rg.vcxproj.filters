@@ -17,7 +17,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\arm.h" />
     <ClInclude Include="..\src\button.h" />
     <ClInclude Include="..\src\client_communication_uart.h" />
     <ClInclude Include="..\src\global_data.h" />

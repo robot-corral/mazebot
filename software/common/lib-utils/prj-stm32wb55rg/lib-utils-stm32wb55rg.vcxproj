@@ -63,6 +63,7 @@
   <ItemGroup>
     <ClInclude Include="..\inc\consumer_producer_buffer.h" />
     <ClInclude Include="..\inc\math_utils.h" />
+    <ClInclude Include="..\inc\mcu_arm.h" />
     <ClInclude Include="..\inc\rolling_values.h" />
   </ItemGroup>
   <ItemGroup>

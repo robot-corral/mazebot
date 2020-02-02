@@ -1,9 +1,10 @@
 #include "position_controller.h"
 
-#include "arm.h"
 #include "led.h"
 #include "global_data.h"
 #include "interrupt_priorities.h"
+
+#include <mcu_arm.h>
 
 #include <stdatomic.h>
 
@@ -89,7 +90,8 @@ bool positionControllerMove(positionControllerStatus_t desired)
     bool result = false;
     // in case emergency stop happened we don't want to resume moving the motor
     // so make sure we cannot get interrupted
-    raise_interrupt_priority();
+    const uint32_t previousInterruptMask = getInterruptMask();
+    disableInterrupts();
     if (atomic_load(&g_positionControllerXStatus) == desired)
     {
         setPositionControllerMovingLedEnabled(true);
@@ -103,7 +105,7 @@ bool positionControllerMove(positionControllerStatus_t desired)
         LL_TIM_GenerateEvent_UPDATE(TIM2);
         result = true;
     }
-    restore_interrupt_priority();
+    setInterruptMask(previousInterruptMask);
     return result;
 }
 

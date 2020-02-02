@@ -104,7 +104,6 @@
     <ClInclude Include="..\src\global_settings.h" />
     <ClInclude Include="..\src\gpio.h" />
     <ClInclude Include="..\src\interrupt_priorities.h" />
-    <ClInclude Include="..\src\mcu.h" />
     <ClInclude Include="..\src\simple_tasks.h" />
     <ClInclude Include="..\src\spi.h" />
     <ClInclude Include="..\src\status.h" />

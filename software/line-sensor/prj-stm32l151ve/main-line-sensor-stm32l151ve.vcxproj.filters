@@ -94,8 +94,5 @@
     <ClInclude Include="..\src\simple_tasks.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\mcu.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -42,7 +42,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(ProjectDir)\..\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG=1;STM32L496ZG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -55,7 +55,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
     <ClCompile>
       <CLanguageStandard>GNU11</CLanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(ProjectDir)\..\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\lib-stm32l4;$(SolutionDir)\common\lib-utils\inc;$(ProjectDir)\..\inc;%(ClCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG=1;RELEASE=1;STM32L496ZG=1;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -90,7 +90,6 @@
     <ClCompile Include="..\src\system_clock.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\arm.h" />
     <ClInclude Include="..\src\button.h" />
     <ClInclude Include="..\src\client_communication_uart.h" />
     <ClInclude Include="..\src\client_communication_uart_impl.h" />
