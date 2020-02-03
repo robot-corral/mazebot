@@ -177,6 +177,7 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
                 }
                 else
                 {
+                    g_positionControllerXState = PCS_BUSY_MOVING_FORWARD;
                     positionControllerMove_Unsafe(PCD_FORWARD, pulseCount);
                 }
                 break;
@@ -190,6 +191,7 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
                 }
                 else
                 {
+                    g_positionControllerXState = PCS_BUSY_MOVING_BACKWARD;
                     positionControllerMove_Unsafe(PCD_BACKWARD, pulseCount);
                 }
                 break;
@@ -272,6 +274,7 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             positionControllerStop_Unsafe();
             // remember max position
             g_positionControllerXMaxValue = LL_TIM_GetCounter(TIM5);
+            g_positionControllerXState = PCS_BUSY_CALIBRATING_CORRECT_MAX;
             // move to the middle (this gives us opportunity to get away from
             // max limit switch and update max position if it triggers again
             positionControllerMove_Unsafe(PCD_BACKWARD, g_positionControllerXMaxValue / 2);
@@ -341,56 +344,62 @@ void TIM5_IRQHandler()
         positionControllerStop_Unsafe();
 
         const uint32_t actualPulsesProduced = LL_TIM_GetCounter(TIM5);
+        const positionControllerState_t positionControllerXState = g_positionControllerXState;
 
-        g_positionControllerXState = PCS_IDLE;
-
-        switch (g_positionControllerXDirection)
+        if (positionControllerXState == PCS_BUSY_MOVING_FORWARD ||
+            positionControllerXState == PCS_BUSY_MOVING_BACKWARD ||
+            positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
         {
-            case PCD_FORWARD:
+            g_positionControllerXState = PCS_IDLE;
+
+            switch (g_positionControllerXDirection)
             {
-                if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                case PCD_FORWARD:
                 {
-                    g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                    if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                    {
+                        g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                    }
+                    else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                    {
+                        g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                    }
+                    if (actualPulsesProduced <= g_positionControllerXMaxValue &&
+                        g_positionControllerX <= g_positionControllerXMaxValue - actualPulsesProduced)
+                    {
+                        g_positionControllerX += actualPulsesProduced;
+                    }
+                    else
+                    {
+                        positionControllerEmergencyStop_Unsafe();
+                    }
+                    break;
                 }
-                else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                case PCD_BACKWARD:
                 {
-                    g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                    if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                    {
+                        g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                    }
+                    else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                    {
+                        g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                    }
+                    if (actualPulsesProduced <= g_positionControllerX)
+                    {
+                        g_positionControllerX -= actualPulsesProduced;
+                    }
+                    else
+                    {
+                        positionControllerEmergencyStop_Unsafe();
+                    }
+                    break;
                 }
-                if (actualPulsesProduced <= g_positionControllerXMaxValue &&
-                    g_positionControllerX <= g_positionControllerXMaxValue - actualPulsesProduced)
-                {
-                    g_positionControllerX += actualPulsesProduced;
-                }
-                else
+                default:
                 {
                     positionControllerEmergencyStop_Unsafe();
+                    break;
                 }
-                break;
-            }
-            case PCD_BACKWARD:
-            {
-                if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
-                {
-                    g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
-                }
-                else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
-                {
-                    g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
-                }
-                if (actualPulsesProduced <= g_positionControllerX)
-                {
-                    g_positionControllerX -= actualPulsesProduced;
-                }
-                else
-                {
-                    positionControllerEmergencyStop_Unsafe();
-                }
-                break;
-            }
-            default:
-            {
-                positionControllerEmergencyStop_Unsafe();
-                break;
             }
         }
 
