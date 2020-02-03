@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
 using line_sensor.data_collector.ui.ui_component;

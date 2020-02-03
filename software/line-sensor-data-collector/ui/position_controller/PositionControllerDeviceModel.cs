@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+
 using Windows.UI.Core;
 
 using line_sensor.data_collector.logic;
@@ -14,11 +15,14 @@ namespace line_sensor.data_collector.ui.position_controller
         public const string TITLE_CONNECT    = "Connect";
         public const string TITLE_DISCONNECT = "Disconnect";
 
+        public const string STATUS_DISPLAY_NAME_NOT_AVAILABLE = "N/A";
+
         public PositionControllerDeviceModel(IPositionController positionController)
         {
             this.positionController = positionController ?? throw new ArgumentNullException(nameof(positionController));
 
             ConnectDisconnectTitle = TITLE_CONNECT;
+            StatusDisplayName = STATUS_DISPLAY_NAME_NOT_AVAILABLE;
             DisconnectCommand = new PositionControllerDisconnectCommand(this.positionController);
             EmergencyStopCommand = new PositionControllerEmergencyStopCommand(this.positionController);
             ResetPositionControllerCommand = new PositionControllerResetCommand(this.positionController);
@@ -74,9 +78,9 @@ namespace line_sensor.data_collector.ui.position_controller
             return this.mainModel.GetBusyUIComponents();
         }
 
-        public void SetBusy(UiComponent uiComponent, bool isBusy)
+        public UiComponent SetBusy(UiComponent uiComponent, bool isBusy)
         {
-            this.mainModel.SetBusy(uiComponent, isBusy);
+            return this.mainModel.SetBusy(uiComponent, isBusy);
         }
 
         public void SetStatus(PositionControllerCommand fromCommand, PositionControllerResponse status)
@@ -87,7 +91,7 @@ namespace line_sensor.data_collector.ui.position_controller
         private void SetStatus(string message, PositionControllerCommand fromCommand, PositionControllerResponse status)
         {
             if (status != null &&
-                status.Status == PositionControllerStatus.OK &&
+                status.Status == PositionControllerStatus.PC_OK_IDLE && /* no errors should be present for calibration to be considered successful */
                 fromCommand == PositionControllerCommand.CALIBRATE)
             {
                 this.maxPosition = status.Position;
@@ -96,19 +100,31 @@ namespace line_sensor.data_collector.ui.position_controller
             if (status == null)
             {
                 Position = double.NaN;
-                IsDeviceBusy = false;
-                IsEmergencyStop = false;
+                StatusDisplayName = STATUS_DISPLAY_NAME_NOT_AVAILABLE;
             }
             else
             {
                 Position = ((double) status.Position) * 0.025d;
-                IsDeviceBusy = (status.Status & PositionControllerStatus.PC_OK_BUSY) == PositionControllerStatus.PC_OK_BUSY;
-                IsEmergencyStop = (status.Status & PositionControllerStatus.PC_OK_EMERGENCY_STOP) == PositionControllerStatus.PC_OK_EMERGENCY_STOP;
+                StatusDisplayName = StatusToDisplayName(status.Status);
 
                 if (!this.positionController.IsOkStatus(status.Status))
                 {
                     this.mainModel.LogEntries.Add(new PositionControllerErrorStatusLogEntry(message, fromCommand, status.Status));
                 }
+            }
+        }
+
+        private string StatusToDisplayName(PositionControllerStatus status)
+        {
+            PositionControllerStatus statusWithoutErrors = status & PositionControllerStatus.PC_OK_MASK;
+
+            switch (statusWithoutErrors)
+            {
+                case PositionControllerStatus.PC_OK_RESET:          return "Reset";
+                case PositionControllerStatus.PC_OK_IDLE:           return "Idle";
+                case PositionControllerStatus.PC_OK_BUSY:           return "Busy";
+                case PositionControllerStatus.PC_OK_EMERGENCY_STOP: return "Emergency Stop";
+                default: return STATUS_DISPLAY_NAME_NOT_AVAILABLE;
             }
         }
 
@@ -143,28 +159,15 @@ namespace line_sensor.data_collector.ui.position_controller
             }
         }
 
-        public bool IsDeviceBusy
+        public string StatusDisplayName
         {
-            get { return this.isDeviceBusy; }
-            set
+            get { return this.statusDisplayName; }
+            private set
             {
-                if (this.isDeviceBusy != value)
+                if (this.statusDisplayName != value)
                 {
-                    this.isDeviceBusy = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDeviceBusy)));
-                }
-            }
-        }
-
-        public bool IsEmergencyStop
-        {
-            get { return this.isEmergencyStop; }
-            set
-            {
-                if (this.isEmergencyStop != value)
-                {
-                    this.isEmergencyStop = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsEmergencyStop)));
+                    this.statusDisplayName = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusDisplayName)));
                 }
             }
         }
@@ -245,11 +248,11 @@ namespace line_sensor.data_collector.ui.position_controller
         public BaseCommandWithParameter<IPositionControllerDeviceModel> CalibratePositionControllerCommand { get; }
 
         private bool isConnected;
-        private bool isDeviceBusy;
-        private bool isEmergencyStop;
+
+        private uint maxPosition;
 
         private string id;
-        private uint maxPosition;
+        private string statusDisplayName;
         private string connectDisconnectTitle;
 
         private double position;

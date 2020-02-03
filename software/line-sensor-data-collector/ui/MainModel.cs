@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
@@ -58,8 +59,10 @@ namespace line_sensor.data_collector.ui
             return this.busyUIComponents;
         }
 
-        public void SetBusy(UiComponent uiComponent, bool isBusy)
+        /// <returns>returns previously busy components</returns>
+        public UiComponent SetBusy(UiComponent uiComponent, bool isBusy)
         {
+            UiComponent oldBusyComponents = this.busyUIComponents;
             UiComponent changedUIComponents;
 
             if (isBusy)
@@ -84,6 +87,8 @@ namespace line_sensor.data_collector.ui
             }
 
             UpdateBusyComponents(changedUIComponents, isBusy);
+
+            return oldBusyComponents;
         }
 
         private void UpdateBusyComponents(UiComponent changedUIComponents, bool isBusy)

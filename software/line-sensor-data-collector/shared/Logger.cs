@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Windows.Foundation.Diagnostics;
 
 namespace line_sensor.data_collector.shared

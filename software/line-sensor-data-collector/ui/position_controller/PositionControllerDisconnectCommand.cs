@@ -32,7 +32,6 @@ namespace line_sensor.data_collector.ui.position_controller
                 .ContinueWith(t =>
                               {
                                   parameter.Connected(null, null);
-                                  parameter.SetStatus(PositionControllerCommand.EMERGENCY_STOP, new PositionControllerResponse(PositionControllerStatus.OK));
                                   parameter.SetBusy(UiComponent.POSITION_CONTROLLER, false);
                               },
                               TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);

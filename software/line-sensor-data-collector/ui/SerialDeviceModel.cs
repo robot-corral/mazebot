@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+
 using Windows.Devices.Enumeration;
 
 namespace line_sensor.data_collector.ui

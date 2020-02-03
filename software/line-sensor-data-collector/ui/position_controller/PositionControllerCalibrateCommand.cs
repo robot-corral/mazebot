@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using Windows.UI.Core;
 
 using line_sensor.data_collector.logic;
@@ -59,13 +60,14 @@ namespace line_sensor.data_collector.ui.position_controller
                                                       .ConfigureAwait(false);
 
                 if (!positionController.IsOkStatus(result.Status) ||
-                    (result.Status & PositionControllerStatus.PC_OK_EMERGENCY_STOP) == PositionControllerStatus.PC_OK_EMERGENCY_STOP)
+                    (result.Status & PositionControllerStatus.PC_OK_MASK) == PositionControllerStatus.PC_OK_EMERGENCY_STOP)
                 {
                     return result;
                 }
 
-                if (result.Status == PositionControllerStatus.OK)
+                if ((result.Status & PositionControllerStatus.PC_OK_MASK) == PositionControllerStatus.PC_OK_IDLE)
                 {
+                    // idle means position controller finished calibration
                     return result;
                 }
                 else

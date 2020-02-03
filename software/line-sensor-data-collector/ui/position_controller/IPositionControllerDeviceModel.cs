@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
+
 using Windows.UI.Core;
 
 using line_sensor.data_collector.logic;
@@ -14,9 +15,7 @@ namespace line_sensor.data_collector.ui.position_controller
 
         bool IsConnected { get; }
 
-        bool IsDeviceBusy { get; }
-
-        bool IsEmergencyStop { get; }
+        string StatusDisplayName { get; }
 
         string ConnectDisconnectTitle { get; }
 
@@ -51,6 +50,7 @@ namespace line_sensor.data_collector.ui.position_controller
 
         UiComponent GetBusyUIComponents();
 
-        void SetBusy(UiComponent uiComponent, bool isBusy);
+        /// <returns>previously busy components</returns>
+        UiComponent SetBusy(UiComponent uiComponent, bool isBusy);
     }
 }

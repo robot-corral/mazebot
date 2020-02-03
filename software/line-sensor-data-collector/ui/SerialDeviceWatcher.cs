@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
 using Windows.UI.Core;

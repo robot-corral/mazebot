@@ -4,8 +4,10 @@ using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Windows.Devices.SerialCommunication;
 using Windows.Storage.Streams;
+
 using line_sensor.data_collector.shared;
 
 namespace line_sensor.data_collector.logic
@@ -143,6 +145,47 @@ namespace line_sensor.data_collector.logic
             return ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.RESET]);
         }
 
+        public async Task<PositionControllerResponse> StrongReset(uint maxAttempts = 10)
+        {
+            this.semaphore.WaitOne();
+
+            try
+            {
+                if (this.serialDevice == null)
+                {
+                    return new PositionControllerResponse(PositionControllerStatus.CS_ERR_DEVICE_NOT_CONNTECTED);
+                }
+
+                for (uint i = 0; i < maxAttempts; ++i)
+                {
+                    try
+                    {
+                        await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.RESET], false).ConfigureAwait(false);
+
+                        await Task.Delay(50)
+                                  .ConfigureAwait(false);
+
+                        PositionControllerResponse result = await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.GET_STATUS], false).ConfigureAwait(false);
+
+                        if ((result.Status & PositionControllerStatus.PC_OK_MASK) == PositionControllerStatus.PC_OK_RESET)
+                        {
+                            return result;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        this.logger.Error(e, $"unexpected exception while trying to reset '{nameof(this.deviceId)}' position controller");
+                    }
+                }
+
+                return new PositionControllerResponse(PositionControllerStatus.CS_ERR_GAVE_UP_EXECUTING_COMMAND);
+            }
+            finally
+            {
+                this.semaphore.Release();
+            }
+        }
+
         public async Task<PositionControllerResponse> StrongEmergencyStop(uint maxAttempts = 10)
         {
             this.semaphore.WaitOne();
@@ -160,7 +203,7 @@ namespace line_sensor.data_collector.logic
                     {
                         PositionControllerResponse result = await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.EMERGENCY_STOP], false).ConfigureAwait(false);
 
-                        if (IsOkStatus(result.Status))
+                        if ((result.Status & PositionControllerStatus.PC_OK_MASK) == PositionControllerStatus.PC_OK_EMERGENCY_STOP)
                         {
                             return result;
                         }
@@ -169,6 +212,13 @@ namespace line_sensor.data_collector.logic
 
                         await Task.Delay(50)
                                   .ConfigureAwait(false);
+
+                        result = await ExecutePrebuiltCommand(commandsBuffers[PositionControllerCommand.GET_STATUS], false).ConfigureAwait(false);
+
+                        if ((result.Status & PositionControllerStatus.PC_OK_MASK) == PositionControllerStatus.PC_OK_RESET)
+                        {
+                            return result;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -186,7 +236,7 @@ namespace line_sensor.data_collector.logic
 
         public bool IsOkStatus(PositionControllerStatus status)
         {
-            return (status & ~(PositionControllerStatus.OK | PositionControllerStatus.PC_OK_BUSY | PositionControllerStatus.PC_OK_EMERGENCY_STOP)) == 0;
+            return (status & ~PositionControllerStatus.PC_OK_MASK) == 0;
         }
 
         private static IBuffer CreateRequest(PositionControllerCommand command, PositionControllerDirection direction, uint steps, byte[] buffer)

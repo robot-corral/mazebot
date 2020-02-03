@@ -30,7 +30,7 @@ namespace line_sensor.data_collector.ui.position_controller
 
             parameter.SetBusy(UiComponent.POSITION_CONTROLLER, true);
 
-            this.positionController.Reset()
+            this.positionController.StrongReset()
                 .ContinueWith(t =>
                               {
                                   parameter.SetStatus(PositionControllerCommand.RESET, t.Result);
