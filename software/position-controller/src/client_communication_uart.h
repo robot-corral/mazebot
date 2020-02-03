@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+// one step is 0.025 mm (roughly)
+
 void initializeClientCommunicationUart();
 
 #define CRC32_POLYNOMIAL ((uint32_t) 0x04C11DB7)
@@ -21,13 +23,32 @@ typedef enum
 
 typedef enum
 {
-    OK                      = 0x0000,
-    OK_BUSY                 = 0x0001,
-    OK_EMERGENCY_STOP       = 0x0002,
+    OK_IDLE                 = 0x0000,
+    OK_RESET                = 0x0001,
+    /*
+     * this tells client that position controller is busy but it didn't interfere with executing requested command
+     */
+    OK_BUSY                 = 0x0002,
+    OK_EMERGENCY_STOP       = 0x0003,
 
-    ERR_COMMUNICATION_ERROR = 0x0004,
-    ERR_UNKNOWN_COMMAND     = 0x0008,
-    ERR_CRC                 = 0x0010,
+    ERR_CRC                 = 0x0004,
+    /*
+     * busy error means, requested command cannot be executed as position controller is busy
+     */
+    ERR_BUSY                = 0x0008,
+    ERR_COMMUNICATION_ERROR = 0x0010,
+    /*
+     * invalid state means that requested command cannot be executed when position controller is
+     * in the state it is at the moment command execution was requested
+     */
+    ERR_INVALID_STATE       = 0x0020,
+    ERR_INVALID_PARAMETER   = 0x0040,
+    ERR_UNKNOWN_COMMAND     = 0x0080,
+    ERR_UNEXPECTED          = 0x0100,
+    /*
+     * desired and actual movement had an error
+     */
+    ERR_POSITION_ERROR      = 0x0200,
 } commandResultFlags_t;
 
 typedef struct __attribute__((packed))
@@ -49,6 +70,9 @@ typedef struct __attribute__((packed))
 {
     uint16_t header;
     uint16_t resultFlags;
+    /*
+     * actual position (can be different from desired if there was an error, see ERR_POSITION_ERROR)
+     */
     uint32_t position;
     uint32_t crc;
 } clientUartResponseUnpacked_t;

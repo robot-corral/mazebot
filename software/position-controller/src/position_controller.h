@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// one step is 0.025 mm
-
 typedef enum
 {
     PCD_NONE     = 0,
@@ -14,13 +12,18 @@ typedef enum
 
 typedef enum
 {
-    PCS_FREE              = 0,
-    PCS_MOVING_FORWARD    = 1,
-    PCS_MOVING_BACKWARD   = 2,
-    PCS_CALIBRATING_MIN   = 3,
-    PCS_CALIBRATING_MAX   = 4,
-    PCS_EMERGENCY_STOPPED = 5,
-} positionControllerStatus_t;
+    PCS_RESET             = 0,
+    PCS_IDLE              = 1,
+    PCS_EMERGENCY_STOPPED = 2,
+
+    PCS_BUSY              = 0x80,
+
+    PCS_BUSY_CALIBRATING_MIN         = 3 | PCS_BUSY,
+    PCS_BUSY_CALIBRATING_MAX         = 4 | PCS_BUSY,
+    PCS_BUSY_CALIBRATING_CORRECT_MAX = 5 | PCS_BUSY,
+    PCS_BUSY_MOVING_FORWARD          = 6 | PCS_BUSY,
+    PCS_BUSY_MOVING_BACKWARD         = 7 | PCS_BUSY,
+} positionControllerState_t;
 
 typedef enum
 {
@@ -29,22 +32,32 @@ typedef enum
     PCLST_MAX  = 2,
 } positionControllerLimitStopType_t;
 
+typedef enum
+{
+    MRR_OK                = 0,
+    MRR_BUSY              = 1,
+    MRR_INVALID_STATE     = 2,
+    MRR_INVALID_PARAMETER = 3,
+    MRR_UNEXPECTED_ERROR  = 4,
+} moveRequestResult_t;
+
 void initializePositionController();
 
-bool isPositionControllerBusy();
-bool isPositionControllerInEmergency();
-
 uint32_t getPosition();
+
+uint32_t getAbsolutePositionError();
+
+positionControllerState_t getState();
 
 /*
  * returns false if position control is busy controlling the motor.
  */
-bool calibratePositionController();
+moveRequestResult_t calibratePositionController(positionControllerState_t* pState);
 
 /*
  * returns false if direction is invalid or position control is busy controlling the motor.
  */
-bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount);
+moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_t pulseCount, positionControllerState_t* pState);
 
 /*
  * recalibration is required after emergency stop.

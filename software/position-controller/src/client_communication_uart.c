@@ -10,6 +10,8 @@
 
 static uint32_t calculateRequestCrc(volatile clientUartRequest_t* pRequest);
 static uint32_t calculateResponseCrc(volatile clientUartResponse_t* pResponse);
+static commandResultFlags_t convertStateToCommandResultFlags(positionControllerState_t state);
+static commandResultFlags_t convertMoveRequestResultToCommandResultFlags(moveRequestResult_t result);
 
 void initializeClientCommunicationUart()
 {
@@ -26,29 +28,27 @@ void processCommand(volatile clientUartRequest_t* pRequest)
 {
     g_clientUartTxBuffer.unpacked.header = CLIENT_UART_RESPONSE_HEADER;
     g_clientUartTxBuffer.unpacked.position = getPosition();
-    g_clientUartTxBuffer.unpacked.resultFlags = 0;
+    g_clientUartTxBuffer.unpacked.resultFlags = getAbsolutePositionError() != 0 ? ERR_POSITION_ERROR : 0;
 
-    if (isPositionControllerBusy())
+    if (pRequest == nullptr)
     {
-        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_BUSY;
-    }
-    if (isPositionControllerInEmergency())
-    {
-        g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_EMERGENCY_STOP;
+        g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_COMMUNICATION_ERROR;
+        g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+        return;
     }
 
     const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
 
     if (calculatedCrc != pRequest->unpacked.crc)
     {
-        g_clientUartTxBuffer.unpacked.resultFlags = (uint16_t) ERR_CRC;
+        g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_CRC;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
 
-    if (pRequest == nullptr || pRequest->unpacked.header != CLIENT_UART_REQUEST_HEADER)
+    if (pRequest->unpacked.header != CLIENT_UART_REQUEST_HEADER)
     {
-        g_clientUartTxBuffer.unpacked.resultFlags = (uint16_t) ERR_COMMUNICATION_ERROR;
+        g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_COMMUNICATION_ERROR;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
         return;
     }
@@ -58,23 +58,21 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         case MCMD_EMERGENCY_STOP:
         {
             positionControllerEmergencyStop();
-            g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_EMERGENCY_STOP;
+            g_clientUartTxBuffer.unpacked.resultFlags |= PCS_EMERGENCY_STOPPED;
             break;
         }
         case MCMD_MOVE_IF_IDLE:
         {
-            if (!setPosition(pRequest->unpacked.direction, pRequest->unpacked.steps))
-            {
-                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_BUSY;
-            }
+            positionControllerState_t state;
+            moveRequestResult_t result = setPosition(pRequest->unpacked.direction, pRequest->unpacked.steps, &state);
+            g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(state) | convertMoveRequestResultToCommandResultFlags(result);
             break;
         }
         case MCMD_CALIBRATE:
         {
-            if (!calibratePositionController())
-            {
-                g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) OK_BUSY;
-            }
+            positionControllerState_t state;
+            moveRequestResult_t result = calibratePositionController(&state);
+            g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(state) | convertMoveRequestResultToCommandResultFlags(result);
             break;
         }
         case MCMD_GET_STATUS:
@@ -90,7 +88,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         }
         default:
         {
-            g_clientUartTxBuffer.unpacked.resultFlags |= (uint16_t) ERR_UNKNOWN_COMMAND;
+            g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_UNKNOWN_COMMAND;
             break;
         }
     }
@@ -114,4 +112,48 @@ uint32_t calculateResponseCrc(volatile clientUartResponse_t* pResponse)
     LL_CRC_FeedData32(CRC, pData[0]);
     LL_CRC_FeedData32(CRC, pData[1]);
     return LL_CRC_ReadData32(CRC);
+}
+
+commandResultFlags_t convertStateToCommandResultFlags(positionControllerState_t state)
+{
+    if (state == PCS_RESET)
+    {
+        return OK_RESET;
+    }
+    else if (state == PCS_IDLE)
+    {
+        return OK_IDLE;
+    }
+    else if (state == PCS_EMERGENCY_STOPPED)
+    {
+        return OK_EMERGENCY_STOP;
+    }
+    else
+    {
+        return OK_BUSY;
+    }
+}
+
+commandResultFlags_t convertMoveRequestResultToCommandResultFlags(moveRequestResult_t result)
+{
+    if (result == MRR_OK)
+    {
+        return 0;
+    }
+    else if (result == MRR_BUSY)
+    {
+        return ERR_BUSY;
+    }
+    else if (result == MRR_INVALID_STATE)
+    {
+        return ERR_INVALID_STATE;
+    }
+    else if (result == MRR_INVALID_PARAMETER)
+    {
+        return ERR_INVALID_PARAMETER;
+    }
+    else
+    {
+        return ERR_UNEXPECTED;
+    }
 }

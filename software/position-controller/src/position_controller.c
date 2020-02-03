@@ -6,8 +6,6 @@
 
 #include <mcu_arm.h>
 
-#include <stdatomic.h>
-
 #include <stm32\stm32l4xx_ll_dma.h>
 #include <stm32\stm32l4xx_ll_tim.h>
 #include <stm32\stm32l4xx_ll_gpio.h>
@@ -15,16 +13,22 @@
 
 static void initializeSlaveTimer();
 static void initializeMasterTimer();
-static void positionControllerStop();
-static bool positionControllerMove(positionControllerStatus_t desired);
+
+static void positionControllerStop_Unsafe();
+static void positionControllerEmergencyStop_Unsafe();
+static void positionControllerMoveUntilLimitSwitchTriggers_Unsafe(positionControllerDirection_t direction);
+static void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint32_t pulseCount);
 
 void initializePositionController()
 {
     g_positionControllerX = 0;
     g_positionControllerXMaxValue = 0;
-    g_positionControllerXStatus = PCS_FREE;
-    g_positionControllerXDesiredValue = 0;
+    g_positionControllerXPulseErrorCount = 0;
+    g_positionControllerXPlannedPulseCount = 0;
+
+    g_positionControllerXState = PCS_RESET;
     g_positionControllerXDirection = PCD_NONE;
+
     initializeSlaveTimer();
     initializeMasterTimer();
 }
@@ -34,16 +38,20 @@ void initializeSlaveTimer()
     NVIC_SetPriority(TIM5_IRQn, IRQ_PRIORITY_MOTOR_PWM_STOP);
     NVIC_EnableIRQ(TIM5_IRQn);
 
+    // trigger input is from:
+    // RM0351 Reference manual - STM32L4x5 and STM32L4x6 advanced ARM®-based 32-bit MCUs
+    // 31.4.3 TIMx slave mode control register (TIMx_SMCR)
+    // Table 192. TIMx internal trigger connection
     LL_TIM_SetTriggerInput(TIM5, LL_TIM_TS_ITR0);
+    // see:
+    // 31.3.3 Clock selection
+    // External clock source mode 1
+    // Figure 293. TI2 external clock connection example
     LL_TIM_SetClockSource(TIM5, LL_TIM_CLOCKSOURCE_EXT_MODE1);
 
-    LL_TIM_SetCounterMode(TIM5, LL_TIM_COUNTERMODE_DOWN);
+    LL_TIM_SetCounterMode(TIM5, LL_TIM_COUNTERMODE_UP);
     LL_TIM_EnableARRPreload(TIM5);
-
-    LL_TIM_SetAutoReload(TIM5, 1);
-    LL_TIM_SetCounter(TIM5, 1);
-
-    LL_TIM_EnableIT_UPDATE(TIM5);
+    LL_TIM_SetAutoReload(TIM5, 0);
 }
 
 void initializeMasterTimer()
@@ -54,7 +62,7 @@ void initializeMasterTimer()
     LL_TIM_SetPrescaler(TIM2, prescaler);
     LL_TIM_EnableARRPreload(TIM2);
 
-    const uint32_t cycle = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 1500);
+    const uint32_t cycle = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 1500 /* Hz */);
 
     LL_TIM_SetAutoReload(TIM2, cycle);
     LL_TIM_OC_SetMode(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_PWM1);
@@ -65,19 +73,15 @@ void initializeMasterTimer()
     LL_TIM_OC_SetCompareCH1(TIM2, cycle / 2);
     LL_TIM_OC_EnablePreload(TIM2, LL_TIM_CHANNEL_CH1);
 
+    // TIM2 is going to drive TIM5
+    // TIM2 generates PWMs (1/2 cycle it is 0 and 1/2 cycle is 1)
+    // TIM5 counts number of PWM pulses
     LL_TIM_EnableMasterSlaveMode(TIM2);
+    // this is from:
+    // 31.4.2 TIMx control register 2 (TIMx_CR2)
+    // 010: Update - The update event is selected as trigger output (TRGO). For instance a master 
+    // timer can then be used as a prescaler for a slave timer.
     LL_TIM_SetTriggerOutput(TIM2, LL_TIM_TRGO_UPDATE);
-}
-
-bool isPositionControllerBusy()
-{
-    const positionControllerStatus_t positionControllerXStatus = atomic_load(&g_positionControllerXStatus);
-    return positionControllerXStatus != PCS_FREE && positionControllerXStatus != PCS_EMERGENCY_STOPPED;
-}
-
-bool isPositionControllerInEmergency()
-{
-    return atomic_load(&g_positionControllerXStatus) == PCS_EMERGENCY_STOPPED;
 }
 
 uint32_t getPosition()
@@ -85,163 +89,218 @@ uint32_t getPosition()
     return g_positionControllerX;
 }
 
-bool positionControllerMove(positionControllerStatus_t desired)
+positionControllerState_t getState()
 {
-    bool result = false;
-    // in case emergency stop happened we don't want to resume moving the motor
-    // so make sure we cannot get interrupted
-    const uint32_t previousInterruptMask = getInterruptMask();
+    return g_positionControllerXState;
+}
+
+uint32_t getAbsolutePositionError()
+{
+    return g_positionControllerXPulseErrorCount;
+}
+
+moveRequestResult_t calibratePositionController(positionControllerState_t* pState)
+{
+    const uint32_t oldInterruptMask = getInterruptMask();
     disableInterrupts();
-    if (atomic_load(&g_positionControllerXStatus) == desired)
+
+    moveRequestResult_t result;
+    positionControllerState_t positionControllerXState = g_positionControllerXState;
+
+    if (positionControllerXState == PCS_RESET || positionControllerXState == PCS_IDLE)
     {
-        setPositionControllerMovingLedEnabled(true);
-        // get ready to count TIM2 pulses
-        LL_TIM_EnableCounter(TIM5);
-        // enable motor controller
-        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
-        // start moving motor
-        LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-        LL_TIM_EnableCounter(TIM2);
-        LL_TIM_GenerateEvent_UPDATE(TIM2);
-        result = true;
+        // move to min position 1st
+        g_positionControllerXDirection = PCD_BACKWARD;
+        g_positionControllerXState = PCS_BUSY_CALIBRATING_MIN;
+        positionControllerXState = PCS_BUSY_CALIBRATING_MIN;
+        positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_BACKWARD);
+        result = MRR_OK;
     }
-    setInterruptMask(previousInterruptMask);
+    else if ((positionControllerXState & PCS_BUSY) == PCS_BUSY)
+    {
+        result = MRR_BUSY;
+    }
+    else
+    {
+        result = MRR_INVALID_STATE;
+    }
+
+    setInterruptMask(oldInterruptMask);
+
+    if (pState)
+    {
+        *pState = positionControllerXState;
+    }
+
     return result;
 }
 
-bool setPosition(positionControllerDirection_t direction, uint32_t pulseCount)
+moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_t pulseCount, positionControllerState_t* pState)
 {
     if (pulseCount == 0)
     {
-        return true; // we are done!
+        return MRR_OK; // no-op command
     }
 
-    positionControllerStatus_t desired;
+    positionControllerState_t desired;
 
     switch (direction)
     {
-        case PCD_FORWARD  : desired = PCS_MOVING_FORWARD; break;
-        case PCD_BACKWARD : desired = PCS_MOVING_BACKWARD; break;
-        default           : return false;
-    }
-
-    positionControllerStatus_t expected = PCS_FREE;
-
-    if (!atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, desired))
-    {
-        return false;
-    }
-
-    g_positionControllerXDirection = direction;
-
-    const uint32_t positionControllerX = g_positionControllerX;
-
-    switch (direction)
-    {
-        case PCD_FORWARD:
+        case PCD_FORWARD  : desired = PCS_BUSY_MOVING_FORWARD; break;
+        case PCD_BACKWARD : desired = PCS_BUSY_MOVING_BACKWARD; break;
+        default           :
         {
-            // make sure we don't trigger max limit-switch
-            if (pulseCount > g_positionControllerXMaxValue ||
-                positionControllerX > g_positionControllerXMaxValue - pulseCount)
+            if (pState)
             {
-                // make sure we do not overwrite status if it changed since we set it to desired value
-                expected = desired;
-                atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_FREE);
-                return false;
+                *pState = g_positionControllerXState;
             }
-            g_positionControllerXDesiredValue = positionControllerX + pulseCount;
-            // set forward direction
-            LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6);
-            break;
-        }
-        case PCD_BACKWARD:
-        {
-            // make sure we don't trigger min limit-switch
-            if (pulseCount > positionControllerX)
-            {
-                // make sure we do not overwrite status if it changed since we set it to desired value
-                expected = desired;
-                atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_FREE);
-                return false;
-            }
-            g_positionControllerXDesiredValue = positionControllerX - pulseCount;
-            // set backward direction
-            LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
-            break;
-        }
-        default:
-        {
-            // something went horribly wrong if we ended up here
-            positionControllerEmergencyStop();
-            return false;
+            return MRR_INVALID_PARAMETER;
         }
     }
 
-    return positionControllerMove(desired);
-}
+    const uint32_t oldInterruptMask = getInterruptMask();
+    disableInterrupts();
 
-void TIM5_IRQHandler()
-{
-    if (LL_TIM_IsActiveFlag_UPDATE(TIM5) == 1)
+    moveRequestResult_t result;
+    positionControllerState_t positionControllerXState = g_positionControllerXState;
+
+    if (positionControllerXState == PCS_IDLE)
     {
-        LL_TIM_ClearFlag_UPDATE(TIM5);
-
-        bool stop = false;
-
-        switch (g_positionControllerXDirection)
+        switch (direction)
         {
-            case PCD_FORWARD :
+            case PCD_FORWARD:
             {
-                if (g_positionControllerX >= g_positionControllerXMaxValue)
+                // make sure we don't trigger max limit-switch
+                if (pulseCount > g_positionControllerXMaxValue || g_positionControllerX > g_positionControllerXMaxValue - pulseCount)
                 {
-                    positionControllerEmergencyStop();
-                    return;
+                    result = MRR_INVALID_PARAMETER;
                 }
-                g_positionControllerX = g_positionControllerX + 1;
-                if (g_positionControllerX == g_positionControllerXDesiredValue)
+                else
                 {
-                    stop = true;
-                }
-                else if (g_positionControllerX > g_positionControllerXDesiredValue)
-                {
-                    positionControllerEmergencyStop();
-                    return;
+                    positionControllerMove_Unsafe(PCD_FORWARD, pulseCount);
                 }
                 break;
             }
-            case PCD_BACKWARD :
+            case PCD_BACKWARD:
             {
-                if (g_positionControllerX == 0)
+                // make sure we don't trigger min limit-switch
+                if (pulseCount > g_positionControllerX)
                 {
-                    positionControllerEmergencyStop();
-                    return;
+                    result = MRR_INVALID_PARAMETER;
                 }
-                g_positionControllerX = g_positionControllerX - 1;
-                if (g_positionControllerX == g_positionControllerXDesiredValue)
+                else
                 {
-                    stop = true;
-                }
-                else if (g_positionControllerX < g_positionControllerXDesiredValue)
-                {
-                    positionControllerEmergencyStop();
-                    return;
+                    positionControllerMove_Unsafe(PCD_BACKWARD, pulseCount);
                 }
                 break;
             }
             default:
             {
                 // something went horribly wrong if we ended up here
-                positionControllerEmergencyStop();
+                positionControllerEmergencyStop_Unsafe();
+                result = MRR_UNEXPECTED_ERROR;
+                positionControllerXState = PCS_EMERGENCY_STOPPED;
+                break;
+            }
+        }
+    }
+    else if ((positionControllerXState & PCS_BUSY) == PCS_BUSY)
+    {
+        result = MRR_BUSY;
+    }
+    else
+    {
+        result = MRR_INVALID_STATE;
+    }
+
+    setInterruptMask(oldInterruptMask);
+
+    if (pState)
+    {
+        *pState = positionControllerXState;
+    }
+
+    return result;
+}
+
+void positionControllerEmergencyStop()
+{
+    const uint32_t oldInterruptMask = getInterruptMask();
+    disableInterrupts();
+
+    positionControllerEmergencyStop_Unsafe();
+
+    setInterruptMask(oldInterruptMask);
+}
+
+void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType)
+{
+    const uint32_t oldInterruptMask = getInterruptMask();
+    disableInterrupts();
+
+    const positionControllerState_t positionControllerXState = g_positionControllerXState;
+
+    if (positionControllerXState == PCS_BUSY_CALIBRATING_MIN)
+    {
+        if (limitStopType == PCLST_MIN)
+        {
+            positionControllerStop_Unsafe();
+            // restart counting from 0
+            LL_TIM_SetCounter(TIM5, 0);
+            // move to max position
+            g_positionControllerXState = PCS_BUSY_CALIBRATING_MAX;
+            positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_BACKWARD);
+            return;
+        }
+        else
+        {
+            // ignore max limit switch as we are moving away from it
+            return;
+        }
+    }
+    else if (positionControllerXState == PCS_BUSY_CALIBRATING_MAX)
+    {
+        if (limitStopType == PCLST_MIN)
+        {
+            // make sure to reset 0 position if limit switch got triggered again
+            LL_TIM_SetCounter(TIM5, 0);
+            // ignore min limit switch as we are moving away from it
+            return;
+        }
+        else if (limitStopType == PCLST_MAX)
+        {
+            positionControllerStop_Unsafe();
+            // remember max position
+            g_positionControllerXMaxValue = LL_TIM_GetCounter(TIM5);
+            // move to the middle (this gives us opportunity to get away from
+            // max limit switch and update max position if it triggers again
+            positionControllerMove_Unsafe(PCD_BACKWARD, g_positionControllerXMaxValue / 2);
+            return;
+        }
+    }
+    else if (positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
+    {
+        if (limitStopType == PCLST_MAX)
+        {
+            // remember how much did we move before max limit switch triggered again
+            const uint32_t delta = LL_TIM_GetCounter(TIM5);
+            // restart counting
+            LL_TIM_SetCounter(TIM5, 0);
+            if (delta <= g_positionControllerXMaxValue)
+            {
+                // update max position
+                g_positionControllerXMaxValue -= delta;
+                // ignore max limit switch as we are moving away from it
                 return;
             }
         }
-        if (stop)
-        {
-            positionControllerStop();
-            // now we are free to do whatever
-            atomic_store(&g_positionControllerXStatus, PCS_FREE);
-        }
     }
+
+    // otherwise something went wrong and some limit switch got triggered
+    // so perform emergency stop
+    positionControllerEmergencyStop_Unsafe();
+
+    setInterruptMask(oldInterruptMask);
 }
 
 void NMI_Handler()
@@ -272,26 +331,79 @@ void BusFault_Handler()
     for (;;) ;
 }
 
-/*
- * this method is called from highest priority interrupts
- */
-void positionControllerEmergencyStop()
+void TIM5_IRQHandler()
 {
-    // disable controller first
-    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
-    // disable timer after that
-    LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-    LL_TIM_DisableCounter(TIM2);
-    LL_TIM_DisableCounter(TIM5);
-    // turn on emergency stop LED
-    setEmergencyStopLedEnabled(true);
-    // modify memory at the end of the method in case it generates some faults
-    atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
-    setPositionControllerMovingLedEnabled(false);
+    if (LL_TIM_IsActiveFlag_CC1(TIM5) == 1)
+    {
+        const uint32_t oldInterruptMask = getInterruptMask();
+        disableInterrupts();
+
+        positionControllerStop_Unsafe();
+
+        const uint32_t actualPulsesProduced = LL_TIM_GetCounter(TIM5);
+
+        g_positionControllerXState = PCS_IDLE;
+
+        switch (g_positionControllerXDirection)
+        {
+            case PCD_FORWARD:
+            {
+                if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                }
+                else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                }
+                if (actualPulsesProduced <= g_positionControllerXMaxValue &&
+                    g_positionControllerX <= g_positionControllerXMaxValue - actualPulsesProduced)
+                {
+                    g_positionControllerX += actualPulsesProduced;
+                }
+                else
+                {
+                    positionControllerEmergencyStop_Unsafe();
+                }
+                break;
+            }
+            case PCD_BACKWARD:
+            {
+                if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                }
+                else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                }
+                if (actualPulsesProduced <= g_positionControllerX)
+                {
+                    g_positionControllerX -= actualPulsesProduced;
+                }
+                else
+                {
+                    positionControllerEmergencyStop_Unsafe();
+                }
+                break;
+            }
+            default:
+            {
+                positionControllerEmergencyStop_Unsafe();
+                break;
+            }
+        }
+
+        setInterruptMask(oldInterruptMask);
+
+        LL_TIM_ClearFlag_CC1(TIM5);
+        LL_TIM_DisableIT_CC1(TIM5);
+    }
 }
 
-void positionControllerStop()
+void positionControllerStop_Unsafe()
 {
+    // stop counter (this will stop motor movement)
     LL_TIM_DisableCounter(TIM2);
     LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_DisableCounter(TIM5);
@@ -305,70 +417,88 @@ void positionControllerStop()
     setPositionControllerMovingLedEnabled(false);
 }
 
-bool calibratePositionController()
+void positionControllerEmergencyStop_Unsafe()
 {
-    positionControllerStatus_t expected = PCS_FREE;
-
-    if (!atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_CALIBRATING_MIN))
-    {
-        return false;
-    }
-
-    // move to min position 1st
-    g_positionControllerX = UINT32_MAX;
-    g_positionControllerXDesiredValue = 0;
-    g_positionControllerXMaxValue = UINT32_MAX;
-    g_positionControllerXDirection = PCD_BACKWARD;
-
-    // set backward direction
-    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
-
-    return positionControllerMove(PCS_CALIBRATING_MIN);
+    // disable controller first
+    LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_7);
+    // disable timer after that
+    LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+    LL_TIM_DisableCounter(TIM2);
+    LL_TIM_DisableCounter(TIM5);
+    // turn on emergency stop LED
+    setEmergencyStopLedEnabled(true);
+    // modify memory at the end of the method in case it generates some faults
+    g_positionControllerXState = PCS_EMERGENCY_STOPPED;
+    setPositionControllerMovingLedEnabled(false);
 }
 
-/*
- * the only way to interrupt this method is with emergency stop interrupt
- */
-void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType)
+void positionControllerMoveUntilLimitSwitchTriggers_Unsafe(positionControllerDirection_t direction)
 {
-    positionControllerStop();
-
-    const positionControllerStatus_t positionControllerXStatus = atomic_load(&g_positionControllerXStatus);
-
-    if (positionControllerXStatus == PCS_CALIBRATING_MIN && limitStopType == PCLST_MIN)
+    if (direction == PCD_FORWARD)
     {
-        positionControllerStatus_t expected = PCS_CALIBRATING_MIN;
-        if (atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_CALIBRATING_MAX))
-        {
-            // move to max position
-            g_positionControllerX = 0;
-            g_positionControllerXMaxValue = UINT32_MAX;
-            g_positionControllerXDirection = PCD_FORWARD;
-            g_positionControllerXDesiredValue = UINT32_MAX;
-
-            // set forward direction
-            LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6);
-
-            positionControllerMove(PCS_CALIBRATING_MAX);
-        }
+        // set forward direction
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6);
     }
-    else if (positionControllerXStatus == PCS_CALIBRATING_MAX)
+    else if (direction == PCD_BACKWARD)
     {
-        if (limitStopType == PCLST_MAX)
-        {
-            // we figured out max x value
-            g_positionControllerXDesiredValue = 0;
-            g_positionControllerXDirection = PCD_NONE;
-            g_positionControllerXMaxValue = g_positionControllerX;
-
-            // we can now use the position controller
-            positionControllerStatus_t expected = PCS_CALIBRATING_MAX;
-            atomic_compare_exchange_strong(&g_positionControllerXStatus, &expected, PCS_FREE);
-        }
+        // set backward direction
+        LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
     }
     else
     {
-        atomic_store(&g_positionControllerXStatus, PCS_EMERGENCY_STOPPED);
-        setEmergencyStopLedEnabled(true);
+        return;
     }
+
+    g_positionControllerXDirection = direction;
+
+    // reset counter to 0 so we can count number of steps motor moves
+    LL_TIM_SetCounter(TIM5, 0);
+    // get ready to count TIM2 pulses
+    LL_TIM_EnableCounter(TIM5);
+
+    // enable motor controller
+    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
+    // start moving motor
+    LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+    LL_TIM_EnableCounter(TIM2);
+    LL_TIM_GenerateEvent_UPDATE(TIM2);
+}
+
+void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint32_t pulseCount)
+{
+    if (direction == PCD_FORWARD)
+    {
+        // set forward direction
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6);
+    }
+    else if (direction == PCD_BACKWARD)
+    {
+        // set backward direction
+        LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6);
+    }
+    else
+    {
+        return;
+    }
+
+    g_positionControllerXDirection = direction;
+    g_positionControllerXPlannedPulseCount = pulseCount;
+
+    // call interrupt (which stops motor) after pulseCount
+    LL_TIM_OC_SetCompareCH1(TIM5, pulseCount);
+    LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH1);
+    // enable interrupt to handle stop event
+    LL_TIM_EnableIT_CC1(TIM5);
+
+    // reset counter to 0 so we can count number of steps motor moves
+    LL_TIM_SetCounter(TIM5, 0);
+    // get ready to count TIM2 pulses
+    LL_TIM_EnableCounter(TIM5);
+
+    // enable motor controller
+    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
+    // start moving motor
+    LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+    LL_TIM_EnableCounter(TIM2);
+    LL_TIM_GenerateEvent_UPDATE(TIM2);
 }

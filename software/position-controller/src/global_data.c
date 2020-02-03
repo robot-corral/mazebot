@@ -2,8 +2,9 @@
 
 volatile uint32_t g_positionControllerX;
 volatile uint32_t g_positionControllerXMaxValue;
-volatile uint32_t g_positionControllerXDesiredValue;
-volatile positionControllerStatus_t g_positionControllerXStatus;
+volatile uint32_t g_positionControllerXPlannedPulseCount;
+volatile uint32_t g_positionControllerXPulseErrorCount;
+volatile positionControllerState_t g_positionControllerXState;
 volatile positionControllerDirection_t g_positionControllerXDirection;
 
 volatile clientUartRequest_t g_clientUartRxBuffer;

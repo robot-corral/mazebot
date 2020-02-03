@@ -9,8 +9,9 @@
 
 extern volatile uint32_t g_positionControllerX;
 extern volatile uint32_t g_positionControllerXMaxValue;
-extern volatile uint32_t g_positionControllerXDesiredValue;
-extern volatile positionControllerStatus_t g_positionControllerXStatus;
+extern volatile uint32_t g_positionControllerXPlannedPulseCount;
+extern volatile uint32_t g_positionControllerXPulseErrorCount;
+extern volatile positionControllerState_t g_positionControllerXState;
 extern volatile positionControllerDirection_t g_positionControllerXDirection;
 
 #define CLIENT_UART_RX_BUFFER_LENGTH (sizeof(clientUartRequest_t))

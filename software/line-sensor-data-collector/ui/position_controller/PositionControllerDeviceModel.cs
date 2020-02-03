@@ -45,7 +45,7 @@ namespace line_sensor.data_collector.ui.position_controller
         {
             Id = deviceId;
 
-            if (deviceId != null)
+            if (deviceId != null && this.positionController.IsOkStatus(status.Status))
             {
                 maxPosition = 0;
                 IsConnected = true;
