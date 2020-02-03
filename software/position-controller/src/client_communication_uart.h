@@ -23,13 +23,22 @@ typedef enum
 
 typedef enum
 {
-    OK_IDLE                 = 0x0000,
-    OK_RESET                = 0x0001,
+    /*
+     * ok value should be compared using equality sign after masking off all the error flags, e.g.:
+     * if ((flags & 0x3) == okValue) { ... }
+     */
+
+    OK_RESET                = 0x0000,
+    OK_IDLE                 = 0x0001,
     /*
      * this tells client that position controller is busy but it didn't interfere with executing requested command
      */
     OK_BUSY                 = 0x0002,
     OK_EMERGENCY_STOP       = 0x0003,
+
+    /*
+     * errors are flags and multiple can be set at the same time as well as they can go with ok values.
+     */
 
     ERR_CRC                 = 0x0004,
     /*

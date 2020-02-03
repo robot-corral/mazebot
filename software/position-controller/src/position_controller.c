@@ -249,7 +249,7 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             LL_TIM_SetCounter(TIM5, 0);
             // move to max position
             g_positionControllerXState = PCS_BUSY_CALIBRATING_MAX;
-            positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_BACKWARD);
+            positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_FORWARD);
             return;
         }
         else
