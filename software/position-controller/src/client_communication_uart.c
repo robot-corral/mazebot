@@ -77,7 +77,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         }
         case MCMD_GET_STATUS:
         {
-            // we already set position above
+            g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState());
             break;
         }
         case MCMD_RESET:
