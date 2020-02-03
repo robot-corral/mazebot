@@ -58,7 +58,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
         case MCMD_EMERGENCY_STOP:
         {
             positionControllerEmergencyStop();
-            g_clientUartTxBuffer.unpacked.resultFlags |= PCS_EMERGENCY_STOPPED;
+            g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState());
             break;
         }
         case MCMD_MOVE_IF_IDLE:
