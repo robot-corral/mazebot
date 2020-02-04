@@ -240,6 +240,7 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
     const uint32_t oldInterruptMask = getInterruptMask();
     disableInterrupts();
 
+    bool performEmergencyStop = true;
     const positionControllerState_t positionControllerXState = g_positionControllerXState;
 
     if (positionControllerXState == PCS_BUSY_CALIBRATING_MIN)
@@ -252,12 +253,12 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             // move to max position
             g_positionControllerXState = PCS_BUSY_CALIBRATING_MAX;
             positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_FORWARD);
-            return;
+            performEmergencyStop = false;
         }
         else
         {
             // ignore max limit switch as we are moving away from it
-            return;
+            performEmergencyStop = false;
         }
     }
     else if (positionControllerXState == PCS_BUSY_CALIBRATING_MAX)
@@ -267,18 +268,19 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             // make sure to reset 0 position if limit switch got triggered again
             LL_TIM_SetCounter(TIM5, 0);
             // ignore min limit switch as we are moving away from it
-            return;
+            performEmergencyStop = false;
         }
         else if (limitStopType == PCLST_MAX)
         {
             positionControllerStop_Unsafe();
             // remember max position
             g_positionControllerXMaxValue = LL_TIM_GetCounter(TIM5);
+            g_positionControllerX = g_positionControllerXMaxValue;
             g_positionControllerXState = PCS_BUSY_CALIBRATING_CORRECT_MAX;
             // move to the middle (this gives us opportunity to get away from
             // max limit switch and update max position if it triggers again
             positionControllerMove_Unsafe(PCD_BACKWARD, g_positionControllerXMaxValue / 2);
-            return;
+            performEmergencyStop = false;
         }
     }
     else if (positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
@@ -293,15 +295,19 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             {
                 // update max position
                 g_positionControllerXMaxValue -= delta;
+                g_positionControllerX -= delta;
                 // ignore max limit switch as we are moving away from it
-                return;
+                performEmergencyStop = false;
             }
         }
     }
 
-    // otherwise something went wrong and some limit switch got triggered
-    // so perform emergency stop
-    positionControllerEmergencyStop_Unsafe();
+    if (performEmergencyStop)
+    {
+        // otherwise something went wrong and some limit switch got triggered
+        // so perform emergency stop
+        positionControllerEmergencyStop_Unsafe();
+    }
 
     setInterruptMask(oldInterruptMask);
 }
@@ -493,14 +499,16 @@ void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint
     g_positionControllerXDirection = direction;
     g_positionControllerXPlannedPulseCount = pulseCount;
 
-    // call interrupt (which stops motor) after pulseCount
-    LL_TIM_OC_SetCompareCH1(TIM5, pulseCount);
-    LL_TIM_CC_EnableChannel(TIM5, LL_TIM_CHANNEL_CH1);
+    // reset counter to 0 so we can count number of steps motor moves
+    LL_TIM_SetCounter(TIM5, 0);
+
+    LL_TIM_ClearFlag_CC1(TIM5);
     // enable interrupt to handle stop event
     LL_TIM_EnableIT_CC1(TIM5);
 
-    // reset counter to 0 so we can count number of steps motor moves
-    LL_TIM_SetCounter(TIM5, 0);
+    // call interrupt (which stops motor) after pulseCount
+    LL_TIM_OC_SetCompareCH1(TIM5, pulseCount);
+
     // get ready to count TIM2 pulses
     LL_TIM_EnableCounter(TIM5);
 
