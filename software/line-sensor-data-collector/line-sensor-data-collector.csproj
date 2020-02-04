@@ -139,7 +139,7 @@
     <Compile Include="ui\BleDeviceWatcher.cs" />
     <Compile Include="ui\CollectDataCommand.cs" />
     <Compile Include="ui\position_controller\PositionControllerCalibrateCommand.cs" />
-    <Compile Include="ui\wireless_line_sensor\ConnectedWirelessLineSensorDeviceModel.cs" />
+    <Compile Include="ui\wireless_line_sensor\WirelessLineSensorDeviceModel.cs" />
     <Compile Include="ui\ui_component\IUiComponent.cs" />
     <Compile Include="ui\position_controller\IPositionControllerDeviceModel.cs" />
     <Compile Include="ui\position_controller\PositionControllerDeviceModel.cs" />

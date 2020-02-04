@@ -21,11 +21,11 @@ namespace line_sensor.data_collector.ui.position_controller
 
         double Position { get; }
 
-        int PacketsTotalNumber { get; set; }
+        int PacketsTotalNumber { get; }
 
-        int PacketsCrcFailuresNumber { get; set; }
+        int PacketsCrcFailuresNumber { get; }
 
-        int PacketsFailuresNumber { get; set; }
+        int PacketsFailuresNumber { get; }
 
         CoreDispatcher Dispatcher { get; }
 

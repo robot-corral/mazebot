@@ -99,6 +99,6 @@ namespace line_sensor.data_collector.ui.position_controller
 
         private readonly IPositionController positionController;
 
-        private static readonly TimeSpan MAX_CALIBRATION_TIME = TimeSpan.FromMinutes(2);
+        private static readonly TimeSpan MAX_CALIBRATION_TIME = TimeSpan.FromMinutes(1);
     }
 }

@@ -107,6 +107,18 @@ namespace line_sensor.data_collector.ui.position_controller
                 Position = ((double) status.Position) * 0.025d;
                 StatusDisplayName = StatusToDisplayName(status.Status);
 
+                ++PacketsTotalNumber;
+
+                if ((status.Status & ~PositionControllerStatus.PC_OK_MASK) != 0)
+                {
+                    ++PacketsFailuresNumber;
+                }
+                if ((status.Status & PositionControllerStatus.PC_ERR_CRC) != 0 ||
+                    (status.Status & PositionControllerStatus.CS_ERR_CRC) != 0)
+                {
+                    ++PacketsCrcFailuresNumber;
+                }
+
                 if (!this.positionController.IsOkStatus(status.Status))
                 {
                     this.mainModel.LogEntries.Add(new PositionControllerErrorStatusLogEntry(message, fromCommand, status.Status));
@@ -201,7 +213,7 @@ namespace line_sensor.data_collector.ui.position_controller
         public int PacketsTotalNumber
         {
             get { return this.packetsTotalNumber; }
-            set
+            private set
             {
                 if (this.packetsTotalNumber != value)
                 {
@@ -214,7 +226,7 @@ namespace line_sensor.data_collector.ui.position_controller
         public int PacketsCrcFailuresNumber
         {
             get { return this.packetsCrcFailuresNumber; }
-            set
+            private set
             {
                 if (this.packetsCrcFailuresNumber != value)
                 {
@@ -227,7 +239,7 @@ namespace line_sensor.data_collector.ui.position_controller
         public int PacketsFailuresNumber
         {
             get { return this.packetsFailuresNumber; }
-            set
+            private set
             {
                 if (this.packetsFailuresNumber != value)
                 {

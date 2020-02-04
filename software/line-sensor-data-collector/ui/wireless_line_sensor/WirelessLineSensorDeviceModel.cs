@@ -1,7 +1,8 @@
-﻿using line_sensor.data_collector.logic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Input;
+
+using line_sensor.data_collector.logic;
+using line_sensor.data_collector.shared;
 
 namespace line_sensor.data_collector.ui.wireless_line_sensor
 {
@@ -13,12 +14,13 @@ namespace line_sensor.data_collector.ui.wireless_line_sensor
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Id { get; set; }
+        // TODO
+        public string Id { get; private set; }
 
         public bool IsConnected
         {
             get { return this.isConnected; }
-            set
+            private set
             {
                 if (this.isConnected != value)
                 {
@@ -31,7 +33,7 @@ namespace line_sensor.data_collector.ui.wireless_line_sensor
         public int PacketsTotalNumber
         {
             get { return this.packetsTotalNumber; }
-            set
+            private set
             {
                 if (this.packetsTotalNumber != value)
                 {
@@ -44,7 +46,7 @@ namespace line_sensor.data_collector.ui.wireless_line_sensor
         public int PacketsCrcFailuresNumber
         {
             get { return this.packetsCrcFailuresNumber; }
-            set
+            private set
             {
                 if (this.packetsCrcFailuresNumber != value)
                 {
@@ -57,7 +59,7 @@ namespace line_sensor.data_collector.ui.wireless_line_sensor
         public int PacketsFailuresNumber
         {
             get { return this.packetsFailuresNumber; }
-            set
+            private set
             {
                 if (this.packetsFailuresNumber != value)
                 {
@@ -69,14 +71,15 @@ namespace line_sensor.data_collector.ui.wireless_line_sensor
 
         public Task Disconnect()
         {
+            // TODO pkrupets
             return Task.CompletedTask;
         }
 
         // TODO pkrupets
-        public ICommand ResetLineSensorCommand { get; }
+        public BaseCommandWithParameter<IWirelessLineSensorDeviceModel> ResetLineSensorCommand { get; }
 
         // TODO pkrupets
-        public ICommand ResetWirelessLineSensorCommand { get; }
+        public BaseCommandWithParameter<IWirelessLineSensorDeviceModel> ResetWirelessLineSensorCommand { get; }
 
         private bool isConnected;
         private int packetsTotalNumber;
