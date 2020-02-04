@@ -7,9 +7,9 @@ namespace line_sensor.data_collector.shared
     {
         public event EventHandler CanExecuteChanged;
 
-        public virtual void UpdateCanExecute(T parameter)
+        public virtual void UpdateCanExecute()
         {
-            CanExecuteChanged?.Invoke(parameter, null);
+            CanExecuteChanged?.Invoke(this, null);
         }
 
         public abstract bool CanExecute(T parameter);

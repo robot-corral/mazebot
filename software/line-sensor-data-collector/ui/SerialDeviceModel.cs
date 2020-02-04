@@ -1,26 +1,30 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 using Windows.Devices.Enumeration;
 
 namespace line_sensor.data_collector.ui
 {
-    public class SerialDeviceModel : IDeviceModel
+    public class SerialDeviceModel : IDeviceModel, INotifyPropertyChanged
     {
         public SerialDeviceModel(DeviceInformation deviceInformation)
         {
             this.deviceInformation = deviceInformation ?? throw new ArgumentNullException(nameof(deviceInformation));
-            SetDisplayName(deviceInformation.Id, null);
+            Id = deviceInformation.Id;
+            IsDefault = deviceInformation.IsDefault;
+            SetDisplayName(deviceInformation.Id);
         }
 
-        private void SetDisplayName(string id, string portName)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void SetDisplayName(string id)
         {
-            // TODO update once serial device is connected
             Match match = DEVICE_UNIQUE_ID_REGEX.Match(id);
 
             if (match.Success)
             {
-                DisplayName = "ST-Link / USB " + match.Groups[1].Value + (portName == null ? "" : $" ({portName})");
+                DisplayName = "ST-Link / USB " + match.Groups[1].Value;
             }
             else
             {
@@ -28,17 +32,42 @@ namespace line_sensor.data_collector.ui
             }
         }
 
-        public string DisplayName { get; set; }
+        public string Id { get; set; }
 
-        public string Id { get { return this.deviceInformation.Id; } }
+        public string DisplayName
+        {
+            get { return this.displayName; }
+            set
+            {
+                if (this.displayName != value)
+                {
+                    this.displayName = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayName)));
+                }
+            }
+        }
 
-        public bool IsDefault { get { return this.deviceInformation.IsDefault; } }
+        public bool IsDefault { get; set; }
 
         public void Update(DeviceInformationUpdate deviceInformationUpdate)
         {
             this.deviceInformation.Update(deviceInformationUpdate);
-            // TODO update properties
+
+            if (deviceInformationUpdate.Properties.ContainsKey(nameof(DeviceInformation.Id)))
+            {
+                Id = deviceInformation.Id;
+            }
+            if (deviceInformationUpdate.Properties.ContainsKey(nameof(DeviceInformation.Name)))
+            {
+                DisplayName = deviceInformation.Name;
+            }
+            if (deviceInformationUpdate.Properties.ContainsKey(nameof(DeviceInformation.IsDefault)))
+            {
+                IsDefault = deviceInformation.IsDefault;
+            }
         }
+
+        private string displayName;
 
         private readonly DeviceInformation deviceInformation;
 

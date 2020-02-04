@@ -11,6 +11,7 @@ using line_sensor.data_collector.ui.log;
 using line_sensor.data_collector.ui.position_controller;
 using line_sensor.data_collector.ui.ui_component;
 using line_sensor.data_collector.ui.wireless_line_sensor;
+using System;
 
 namespace line_sensor.data_collector.ui
 {
@@ -28,6 +29,7 @@ namespace line_sensor.data_collector.ui
 
             this.bleDeviceScanningIndicatorVisible = Visibility.Collapsed;
             this.AllSupportedBleDevices = new ObservableCollection<BleDeviceModel>();
+            this.AllSupportedBleDevices.CollectionChanged += AllSupportedBleDevicesCollectionChanged;
             this.BleDeviceToggleScanningCommand = new BleDeviceToggleScanningCommand();
             this.BleDeviceToggleConnectionCommand = new BleDeviceToggleConnectionCommand(this.wirelessLineSensor);
 
@@ -36,7 +38,8 @@ namespace line_sensor.data_collector.ui
             this.positionControllerDeviceModel = new PositionControllerDeviceModel(this.positionController);
             this.positionControllerDeviceModel.PropertyChanged += PositionControllerDeviceModelChanged;
 
-            this.wirelessLineSensorDeviceModel = new WirelessLineSensorDeviceModel(this, this.wirelessLineSensor);
+            this.wirelessLineSensorDeviceModel = new WirelessLineSensorDeviceModel(this.wirelessLineSensor);
+            this.wirelessLineSensorDeviceModel.PropertyChanged += WirelessLineSensorDeviceModelChanged;
 
             this.LogEntries = new ObservableCollection<ILogEntryModel>();
 
@@ -47,11 +50,37 @@ namespace line_sensor.data_collector.ui
 
         public void Initialize(CoreDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
             this.positionControllerDeviceModel.Initialize(this, dispatcher);
+            this.wirelessLineSensorDeviceModel.Initialize(this, dispatcher);
             this.bleDeviceWatcher = new BleDeviceWatcher(dispatcher, this);
             this.serialDeviceWatcher = new SerialDeviceWatcher(dispatcher, this);
             this.bleDeviceWatcher.Start();
             this.serialDeviceWatcher.Start();
+            this.wirelessLineSensor.DeviceRemovedEvent += BleDeviceRemoved;
+        }
+
+        private void BleDeviceRemoved(WirelessLineSensor source, string removedDeviceId)
+        {
+            var ignore = this.dispatcher?.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                for (int i = 0; i < AllSupportedBleDevices.Count; ++i)
+                {
+                    if (AllSupportedBleDevices[i].Id == removedDeviceId)
+                    {
+                        if (WirelessLineSensorDeviceModel.Id == removedDeviceId)
+                        {
+                            WirelessLineSensorDeviceModel.DisconnectCommand.Execute(WirelessLineSensorDeviceModel);
+                        }
+                        AllSupportedBleDevices.RemoveAt(i);
+                        if (SelectedBleDevice == null || SelectedBleDevice.Id == removedDeviceId)
+                        {
+                            SelectedBleDevice = AllSupportedBleDevices.Count <= 0 ? null : AllSupportedBleDevices[0];
+                        }
+                        break;
+                    }
+                }
+            });
         }
 
         public UiComponent GetBusyUIComponents()
@@ -97,19 +126,33 @@ namespace line_sensor.data_collector.ui
             {
                 UpdateIsAllSupportedSerialDevicesEnabled();
             }
+            if ((changedUIComponents & UiComponent.ALL_BLE_DEVICES) == UiComponent.ALL_BLE_DEVICES)
+            {
+                UpdateIsAllSupportedBleDevicesEnabled();
+            }
             if ((changedUIComponents & UiComponent.POSITION_CONTROLLER) == UiComponent.POSITION_CONTROLLER)
             {
                 this.positionControllerDeviceModel.OnBusyChanged(isBusy);
             }
+            if ((changedUIComponents & UiComponent.WIRELESS_LINE_SENSOR) == UiComponent.WIRELESS_LINE_SENSOR)
+            {
+                this.wirelessLineSensorDeviceModel.OnBusyChanged(isBusy);
+            }
             if ((changedUIComponents & UiComponent.ALL_SERIAL_DEVICES) == UiComponent.ALL_SERIAL_DEVICES ||
                 (changedUIComponents & UiComponent.POSITION_CONTROLLER) == UiComponent.POSITION_CONTROLLER)
             {
-                SerialDeviceToggleConnectionCommand.UpdateCanExecute(this);
+                SerialDeviceToggleConnectionCommand.UpdateCanExecute();
+            }
+            if ((changedUIComponents & UiComponent.ALL_BLE_DEVICES) == UiComponent.ALL_BLE_DEVICES ||
+                (changedUIComponents & UiComponent.WIRELESS_LINE_SENSOR) == UiComponent.WIRELESS_LINE_SENSOR)
+            {
+                BleDeviceToggleScanningCommand.UpdateCanExecute();
+                BleDeviceToggleConnectionCommand.UpdateCanExecute();
             }
             if ((changedUIComponents & UiComponent.POSITION_CONTROLLER) == UiComponent.POSITION_CONTROLLER ||
                 (changedUIComponents & UiComponent.WIRELESS_LINE_SENSOR) == UiComponent.WIRELESS_LINE_SENSOR)
             {
-                CollectDataCommand.UpdateCanExecute(this);
+                CollectDataCommand.UpdateCanExecute();
             }
         }
 
@@ -129,7 +172,7 @@ namespace line_sensor.data_collector.ui
                 if (this.selectedSerialDevice != value)
                 {
                     this.selectedSerialDevice = value;
-                    this.SerialDeviceToggleConnectionCommand.UpdateCanExecute(this);
+                    this.SerialDeviceToggleConnectionCommand.UpdateCanExecute();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedSerialDevice)));
                 }
             }
@@ -186,7 +229,7 @@ namespace line_sensor.data_collector.ui
                 if (this.selectedBleDevice != value)
                 {
                     this.selectedBleDevice = value;
-                    this.SerialDeviceToggleConnectionCommand.UpdateCanExecute(this);
+                    this.BleDeviceToggleConnectionCommand.UpdateCanExecute();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedBleDevice)));
                 }
             }
@@ -205,6 +248,13 @@ namespace line_sensor.data_collector.ui
             }
         }
 
+        private void UpdateIsAllSupportedBleDevicesEnabled()
+        {
+            IsAllSupportedBleDevicesEnabled = !WirelessLineSensorDeviceModel.IsConnected &&
+                                               AllSupportedBleDevices.Count > 0 &&
+                                               (GetBusyUIComponents() & UiComponent.ALL_BLE_DEVICES) == 0;
+        }
+
         public Visibility BleDeviceScanningIndicatorVisible
         {
             get { return this.bleDeviceScanningIndicatorVisible; }
@@ -214,6 +264,15 @@ namespace line_sensor.data_collector.ui
                 {
                     this.bleDeviceScanningIndicatorVisible = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BleDeviceScanningIndicatorVisible)));
+
+                    if (this.bleDeviceScanningIndicatorVisible == Visibility.Visible)
+                    {
+                        BleDeviceToggleScanningCommandTitle = TITLE_SCANNING_STOP;
+                    }
+                    else
+                    {
+                        BleDeviceToggleScanningCommandTitle = TITLE_SCANNING_START;
+                    }
                 }
             }
         }
@@ -221,7 +280,7 @@ namespace line_sensor.data_collector.ui
         public string BleDeviceToggleScanningCommandTitle
         {
             get { return this.bleDeviceToggleScanningCommandTitle; }
-            set
+            private set
             {
                 if (this.bleDeviceToggleScanningCommandTitle != value)
                 {
@@ -233,20 +292,17 @@ namespace line_sensor.data_collector.ui
 
         public BaseCommandWithParameter<MainModel> BleDeviceToggleScanningCommand { get; }
 
-        public string BleDeviceToggleConnectionCommandTitle
+        public BaseCommandWithParameter<MainModel> BleDeviceToggleConnectionCommand { get; }
+
+        public void StopScanningBleDevices()
         {
-            get { return this.bleDeviceToggleConnectionCommandTitle; }
-            set
-            {
-                if (this.bleDeviceToggleConnectionCommandTitle != value)
-                {
-                    this.bleDeviceToggleConnectionCommandTitle = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BleDeviceToggleConnectionCommandTitle)));
-                }
-            }
+            this.bleDeviceWatcher.Stop();
         }
 
-        public BaseCommandWithParameter<MainModel> BleDeviceToggleConnectionCommand { get; }
+        public void StartScanningBleDevices()
+        {
+            this.bleDeviceWatcher.Start();
+        }
 
         /*
          * 
@@ -275,11 +331,27 @@ namespace line_sensor.data_collector.ui
             UpdateIsAllSupportedSerialDevicesEnabled();
         }
 
+        private void WirelessLineSensorDeviceModelChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WirelessLineSensorDeviceModel.IsConnected))
+            {
+                UpdateIsAllSupportedBleDevicesEnabled();
+                BleDeviceToggleScanningCommand.UpdateCanExecute();
+            }
+        }
+
+        private void AllSupportedBleDevicesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateIsAllSupportedBleDevicesEnabled();
+        }
+
         /* 
          * 
          * Fields
          * 
          */
+
+        private CoreDispatcher dispatcher;
 
         private UiComponent busyUIComponents;
 
@@ -291,7 +363,6 @@ namespace line_sensor.data_collector.ui
         private bool isAllSupportedBleDevicesEnabled;
         private Visibility bleDeviceScanningIndicatorVisible;
         private string bleDeviceToggleScanningCommandTitle;
-        private string bleDeviceToggleConnectionCommandTitle;
 
         private BleDeviceWatcher bleDeviceWatcher;
         private SerialDeviceWatcher serialDeviceWatcher;
@@ -301,5 +372,8 @@ namespace line_sensor.data_collector.ui
 
         private readonly PositionControllerDeviceModel positionControllerDeviceModel;
         private readonly WirelessLineSensorDeviceModel wirelessLineSensorDeviceModel;
+
+        private const string TITLE_SCANNING_STOP = "Stop";
+        private const string TITLE_SCANNING_START = "Rescan";
     }
 }

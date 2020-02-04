@@ -12,11 +12,6 @@ namespace line_sensor.data_collector.ui.position_controller
 {
     public class PositionControllerDeviceModel : IPositionControllerDeviceModel, IUiComponent
     {
-        public const string TITLE_CONNECT    = "Connect";
-        public const string TITLE_DISCONNECT = "Disconnect";
-
-        public const string STATUS_DISPLAY_NAME_NOT_AVAILABLE = "N/A";
-
         public PositionControllerDeviceModel(IPositionController positionController)
         {
             this.positionController = positionController ?? throw new ArgumentNullException(nameof(positionController));
@@ -39,10 +34,10 @@ namespace line_sensor.data_collector.ui.position_controller
 
         public void OnBusyChanged(bool isBusy)
         {
-            DisconnectCommand.UpdateCanExecute(this);
-            EmergencyStopCommand.UpdateCanExecute(this);
-            ResetPositionControllerCommand.UpdateCanExecute(this);
-            CalibratePositionControllerCommand.UpdateCanExecute(this);
+            DisconnectCommand.UpdateCanExecute();
+            EmergencyStopCommand.UpdateCanExecute();
+            ResetPositionControllerCommand.UpdateCanExecute();
+            CalibratePositionControllerCommand.UpdateCanExecute();
         }
 
         public void Connected(string deviceId, PositionControllerResponse status)
@@ -67,10 +62,10 @@ namespace line_sensor.data_collector.ui.position_controller
 
             SetStatus("Connection attempt", PositionControllerCommand.NONE, status);
 
-            DisconnectCommand.UpdateCanExecute(this);
-            EmergencyStopCommand.UpdateCanExecute(this);
-            ResetPositionControllerCommand.UpdateCanExecute(this);
-            CalibratePositionControllerCommand.UpdateCanExecute(this);
+            DisconnectCommand.UpdateCanExecute();
+            EmergencyStopCommand.UpdateCanExecute();
+            ResetPositionControllerCommand.UpdateCanExecute();
+            CalibratePositionControllerCommand.UpdateCanExecute();
         }
 
         public UiComponent GetBusyUIComponents()
@@ -275,5 +270,10 @@ namespace line_sensor.data_collector.ui.position_controller
         private MainModel mainModel;
 
         private readonly IPositionController positionController;
+
+        private const string TITLE_CONNECT = "Connect";
+        private const string TITLE_DISCONNECT = "Disconnect";
+
+        private const string STATUS_DISPLAY_NAME_NOT_AVAILABLE = "N/A";
     }
 }

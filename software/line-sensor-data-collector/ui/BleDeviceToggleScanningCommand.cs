@@ -1,4 +1,7 @@
-﻿using line_sensor.data_collector.shared;
+﻿using Windows.UI.Xaml;
+
+using line_sensor.data_collector.shared;
+using line_sensor.data_collector.ui.ui_component;
 
 namespace line_sensor.data_collector.ui
 {
@@ -6,14 +9,21 @@ namespace line_sensor.data_collector.ui
     {
         public override bool CanExecute(MainModel parameter)
         {
-            // TODO pkrupets
-            return false;
+            return parameter != null &&
+                   !parameter.WirelessLineSensorDeviceModel.IsConnected &&
+                   (parameter.GetBusyUIComponents() & (UiComponent.ALL_BLE_DEVICES | UiComponent.WIRELESS_LINE_SENSOR)) == 0;
         }
 
         public override void Execute(MainModel parameter)
         {
-            // TODO pkrupets
-            throw new System.NotImplementedException();
+            if (parameter.BleDeviceScanningIndicatorVisible == Visibility.Visible)
+            {
+                parameter.StopScanningBleDevices();
+            }
+            else
+            {
+                parameter.StartScanningBleDevices();
+            }
         }
     }
 }

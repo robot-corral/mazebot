@@ -159,6 +159,9 @@
     <Compile Include="ui\SerialDeviceWatcher.cs" />
     <Compile Include="ui\ui_component\UiComponent.cs" />
     <Compile Include="ui\wireless_line_sensor\IWirelessLineSensorDeviceModel.cs" />
+    <Compile Include="ui\wireless_line_sensor\WirelessLineSensorDisconnectCommand.cs" />
+    <Compile Include="ui\wireless_line_sensor\WirelessLineSensorResetLineSensorCommand.cs" />
+    <Compile Include="ui\wireless_line_sensor\WirelessLineSensorResetWirelessLineSensorCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

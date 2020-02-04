@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using line_sensor.data_collector.logic;
 using line_sensor.data_collector.shared;
+using line_sensor.data_collector.ui.ui_component;
 
 namespace line_sensor.data_collector.ui
 {
@@ -14,68 +16,40 @@ namespace line_sensor.data_collector.ui
 
         public override bool CanExecute(MainModel parameter)
         {
-            return !this.isBusy && parameter != null && parameter.SelectedBleDevice != null;
+            return parameter != null &&
+                   parameter.SelectedBleDevice != null &&
+                   (parameter.GetBusyUIComponents() & (UiComponent.ALL_BLE_DEVICES | UiComponent.WIRELESS_LINE_SENSOR)) == 0;
         }
 
         public override void Execute(MainModel parameter)
         {
-            //if (parameter == null ||
-            //    parameter.SelectedSerialDevice == null)
-            //{
-            //    return;
-            //}
-
-            //if (parameter.WirelessLineSensorDeviceModel.IsConnected)
-            //{
-            //    this.wirelessLineSensor.Disconnect();
-            //    parameter.WirelessLineSensorDeviceModel.IsConnected = false;
-            //}
-            //else
-            //{
-            //    SetIsBusy(true, parameter);
-
-            //    BleDeviceModel bleDeviceModel = parameter.SelectedBleDevice;
-
-            //    if (bleDeviceModel == null)
-            //    {
-            //        SetIsBusy(false, parameter);
-            //        return;
-            //    }
-
-            //    bleDeviceModel.IsBusy = true;
-
-            //    this.wirelessLineSensor.TryToConnect(bleDeviceModel.Id)
-            //        .ContinueWith(t =>
-            //        {
-            //            try
-            //            {
-            //                if (t.Result)
-            //                {
-            //                    parameter.ConnectedWirelessLineSensorDeviceModel.IsConnected = true;
-            //                }
-            //                else
-            //                {
-            //                    // TODO handle errors
-            //                }
-            //            }
-            //            finally
-            //            {
-            //                SetIsBusy(false, parameter);
-            //            }
-            //        }, TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
-            //}
-        }
-
-        private void SetIsBusy(bool isBusy, MainModel parameter)
-        {
-            if (this.isBusy != isBusy)
+            if (parameter == null ||
+                parameter.SelectedSerialDevice == null)
             {
-                this.isBusy = isBusy;
-                UpdateCanExecute(parameter);
+                return;
+            }
+
+            if (parameter.WirelessLineSensorDeviceModel.IsConnected)
+            {
+                parameter.WirelessLineSensorDeviceModel.DisconnectCommand.Execute(parameter.WirelessLineSensorDeviceModel);
+            }
+            else
+            {
+                BleDeviceModel bleDeviceModel = parameter.SelectedBleDevice;
+
+                bleDeviceModel.CanBeDeletedByWatcher = false;
+
+                parameter.SetBusy(UiComponent.ALL_BLE_DEVICES | UiComponent.WIRELESS_LINE_SENSOR, true);
+
+                this.wirelessLineSensor.TryToConnect(bleDeviceModel.Id)
+                    .ContinueWith(t =>
+                                  {
+                                      parameter.WirelessLineSensorDeviceModel.Connected(bleDeviceModel.Id, t.Result);
+                                      parameter.SetBusy(UiComponent.ALL_BLE_DEVICES | UiComponent.WIRELESS_LINE_SENSOR, false);
+                                  },
+                                  TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
             }
         }
-
-        private bool isBusy;
 
         private readonly IWirelessLineSensor wirelessLineSensor;
     }

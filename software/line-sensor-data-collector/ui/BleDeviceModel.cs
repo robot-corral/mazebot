@@ -1,30 +1,77 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using Windows.Devices.Enumeration;
 
 namespace line_sensor.data_collector.ui
 {
-    public class BleDeviceModel : IDeviceModel
+    public class BleDeviceModel : IDeviceModel, INotifyPropertyChanged
     {
         public BleDeviceModel(DeviceInformation deviceInformation)
         {
             this.deviceInformation = deviceInformation ?? throw new ArgumentNullException(nameof(deviceInformation));
-            DisplayName = deviceInformation.Name;
+            Id = deviceInformation.Id;
+            DisplayName = deviceInformation.Name + GetIp(Id);
+            IsDefault = deviceInformation.IsDefault;
         }
 
-        public string Id { get { return this.deviceInformation.Id; } }
+        private string GetIp(string id)
+        {
+            Match match = DEVICE_UNIQUE_ID_REGEX.Match(id);
 
-        public bool IsDefault { get { return this.deviceInformation.IsDefault; } }
+            if (match.Success)
+            {
+                return " " + match.Groups[2].Value;
+            }
+            else
+            {
+                return "";
+            }
+        }
 
-        public string DisplayName { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool IsBusy { get; set; }
+        public string Id { get; set; }
+
+        public string DisplayName
+        {
+            get { return this.displayName; }
+            set
+            {
+                if (this.displayName != value)
+                {
+                    this.displayName = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DisplayName)));
+                }
+            }
+        }
+
+        public bool IsDefault { get; set; }
+
+        public bool CanBeDeletedByWatcher { get; set; }
 
         public void Update(DeviceInformationUpdate deviceInformationUpdate)
         {
             this.deviceInformation.Update(deviceInformationUpdate);
-            // TODO update properties
+
+            if (deviceInformationUpdate.Properties.ContainsKey(nameof(DeviceInformation.Id)))
+            {
+                Id = deviceInformation.Id;
+            }
+            if (deviceInformationUpdate.Properties.ContainsKey(nameof(DeviceInformation.Name)))
+            {
+                DisplayName = deviceInformation.Name;
+            }
+            if (deviceInformationUpdate.Properties.ContainsKey(nameof(DeviceInformation.IsDefault)))
+            {
+                IsDefault = deviceInformation.IsDefault;
+            }
         }
 
+        private string displayName;
+
         private readonly DeviceInformation deviceInformation;
+
+        private static readonly Regex DEVICE_UNIQUE_ID_REGEX = new Regex("([^\\-]+)\\-(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
     }
 }

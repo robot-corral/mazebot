@@ -41,10 +41,11 @@ namespace line_sensor.data_collector.ui
 
                 this.positionController.TryToConnect(selectedSerialDevice.Id)
                     .ContinueWith(t =>
-                    {
-                        parameter.PositionControllerDeviceModel.Connected(selectedSerialDevice.Id, t.Result);
-                        parameter.SetBusy(UiComponent.ALL_SERIAL_DEVICES | UiComponent.POSITION_CONTROLLER, false);
-                    }, TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
+                                  {
+                                      parameter.PositionControllerDeviceModel.Connected(selectedSerialDevice.Id, t.Result);
+                                      parameter.SetBusy(UiComponent.ALL_SERIAL_DEVICES | UiComponent.POSITION_CONTROLLER, false);
+                                  },
+                                  TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
             }
         }
 

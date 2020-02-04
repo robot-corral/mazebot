@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Windows.Devices.Enumeration;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -16,26 +17,36 @@ namespace line_sensor.data_collector.ui
 
         public void Start()
         {
-            if (this.bleDeviceWatcher == null)
+            // property strings are documented here https://msdn.microsoft.com/en-us/library/windows/desktop/ff521659(v=vs.85).aspx
+            string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
+
+            // guid in this expression is Bluetooth LE protocol ID
+            string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
+
+            this.bleDeviceWatcher = DeviceInformation.CreateWatcher(aqsAllBluetoothLEDevices,
+                                                                    requestedProperties,
+                                                                    DeviceInformationKind.AssociationEndpoint);
+
+            this.allBleDevices.Clear();
+            this.model.AllSupportedBleDevices.Clear();
+
+            this.bleDeviceWatcher.Added += OnBleDeviceAdded;
+            this.bleDeviceWatcher.Removed += OnBleDeviceRemoved;
+            this.bleDeviceWatcher.Updated += OnBleDeviceUpdated;
+            this.bleDeviceWatcher.EnumerationCompleted += OnBleDeviceEnumerationComplete;
+
+            this.model.BleDeviceScanningIndicatorVisible = Visibility.Visible;
+
+            this.bleDeviceWatcher.Start();
+        }
+
+        public void Stop()
+        {
+            if (this.bleDeviceWatcher != null && this.bleDeviceWatcher.Status == DeviceWatcherStatus.Started)
             {
-                // property strings are documented here https://msdn.microsoft.com/en-us/library/windows/desktop/ff521659(v=vs.85).aspx
-                string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
-
-                // guid in this expression is Bluetooth LE protocol ID
-                string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
-
-                this.bleDeviceWatcher = DeviceInformation.CreateWatcher(aqsAllBluetoothLEDevices,
-                                                                        requestedProperties,
-                                                                        DeviceInformationKind.AssociationEndpoint);
-
-                this.bleDeviceWatcher.Added += OnBleDeviceAdded;
-                this.bleDeviceWatcher.Removed += OnBleDeviceRemoved;
-                this.bleDeviceWatcher.Updated += OnBleDeviceUpdated;
-                this.bleDeviceWatcher.EnumerationCompleted += OnBleDeviceEnumerationComplete;
-
-                this.model.BleDeviceScanningIndicatorVisible = Visibility.Visible;
-
-                this.bleDeviceWatcher.Start();
+                this.bleDeviceWatcher.Stop();
+                this.bleDeviceWatcher = null;
+                this.model.BleDeviceScanningIndicatorVisible = Visibility.Collapsed;
             }
         }
 
@@ -58,7 +69,7 @@ namespace line_sensor.data_collector.ui
             }
         }
 
-        private bool IsLooingLikeLineSensorDataDevice(DeviceInformation deviceInformation)
+        private static bool IsLooingLikeLineSensorDataDevice(DeviceInformation deviceInformation)
         {
             return deviceInformation != null &&
                    deviceInformation.Name?.ToLower() == DEVICE_NAME_LINE_SENSOR_DATA;
@@ -68,7 +79,10 @@ namespace line_sensor.data_collector.ui
         {
             var ignoreContinuation = this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                this.model.BleDeviceScanningIndicatorVisible = Visibility.Collapsed;
+                if (sender == this.bleDeviceWatcher)
+                {
+                    this.model.BleDeviceScanningIndicatorVisible = Visibility.Collapsed;
+                }
             });
         }
 
@@ -94,30 +108,36 @@ namespace line_sensor.data_collector.ui
         {
             var ignoreContinuation = this.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if (sender == this.bleDeviceWatcher && this.allBleDevices.Remove(deviceInformationUpdate.Id))
+                if (sender == this.bleDeviceWatcher && this.allBleDevices.ContainsKey(deviceInformationUpdate.Id))
                 {
+                    bool removeDevice = true;
+
                     for (int i = 0; i < this.model.AllSupportedBleDevices.Count; ++i)
                     {
                         if (this.model.AllSupportedBleDevices[i].Id == deviceInformationUpdate.Id)
                         {
-                            if (this.model.SelectedBleDevice != null && this.model.SelectedBleDevice.Id == deviceInformationUpdate.Id)
+                            if (this.model.AllSupportedBleDevices[i].CanBeDeletedByWatcher)
                             {
-                                if (this.model.SelectedBleDevice.IsBusy)
+                                if (this.model.WirelessLineSensorDeviceModel.Id == deviceInformationUpdate.Id)
                                 {
-                                    // when we connect to device it will be removed from list of available devices
-                                    // so we mark it as busy and keep it in the list.
-                                    // once device is actally disconnected / removed model will be notified about this
-                                    // by IWirelessLineSensor implementation
-                                    continue;
+                                    this.model.WirelessLineSensorDeviceModel.DisconnectCommand.Execute(this.model.WirelessLineSensorDeviceModel);
                                 }
-                                else
+                                this.model.AllSupportedBleDevices.RemoveAt(i);
+                                if (this.model.SelectedBleDevice == null || this.model.SelectedBleDevice.Id == deviceInformationUpdate.Id)
                                 {
                                     this.model.SelectedBleDevice = this.model.AllSupportedBleDevices.Count <= 0 ? null : this.model.AllSupportedBleDevices[0];
                                 }
                             }
-                            this.model.AllSupportedBleDevices.RemoveAt(i);
+                            else
+                            {
+                                removeDevice = false;
+                            }
                             break;
                         }
+                    }
+                    if (removeDevice)
+                    {
+                        this.allBleDevices.Remove(deviceInformationUpdate.Id);
                     }
                 }
             });

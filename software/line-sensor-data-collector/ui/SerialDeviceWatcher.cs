@@ -100,11 +100,11 @@ namespace line_sensor.data_collector.ui
                             {
                                 this.model.PositionControllerDeviceModel.DisconnectCommand.Execute(this.model.PositionControllerDeviceModel);
                             }
-                            if (this.model.SelectedSerialDevice != null && this.model.SelectedSerialDevice.Id == deviceInformationUpdate.Id)
+                            this.model.AllSupportedSerialDevices.RemoveAt(i);
+                            if (this.model.SelectedSerialDevice == null || this.model.SelectedSerialDevice.Id == deviceInformationUpdate.Id)
                             {
                                 this.model.SelectedSerialDevice = this.model.AllSupportedSerialDevices.Count <= 0 ? null : this.model.AllSupportedSerialDevices[0];
                             }
-                            this.model.AllSupportedSerialDevices.RemoveAt(i);
                             break;
                         }
                     }
