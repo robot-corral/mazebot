@@ -119,8 +119,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="logic\DataCollector.cs" />
+    <Compile Include="logic\IDataCollector.cs" />
     <Compile Include="logic\IWirelessLineSensor.cs" />
     <Compile Include="logic\LineSensorData.cs" />
+    <Compile Include="logic\LineSensorReading.cs" />
+    <Compile Include="logic\LineSensorStatus.cs" />
     <Compile Include="logic\PositionController.cs" />
     <Compile Include="logic\PositionControllerCommand.cs" />
     <Compile Include="logic\PositionControllerDirection.cs" />

@@ -6,7 +6,7 @@
         public byte NumberOfFailures { get; set; }
         public byte NumberOfCrcErrors { get; set; }
 
-        public byte CurrentStatus { get; set; }
+        public LineSensorStatus CurrentStatus { get; set; }
         public uint CurrentDetailedStatus { get; set; }
         public uint CumulativeDetailedStatusSinceLastReset { get; set; }
 

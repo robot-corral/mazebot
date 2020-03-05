@@ -22,7 +22,7 @@ do {\
 
 static SVCCTL_EvtAckStatus_t p2pEventHandler(void* pEvent)
 {
-    p2pStmAppNotification_t pNotification;
+    p2pStmAppNotification_t notification;
 
     SVCCTL_EvtAckStatus_t returnValue = SVCCTL_EvtNotAck;
     hci_event_pckt* pEventPacket = (hci_event_pckt *) (((hci_uart_pckt*) pEvent)->data);
@@ -40,13 +40,13 @@ static SVCCTL_EvtAckStatus_t p2pEventHandler(void* pEvent)
                 returnValue = SVCCTL_EvtAckFlowEnable;
                 if(pAttributeModified->Attr_Data[0] & COMSVC_Notification)
                 {
-                    pNotification.p2pOpcode = P2PS_CLIENT_ENABLE_RESPONSE;
-                    p2pStmAppNotification(&pNotification);
+                    notification.p2pOpcode = P2PS_CLIENT_ENABLE_RESPONSE;
+                    p2pStmAppNotification(&notification);
                 }
                 else
                 {
-                    pNotification.p2pOpcode = P2PS_CLIENT_DISABLE_RESPONSE;
-                    p2pStmAppNotification(&pNotification);
+                    notification.p2pOpcode = P2PS_CLIENT_DISABLE_RESPONSE;
+                    p2pStmAppNotification(&notification);
                 }
             }
         }

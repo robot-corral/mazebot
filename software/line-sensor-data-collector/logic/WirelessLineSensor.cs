@@ -14,6 +14,8 @@ namespace line_sensor.data_collector.logic
 {
     public class WirelessLineSensor : IWirelessLineSensor
     {
+        public const int NUMBER_OF_SENSORS = 25;
+
         public WirelessLineSensor(ILogger logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -114,8 +116,6 @@ namespace line_sensor.data_collector.logic
                 this.service = service;
                 this.responseCharacteristic = responseCharacteristic;
                 this.responseCharacteristic.ValueChanged += OnCharacteristicValueChanged;
-
-                await StartQueryingLineSensor().ConfigureAwait(false);
 
                 success = true;
 
@@ -228,7 +228,7 @@ namespace line_sensor.data_collector.logic
             lineSensorData.NumberOfCalls = br.ReadByte();
             lineSensorData.NumberOfFailures = br.ReadByte();
             lineSensorData.NumberOfCrcErrors = br.ReadByte();
-            lineSensorData.CurrentStatus = br.ReadByte();
+            lineSensorData.CurrentStatus = (LineSensorStatus) br.ReadByte();
             lineSensorData.CurrentDetailedStatus = br.ReadUInt32();
             lineSensorData.CumulativeDetailedStatusSinceLastReset = br.ReadUInt32();
 
@@ -240,8 +240,6 @@ namespace line_sensor.data_collector.logic
         private GattCharacteristic responseCharacteristic;
 
         private readonly ILogger logger;
-
-        private const int NUMBER_OF_SENSORS = 25;
 
         private static readonly Guid SERVICE_GUID                  = new Guid("0000fe40-cc7a-482a-984a-7f2ed5b3e58f");
         private static readonly Guid RESPONSE_CHARACTERISTICS_GUID = new Guid("0000fe42-8e22-4541-9d4c-21edae82ed19");

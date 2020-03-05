@@ -99,8 +99,9 @@ namespace line_sensor.data_collector.ui.position_controller
             }
             else
             {
-                Position = ((double) status.Position) * 0.025d;
+                Position = ((double) status.Position) * PositionController.DISTANCE_PER_TICK_MM;
                 StatusDisplayName = StatusToDisplayName(status.Status);
+                IsEmergencyStopped = (status.Status & PositionControllerStatus.PC_OK_EMERGENCY_STOP) == PositionControllerStatus.PC_OK_EMERGENCY_STOP;
 
                 ++PacketsTotalNumber;
 
@@ -162,6 +163,19 @@ namespace line_sensor.data_collector.ui.position_controller
                 {
                     this.isConnected = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsConnected)));
+                }
+            }
+        }
+
+        public bool IsEmergencyStopped
+        {
+            get { return this.isEmergencyStopped; }
+            private set
+            {
+                if (this.isEmergencyStopped != value)
+                {
+                    this.isEmergencyStopped = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsEmergencyStopped)));
                 }
             }
         }
@@ -255,6 +269,7 @@ namespace line_sensor.data_collector.ui.position_controller
         public BaseCommandWithParameter<IPositionControllerDeviceModel> CalibratePositionControllerCommand { get; }
 
         private bool isConnected;
+        private bool isEmergencyStopped;
 
         private uint maxPosition;
 

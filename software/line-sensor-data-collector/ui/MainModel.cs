@@ -21,6 +21,7 @@ namespace line_sensor.data_collector.ui
         {
             this.positionController = new PositionController(logger);
             this.wirelessLineSensor = new WirelessLineSensor(logger);
+            this.dataCollector = new DataCollector(this.positionController, this.wirelessLineSensor, logger);
 
             this.serialDeviceScanningIndicatorVisible = Visibility.Collapsed;
             this.AllSupportedSerialDevices = new ObservableCollection<SerialDeviceModel>();
@@ -33,7 +34,7 @@ namespace line_sensor.data_collector.ui
             this.BleDeviceToggleScanningCommand = new BleDeviceToggleScanningCommand();
             this.BleDeviceToggleConnectionCommand = new BleDeviceToggleConnectionCommand(this.wirelessLineSensor);
 
-            this.CollectDataCommand = new CollectDataCommand(this.positionController, this.wirelessLineSensor);
+            this.CollectDataCommand = new CollectDataCommand(this.dataCollector);
 
             this.positionControllerDeviceModel = new PositionControllerDeviceModel(this.positionController);
             this.positionControllerDeviceModel.PropertyChanged += PositionControllerDeviceModelChanged;
@@ -118,6 +119,16 @@ namespace line_sensor.data_collector.ui
             UpdateBusyComponents(changedUIComponents, isBusy);
 
             return oldBusyComponents;
+        }
+
+        public void ResetBusy(UiComponent busyComponents)
+        {
+            UiComponent newBusyUIComponents = (~this.busyUIComponents) & busyComponents;
+            UiComponent newNotBusyUIComponents = this.busyUIComponents & (~busyComponents);
+
+            this.busyUIComponents = busyComponents;
+            UpdateBusyComponents(newBusyUIComponents, true);
+            UpdateBusyComponents(newNotBusyUIComponents, false);
         }
 
         private void UpdateBusyComponents(UiComponent changedUIComponents, bool isBusy)
@@ -323,6 +334,7 @@ namespace line_sensor.data_collector.ui
             if (e.PropertyName == nameof(PositionControllerDeviceModel.IsConnected))
             {
                 UpdateIsAllSupportedSerialDevicesEnabled();
+                this.CollectDataCommand.UpdateCanExecute();
             }
         }
 
@@ -337,6 +349,7 @@ namespace line_sensor.data_collector.ui
             {
                 UpdateIsAllSupportedBleDevicesEnabled();
                 BleDeviceToggleScanningCommand.UpdateCanExecute();
+                this.CollectDataCommand.UpdateCanExecute();
             }
         }
 
@@ -367,6 +380,7 @@ namespace line_sensor.data_collector.ui
         private BleDeviceWatcher bleDeviceWatcher;
         private SerialDeviceWatcher serialDeviceWatcher;
 
+        private readonly IDataCollector dataCollector;
         private readonly IPositionController positionController;
         private readonly IWirelessLineSensor wirelessLineSensor;
 

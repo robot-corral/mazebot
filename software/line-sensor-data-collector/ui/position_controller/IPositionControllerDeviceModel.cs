@@ -15,6 +15,8 @@ namespace line_sensor.data_collector.ui.position_controller
 
         bool IsConnected { get; }
 
+        bool IsEmergencyStopped { get; }
+
         string StatusDisplayName { get; }
 
         string ConnectDisconnectTitle { get; }

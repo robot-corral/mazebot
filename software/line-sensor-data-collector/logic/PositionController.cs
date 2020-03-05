@@ -14,6 +14,8 @@ namespace line_sensor.data_collector.logic
 {
     public class PositionController : IPositionController
     {
+        public const double DISTANCE_PER_TICK_MM = 0.0125;
+
         static PositionController()
         {
             byte[] getStatus = new byte[REQUEST_LENGTH];
