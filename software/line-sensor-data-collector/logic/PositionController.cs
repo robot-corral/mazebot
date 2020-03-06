@@ -357,13 +357,11 @@ namespace line_sensor.data_collector.logic
             catch (TaskCanceledException)
             {
                 this.logger.Error($"'{nameof(this.deviceId)}' position controller calibration request timed out");
-                DisconnectUnsafe();
                 return new PositionControllerResponse(PositionControllerStatus.CS_ERR_COMMUNICATION_TIMEOUT);
             }
             catch (Exception e)
             {
                 this.logger.Error(e, $"unexpected exception while calibrating '{nameof(this.deviceId)}' position controller");
-                DisconnectUnsafe();
                 return new PositionControllerResponse(PositionControllerStatus.CS_ERR_UNEXPECTED);
             }
             finally

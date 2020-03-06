@@ -212,7 +212,7 @@ namespace line_sensor.data_collector.logic
                     {
                         throw new InvalidOperationException("position controller is in emergency stop");
                     }
-                } while (positionController.IsOkStatus(response.Status) && (response.Status & PositionControllerStatus.PC_OK_BUSY) != 0);
+                } while (!positionController.IsOkStatus(response.Status) || (response.Status & PositionControllerStatus.PC_OK_BUSY) != 0);
 
                 return response.Position;
             }
