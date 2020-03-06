@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using line_sensor.data_collector.logic;
@@ -20,54 +19,58 @@ namespace line_sensor.data_collector.ui
         {
             return parameter != null &&
                    parameter.PositionControllerDeviceModel.IsConnected &&
-                   parameter.WirelessLineSensorDeviceModel.IsConnected &&
-                   (parameter.GetBusyUIComponents() & (UiComponent.POSITION_CONTROLLER | UiComponent.WIRELESS_LINE_SENSOR)) == 0;
+                   parameter.WirelessLineSensorDeviceModel.IsConnected;
         }
 
         public override void Execute(MainModel parameter)
         {
-            UiComponent previousBusyComponents = parameter.SetBusy(UiComponent.POSITION_CONTROLLER | UiComponent.WIRELESS_LINE_SENSOR, true);
+            if (parameter.CollectDataCommandTitle == MainModel.TITLE_COLLECT_DATA)
+            {
+                parameter.CollectDataCommandTitle = MainModel.TITLE_STOP_COLLECTING_DATA;
 
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                UiComponent previousBusyComponents = parameter.SetBusy(UiComponent.POSITION_CONTROLLER | UiComponent.WIRELESS_LINE_SENSOR, true);
 
-            PropertyChangedEventHandler emergencyStoppedHandler = (s, e) => {
-                if (e.PropertyName == nameof(parameter.PositionControllerDeviceModel.IsEmergencyStopped) &&
-                    parameter.PositionControllerDeviceModel.IsEmergencyStopped)
-                {
-                    cancellationTokenSource.Cancel();
-                }
-            };
+                this.cancellationTokenSource = new CancellationTokenSource();
 
-            parameter.PositionControllerDeviceModel.PropertyChanged += emergencyStoppedHandler;
+                PropertyChangedEventHandler emergencyStoppedHandler = (s, e) => {
+                    if (e.PropertyName == nameof(parameter.PositionControllerDeviceModel.IsEmergencyStopped) &&
+                        parameter.PositionControllerDeviceModel.IsEmergencyStopped)
+                    {
+                        this.cancellationTokenSource.Cancel();
+                    }
+                };
 
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
-            // TODO
+                parameter.PositionControllerDeviceModel.PropertyChanged += emergencyStoppedHandler;
 
-            Task.Run(() => this.dataCollector.CollectData(20, 1000, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "line_sensor_data"), cancellationTokenSource.Token))
-                .ContinueWith(t =>
-                              {
-                                  try
-                                  {
-                                      parameter.ResetBusy(previousBusyComponents);
-                                  }
-                                  finally
-                                  {
-                                      parameter.PositionControllerDeviceModel.PropertyChanged -= emergencyStoppedHandler;
-                                  }
-                              },
-                TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
+                int numberOfSamples = parameter.NumberOfSamples;
+                string resultFilePathPrefix = parameter.FilePathPrefix;
+                uint dataCollectionPositionDelta = (uint) (parameter.StepSize / PositionController.DISTANCE_PER_TICK_MM + 0.5);
+
+                Task.Run(() => this.dataCollector.CollectData(dataCollectionPositionDelta,
+                                                              numberOfSamples,
+                                                              resultFilePathPrefix,
+                                                              this.cancellationTokenSource.Token))
+                    .ContinueWith(t =>
+                    {
+                        try
+                        {
+                            parameter.ResetBusy(previousBusyComponents);
+                            parameter.CollectDataCommandTitle = MainModel.TITLE_COLLECT_DATA;
+                        }
+                        finally
+                        {
+                            parameter.PositionControllerDeviceModel.PropertyChanged -= emergencyStoppedHandler;
+                        }
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext() /* make sure we continue on UI thread */);
+            }
+            else
+            {
+                this.cancellationTokenSource.Cancel();
+            }
         }
 
         private readonly IDataCollector dataCollector;
+        private CancellationTokenSource cancellationTokenSource;
     }
 }

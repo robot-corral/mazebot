@@ -55,7 +55,14 @@ namespace line_sensor.data_collector.logic
 
                 if (token.IsCancellationRequested)
                 {
-                    semaphore.Release();
+                    try
+                    {
+                        semaphore.Release();
+                    }
+                    catch (SemaphoreFullException)
+                    {
+                        // ignore as callback might get called multiple times after being cancelled
+                    }
                 }
                 else if ((data.CurrentStatus & LineSensorStatus.LSS_OK_FLAG_NEW_DATA_AVAILABLE) == LineSensorStatus.LSS_OK_FLAG_NEW_DATA_AVAILABLE &&
                          (data.CurrentStatus & LineSensorStatus.LSS_ERROR) == 0)
@@ -201,12 +208,11 @@ namespace line_sensor.data_collector.logic
                 {
                     response = await this.positionController.GetPosition().ConfigureAwait(false);
 
-                    if (!this.positionController.IsOkStatus(response.Status) ||
-                        (response.Status & PositionControllerStatus.PC_OK_EMERGENCY_STOP) == PositionControllerStatus.PC_OK_EMERGENCY_STOP)
+                    if ((response.Status & PositionControllerStatus.PC_OK_EMERGENCY_STOP) == PositionControllerStatus.PC_OK_EMERGENCY_STOP)
                     {
                         throw new InvalidOperationException("position controller is in emergency stop");
                     }
-                } while ((response.Status & PositionControllerStatus.PC_OK_BUSY) != 0);
+                } while (positionController.IsOkStatus(response.Status) && (response.Status & PositionControllerStatus.PC_OK_BUSY) != 0);
 
                 return response.Position;
             }
@@ -218,7 +224,7 @@ namespace line_sensor.data_collector.logic
 
         private const int STOP_QUERYING_LINE_SENSOR_RETRIES_COUNT = 10;
         private const int START_QUERYING_LINE_SENSOR_RETRIES_COUNT = 10;
-        private const int TIMEOUT_TO_QUERY_LINE_SENSOR_MILLISECONDS = 10 * 1000;
+        private const int TIMEOUT_TO_QUERY_LINE_SENSOR_MILLISECONDS = 10 * 60 * 1000;
 
         private const double SENSOR_LENGTH = 112.0 /* sensor width */ + 6.35 /* width of a line */;
     }

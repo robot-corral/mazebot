@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.IO;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
@@ -11,12 +13,14 @@ using line_sensor.data_collector.ui.log;
 using line_sensor.data_collector.ui.position_controller;
 using line_sensor.data_collector.ui.ui_component;
 using line_sensor.data_collector.ui.wireless_line_sensor;
-using System;
 
 namespace line_sensor.data_collector.ui
 {
     public class MainModel : INotifyPropertyChanged
     {
+        public const string TITLE_COLLECT_DATA = "Collect Data";
+        public const string TITLE_STOP_COLLECTING_DATA = "Stop\nCollecting\nData";
+
         public MainModel(ILogger logger)
         {
             this.positionController = new PositionController(logger);
@@ -45,6 +49,12 @@ namespace line_sensor.data_collector.ui
             this.LogEntries = new ObservableCollection<ILogEntryModel>();
 
             this.busyUIComponents = UiComponent.NONE;
+
+            this.CollectDataCommandTitle = TITLE_COLLECT_DATA;
+
+            this.StepSize = 0.5;
+            this.NumberOfSamples = 1000;
+            this.FilePathPrefix = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "line_sensor_data_" + Guid.NewGuid());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -329,6 +339,58 @@ namespace line_sensor.data_collector.ui
 
         public ObservableCollection<ILogEntryModel> LogEntries { get; }
 
+        public string CollectDataCommandTitle
+        {
+            get { return this.collectDataCommandTitle; }
+            set
+            {
+                if (this.collectDataCommandTitle != value)
+                {
+                    this.collectDataCommandTitle = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CollectDataCommandTitle)));
+                }
+            }
+        }
+
+        public double StepSize
+        {
+            get { return this.stepSize; }
+            set
+            {
+                if (this.stepSize != value)
+                {
+                    this.stepSize = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StepSize)));
+                }
+            }
+        }
+
+        public string FilePathPrefix
+        {
+            get { return this.filePathPrefix; }
+            set
+            {
+                if (this.filePathPrefix != value)
+                {
+                    this.filePathPrefix = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilePathPrefix)));
+                }
+            }
+        }
+
+        public int NumberOfSamples
+        {
+            get { return this.numberOfSamples; }
+            set
+            {
+                if (this.numberOfSamples != value)
+                {
+                    this.numberOfSamples = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(NumberOfSamples)));
+                }
+            }
+        }
+
         private void PositionControllerDeviceModelChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PositionControllerDeviceModel.IsConnected))
@@ -379,6 +441,11 @@ namespace line_sensor.data_collector.ui
 
         private BleDeviceWatcher bleDeviceWatcher;
         private SerialDeviceWatcher serialDeviceWatcher;
+
+        private double stepSize;
+        private int numberOfSamples;
+        private string filePathPrefix;
+        private string collectDataCommandTitle;
 
         private readonly IDataCollector dataCollector;
         private readonly IPositionController positionController;

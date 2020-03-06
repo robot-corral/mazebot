@@ -55,6 +55,12 @@ namespace line_sensor.data_collector.logic
                 this.deviceId = serialDeviceId;
                 this.serialDevice = await SerialDevice.FromIdAsync(serialDeviceId);
 
+                if (this.serialDevice == null)
+                {
+                    this.logger.Error($"'{nameof(serialDeviceId)}' is busy, most likely it is being used by some other application");
+                    return new PositionControllerResponse(PositionControllerStatus.CS_ERR_DEVICE_BUSY);
+                }
+
                 this.serialDevice.BaudRate = 230400;
                 this.serialDevice.IsDataTerminalReadyEnabled = true;
                 this.serialDevice.IsRequestToSendEnabled = true;
