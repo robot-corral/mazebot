@@ -15,11 +15,12 @@ static commandResultFlags_t convertMoveRequestResultToCommandResultFlags(moveReq
 
 void initializeClientCommunicationUart()
 {
+    g_clientUartIsTransmitting = false;
+
 #ifdef STM32L496ZG
     enableVddIo2();
 #endif
     initializeUart();
-    setRxActiveLedEnabled(true);
 
     LL_CRC_SetPolynomialCoef(CRC, CRC32_POLYNOMIAL);
 }
@@ -155,5 +156,25 @@ commandResultFlags_t convertMoveRequestResultToCommandResultFlags(moveRequestRes
     else
     {
         return ERR_UNEXPECTED;
+    }
+}
+
+void tryToProcessEmergencyStopCommand(volatile clientUartRequest_t* pRequest)
+{
+    if (pRequest == nullptr)
+    {
+        return;
+    }
+
+    if (pRequest->unpacked.motorCommand == MCMD_EMERGENCY_STOP)
+    {
+        const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
+
+        if (calculatedCrc != pRequest->unpacked.crc)
+        {
+            return;
+        }
+
+        positionControllerEmergencyStop();
     }
 }

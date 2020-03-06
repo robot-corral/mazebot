@@ -7,5 +7,6 @@ volatile uint32_t g_positionControllerXPulseErrorCount;
 volatile positionControllerState_t g_positionControllerXState;
 volatile positionControllerDirection_t g_positionControllerXDirection;
 
+volatile bool g_clientUartIsTransmitting;
 volatile clientUartRequest_t g_clientUartRxBuffer;
 volatile clientUartResponse_t g_clientUartTxBuffer;

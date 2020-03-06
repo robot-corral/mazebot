@@ -120,24 +120,13 @@ void DMA2_Channel6_IRQHandler(void)
     if (LL_DMA_IsActiveFlag_TE6(DMA2))
     {
         LL_DMA_ClearFlag_TE6(DMA2);
-        setTxErrorLedEnabled(true);
         resetUart();
     }
     else if (LL_DMA_IsActiveFlag_TC6(DMA2))
     {
         LL_DMA_ClearFlag_TC6(DMA2);
         LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_6);
-        setTxActiveLedEnabled(false);
-        setTxErrorLedEnabled(false);
-        // get ready to receive next command
-        LL_DMA_ConfigAddresses(DMA2,
-                               LL_DMA_CHANNEL_7,
-                               LL_LPUART_DMA_GetRegAddr(LPUART1, LL_LPUART_DMA_REG_DATA_RECEIVE),
-                               (uint32_t) &g_clientUartRxBuffer,
-                               LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-        LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_7, CLIENT_UART_RX_BUFFER_LENGTH);
-        LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_7);
-        setRxActiveLedEnabled(true);
+        g_clientUartIsTransmitting = false;
     }
 }
 
@@ -149,24 +138,40 @@ void DMA2_Channel7_IRQHandler(void)
     if (LL_DMA_IsActiveFlag_TE7(DMA2))
     {
         LL_DMA_ClearFlag_TE7(DMA2);
-        setRxErrorLedEnabled(true);
         resetUart();
     }
     else if (LL_DMA_IsActiveFlag_TC7(DMA2))
     {
         LL_DMA_ClearFlag_TC7(DMA2);
+
+        // get ready to receive next command
         LL_DMA_DisableChannel(DMA2, LL_DMA_CHANNEL_7);
-        setRxActiveLedEnabled(false);
-        setRxErrorLedEnabled(false);
-        processCommand(&g_clientUartRxBuffer);
-        // transmit results
         LL_DMA_ConfigAddresses(DMA2,
-                               LL_DMA_CHANNEL_6,
-                               (uint32_t) &g_clientUartTxBuffer,
-                               LL_LPUART_DMA_GetRegAddr(LPUART1, LL_LPUART_DMA_REG_DATA_TRANSMIT),
-                               LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-        LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_6, CLIENT_UART_TX_BUFFER_LENGTH);
-        LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_6);
-        setTxActiveLedEnabled(true);
+                               LL_DMA_CHANNEL_7,
+                               LL_LPUART_DMA_GetRegAddr(LPUART1, LL_LPUART_DMA_REG_DATA_RECEIVE),
+                               (uint32_t) &g_clientUartRxBuffer,
+                               LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
+        LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_7, CLIENT_UART_RX_BUFFER_LENGTH);
+        LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_7);
+
+        if (!g_clientUartIsTransmitting)
+        {
+            g_clientUartIsTransmitting = true;
+
+            processCommand(&g_clientUartRxBuffer);
+
+            // transmit results
+            LL_DMA_ConfigAddresses(DMA2,
+                                   LL_DMA_CHANNEL_6,
+                                   (uint32_t) &g_clientUartTxBuffer,
+                                   LL_LPUART_DMA_GetRegAddr(LPUART1, LL_LPUART_DMA_REG_DATA_TRANSMIT),
+                                   LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+            LL_DMA_SetDataLength(DMA2, LL_DMA_CHANNEL_6, CLIENT_UART_TX_BUFFER_LENGTH);
+            LL_DMA_EnableChannel(DMA2, LL_DMA_CHANNEL_6);
+        }
+        else
+        {
+            tryToProcessEmergencyStopCommand(&g_clientUartRxBuffer);
+        }
     }
 }

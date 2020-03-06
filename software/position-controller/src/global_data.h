@@ -17,5 +17,6 @@ extern volatile positionControllerDirection_t g_positionControllerXDirection;
 #define CLIENT_UART_RX_BUFFER_LENGTH (sizeof(clientUartRequest_t))
 #define CLIENT_UART_TX_BUFFER_LENGTH (sizeof(clientUartResponse_t))
 
+extern volatile bool g_clientUartIsTransmitting;
 extern volatile clientUartRequest_t g_clientUartRxBuffer;
 extern volatile clientUartResponse_t g_clientUartTxBuffer;
