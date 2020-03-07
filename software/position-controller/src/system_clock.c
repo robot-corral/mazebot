@@ -9,11 +9,12 @@
 
 void initializeSystemClock()
 {
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR    |
-                             LL_APB1_GRP1_PERIPH_TIM5   |
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR  |
+                             LL_APB1_GRP1_PERIPH_TIM5 |
                              LL_APB1_GRP1_PERIPH_TIM2);
 
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_CRC  |
+                             LL_AHB1_GRP1_PERIPH_DMA1 |
                              LL_AHB1_GRP1_PERIPH_DMA2);
 
     LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPUART1);
@@ -24,7 +25,6 @@ void initializeSystemClock()
                              LL_AHB2_GRP1_PERIPH_GPIOB |
                              LL_AHB2_GRP1_PERIPH_GPIOC |
                              LL_AHB2_GRP1_PERIPH_GPIOD |
-                             LL_AHB2_GRP1_PERIPH_GPIOE |
                              LL_AHB2_GRP1_PERIPH_GPIOG);
 
     LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);

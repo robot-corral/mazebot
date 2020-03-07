@@ -83,6 +83,7 @@
     <ClCompile Include="..\src\client_communication_uart.c" />
     <ClCompile Include="..\src\client_communication_uart_stm32l496zg.c" />
     <ClCompile Include="..\src\global_data.c" />
+    <ClCompile Include="..\src\global_data_timer.c" />
     <ClCompile Include="..\src\gpio.c" />
     <ClCompile Include="..\src\led.c" />
     <ClCompile Include="..\src\main.c" />
@@ -94,6 +95,7 @@
     <ClInclude Include="..\src\client_communication_uart.h" />
     <ClInclude Include="..\src\client_communication_uart_impl.h" />
     <ClInclude Include="..\src\global_data.h" />
+    <ClInclude Include="..\src\global_data_timer.h" />
     <ClInclude Include="..\src\gpio.h" />
     <ClInclude Include="..\src\interrupt_priorities.h" />
     <ClInclude Include="..\src\led.h" />

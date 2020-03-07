@@ -2,6 +2,7 @@
 
 #include "led.h"
 #include "global_data.h"
+#include "global_data_timer.h"
 #include "interrupt_priorities.h"
 
 #include <mcu_arm.h>
@@ -13,6 +14,7 @@
 
 static void initializeSlaveTimer();
 static void initializeMasterTimer();
+static void initializeMasterTimerDma();
 
 static void positionControllerStop_Unsafe();
 static void positionControllerEmergencyStop_Unsafe();
@@ -29,6 +31,7 @@ void initializePositionController()
     g_positionControllerXState = PCS_RESET;
     g_positionControllerXDirection = PCD_NONE;
 
+    initializeMasterTimerDma();
     initializeSlaveTimer();
     initializeMasterTimer();
 }
@@ -56,21 +59,19 @@ void initializeSlaveTimer()
 
 void initializeMasterTimer()
 {
-    const uint32_t prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 1000000);
+    const uint32_t prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 40000000);
 
     LL_TIM_SetCounterMode(TIM2, LL_TIM_COUNTERMODE_UP);
     LL_TIM_SetPrescaler(TIM2, prescaler);
     LL_TIM_EnableARRPreload(TIM2);
 
-    const uint32_t cycle = __LL_TIM_CALC_ARR(SystemCoreClock, LL_TIM_GetPrescaler(TIM2), 1500 /* Hz */);
-
-    LL_TIM_SetAutoReload(TIM2, cycle);
+    LL_TIM_SetAutoReload(TIM2, DMA_TIMER_MIN_FREQUENCY_ARR);
     LL_TIM_OC_SetMode(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_PWM1);
     // timer update is on falling edge
     // idle timer state is low
     // (as motor controller expects rising edge, then falling edge on which it moves the motor)
     LL_TIM_OC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_OCPOLARITY_LOW | LL_TIM_OCIDLESTATE_LOW);
-    LL_TIM_OC_SetCompareCH1(TIM2, cycle / 2);
+    LL_TIM_OC_SetCompareCH1(TIM2, DMA_TIMER_MIN_FREQUENCY_CC);
     LL_TIM_OC_EnablePreload(TIM2, LL_TIM_CHANNEL_CH1);
 
     // TIM2 is going to drive TIM5
@@ -82,6 +83,39 @@ void initializeMasterTimer()
     // 010: Update - The update event is selected as trigger output (TRGO). For instance a master 
     // timer can then be used as a prescaler for a slave timer.
     LL_TIM_SetTriggerOutput(TIM2, LL_TIM_TRGO_UPDATE);
+
+    LL_TIM_ConfigDMABurst(TIM2, LL_TIM_DMABURST_BASEADDR_ARR, LL_TIM_DMABURST_LENGTH_3TRANSFERS);
+    LL_TIM_EnableDMAReq_UPDATE(TIM2);
+}
+
+void initializeMasterTimerDma()
+{
+    NVIC_SetPriority(DMA1_Channel2_IRQn, IRQ_PRIORITY_MOTOR_PWM_DMA);
+    NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+
+    LL_DMA_ConfigTransfer(DMA1,
+                          LL_DMA_CHANNEL_2,
+                          LL_DMA_DIRECTION_MEMORY_TO_PERIPH |
+                          LL_DMA_MODE_NORMAL                |
+                          LL_DMA_PERIPH_NOINCREMENT         |
+                          LL_DMA_MEMORY_INCREMENT           |
+                          LL_DMA_PDATAALIGN_WORD            |
+                          LL_DMA_MDATAALIGN_WORD            |
+                          LL_DMA_PRIORITY_HIGH);
+
+    LL_DMA_SetPeriphRequest(DMA1, LL_DMA_CHANNEL_2, LL_DMA_REQUEST_4);
+
+    LL_DMA_ConfigAddresses(DMA1,
+                           LL_DMA_CHANNEL_2,
+                           (uint32_t) &g_dmaTimerDataIncreasing[3],
+                           (uint32_t) &TIM2->DMAR,
+                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, (DMA_TIMER_STEPS_COUNT - 1) * 3);
+
+    LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
+    LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
+
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
 }
 
 uint32_t getPosition()
@@ -518,4 +552,18 @@ void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint
     LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_EnableCounter(TIM2);
     LL_TIM_GenerateEvent_UPDATE(TIM2);
+}
+
+void DMA1_Channel2_IRQHandler()
+{
+    if(LL_DMA_IsActiveFlag_TC2(DMA1) == 1)
+    {
+        // TODO
+        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
+        positionControllerEmergencyStop_Unsafe();
+    }
+    else if(LL_DMA_IsActiveFlag_TE2(DMA1) == 1)
+    {
+        // TODO
+    }
 }
