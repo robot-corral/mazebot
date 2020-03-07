@@ -11,24 +11,12 @@ void initializeSystemClock()
 {
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR    |
                              LL_APB1_GRP1_PERIPH_TIM5   |
-#ifdef STM32L476RG
-                             LL_APB1_GRP1_PERIPH_USART2 |
-#endif
                              LL_APB1_GRP1_PERIPH_TIM2);
 
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_CRC
-#ifdef STM32L496ZG
-                             | LL_AHB1_GRP1_PERIPH_DMA2
-#endif
-    );
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_CRC  |
+                             LL_AHB1_GRP1_PERIPH_DMA2);
 
-#ifdef STM32L496ZG
     LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_LPUART1);
-#endif
-
-#ifdef STM32L476RG
-    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
-#endif
 
     LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);
 
