@@ -1,5 +1,6 @@
 #include "global_data.h"
 
+volatile uint32_t g_slowDownPulseCount;
 volatile uint32_t g_positionControllerX;
 volatile uint32_t g_positionControllerXMaxValue;
 volatile uint32_t g_positionControllerXPlannedPulseCount;

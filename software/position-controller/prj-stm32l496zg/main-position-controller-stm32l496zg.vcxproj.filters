@@ -27,6 +27,7 @@
     <ClCompile Include="..\src\position_controller.c" />
     <ClCompile Include="..\src\client_communication_uart_stm32l496zg.c" />
     <ClCompile Include="..\src\global_data_timer.c" />
+    <ClCompile Include="..\src\errors.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\gpio.h" />

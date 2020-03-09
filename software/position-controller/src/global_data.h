@@ -7,6 +7,7 @@
 
 #define nullptr ((void*) 0)
 
+extern volatile uint32_t g_slowDownPulseCount;
 extern volatile uint32_t g_positionControllerX;
 extern volatile uint32_t g_positionControllerXMaxValue;
 extern volatile uint32_t g_positionControllerXPlannedPulseCount;

@@ -82,6 +82,7 @@
     <ClCompile Include="..\src\button.c" />
     <ClCompile Include="..\src\client_communication_uart.c" />
     <ClCompile Include="..\src\client_communication_uart_stm32l496zg.c" />
+    <ClCompile Include="..\src\errors.c" />
     <ClCompile Include="..\src\global_data.c" />
     <ClCompile Include="..\src\global_data_timer.c" />
     <ClCompile Include="..\src\gpio.c" />

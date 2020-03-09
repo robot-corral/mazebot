@@ -21,6 +21,9 @@ static void positionControllerEmergencyStop_Unsafe();
 static void positionControllerMoveUntilLimitSwitchTriggers_Unsafe(positionControllerDirection_t direction);
 static void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint32_t pulseCount);
 
+static void startSlowingDown_Unsafe();
+static void finishedRepositioning_Unsafe();
+
 void initializePositionController()
 {
     g_positionControllerX = 0;
@@ -114,8 +117,6 @@ void initializeMasterTimerDma()
 
     LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_2);
     LL_DMA_EnableIT_TE(DMA1, LL_DMA_CHANNEL_2);
-
-    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
 }
 
 uint32_t getPosition()
@@ -176,20 +177,13 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
         return MRR_OK; // no-op command
     }
 
-    positionControllerState_t desired;
-
-    switch (direction)
+    if (direction != PCD_FORWARD && direction != PCD_BACKWARD)
     {
-        case PCD_FORWARD  : desired = PCS_BUSY_MOVING_FORWARD; break;
-        case PCD_BACKWARD : desired = PCS_BUSY_MOVING_BACKWARD; break;
-        default           :
+        if (pState)
         {
-            if (pState)
-            {
-                *pState = g_positionControllerXState;
-            }
-            return MRR_INVALID_PARAMETER;
+            *pState = g_positionControllerXState;
         }
+        return MRR_INVALID_PARAMETER;
     }
 
     const uint32_t oldInterruptMask = getInterruptMask();
@@ -211,7 +205,6 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
                 }
                 else
                 {
-                    g_positionControllerXState = PCS_BUSY_MOVING_FORWARD;
                     positionControllerMove_Unsafe(PCD_FORWARD, pulseCount);
                 }
                 break;
@@ -225,7 +218,6 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
                 }
                 else
                 {
-                    g_positionControllerXState = PCS_BUSY_MOVING_BACKWARD;
                     positionControllerMove_Unsafe(PCD_BACKWARD, pulseCount);
                 }
                 break;
@@ -233,6 +225,7 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
             default:
             {
                 // something went horribly wrong if we ended up here
+                // (we did check direction argument at the beginning of the method)
                 positionControllerEmergencyStop_Unsafe();
                 result = MRR_UNEXPECTED_ERROR;
                 positionControllerXState = PCS_EMERGENCY_STOPPED;
@@ -346,34 +339,6 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
     setInterruptMask(oldInterruptMask);
 }
 
-void NMI_Handler()
-{
-    positionControllerEmergencyStop();
-    setFatalErrorLedEnabled(true);
-    for (;;) ;
-}
-
-void HardFault_Handler()
-{
-    positionControllerEmergencyStop();
-    setFatalErrorLedEnabled(true);
-    for (;;) ;
-}
-
-void MemManage_Handler()
-{
-    positionControllerEmergencyStop();
-    setFatalErrorLedEnabled(true);
-    for (;;) ;
-}
-
-void BusFault_Handler()
-{
-    positionControllerEmergencyStop();
-    setFatalErrorLedEnabled(true);
-    for (;;) ;
-}
-
 void TIM5_IRQHandler()
 {
     if (LL_TIM_IsActiveFlag_CC1(TIM5) == 1)
@@ -381,66 +346,17 @@ void TIM5_IRQHandler()
         const uint32_t oldInterruptMask = getInterruptMask();
         disableInterrupts();
 
-        positionControllerStop_Unsafe();
-
-        const uint32_t actualPulsesProduced = LL_TIM_GetCounter(TIM5);
-        const positionControllerState_t positionControllerXState = g_positionControllerXState;
-
-        if (positionControllerXState == PCS_BUSY_MOVING_FORWARD ||
-            positionControllerXState == PCS_BUSY_MOVING_BACKWARD ||
-            positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
+        if (g_positionControllerXState == PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED)
         {
-            g_positionControllerXState = PCS_IDLE;
-
-            switch (g_positionControllerXDirection)
-            {
-                case PCD_FORWARD:
-                {
-                    if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
-                    {
-                        g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
-                    }
-                    else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
-                    {
-                        g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
-                    }
-                    if (actualPulsesProduced <= g_positionControllerXMaxValue &&
-                        g_positionControllerX <= g_positionControllerXMaxValue - actualPulsesProduced)
-                    {
-                        g_positionControllerX += actualPulsesProduced;
-                    }
-                    else
-                    {
-                        positionControllerEmergencyStop_Unsafe();
-                    }
-                    break;
-                }
-                case PCD_BACKWARD:
-                {
-                    if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
-                    {
-                        g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
-                    }
-                    else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
-                    {
-                        g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
-                    }
-                    if (actualPulsesProduced <= g_positionControllerX)
-                    {
-                        g_positionControllerX -= actualPulsesProduced;
-                    }
-                    else
-                    {
-                        positionControllerEmergencyStop_Unsafe();
-                    }
-                    break;
-                }
-                default:
-                {
-                    positionControllerEmergencyStop_Unsafe();
-                    break;
-                }
-            }
+            startSlowingDown_Unsafe();
+        }
+        else if (g_positionControllerXState == PCS_BUSY_MOVING_AT_CONSTANT_SPEED)
+        {
+            finishedRepositioning_Unsafe();
+        }
+        else
+        {
+            positionControllerEmergencyStop_Unsafe();
         }
 
         setInterruptMask(oldInterruptMask);
@@ -450,12 +366,63 @@ void TIM5_IRQHandler()
     }
 }
 
+void DMA1_Channel2_IRQHandler()
+{
+    if (LL_DMA_IsActiveFlag_TE2(DMA1) == 1)
+    {
+        LL_DMA_ClearFlag_TE2(DMA1);
+        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
+
+        const uint32_t oldInterruptMask = getInterruptMask();
+        disableInterrupts();
+
+        positionControllerEmergencyStop_Unsafe();
+
+        setInterruptMask(oldInterruptMask);
+    }
+    else if (LL_DMA_IsActiveFlag_TC2(DMA1) == 1)
+    {
+        LL_DMA_ClearFlag_TC2(DMA1);
+        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
+
+        const uint32_t oldInterruptMask = getInterruptMask();
+        disableInterrupts();
+
+        const positionControllerState_t positionControllerXState = g_positionControllerXState;
+
+        if (positionControllerXState == PCS_BUSY_SLOWING_DOWN)
+        {
+            // we just finished slowing down
+            finishedRepositioning_Unsafe();
+        }
+        else if (positionControllerXState == PCS_BUSY_ACCELERATING)
+        {
+            // we just finished accelerating and now it's time to slow down
+            startSlowingDown_Unsafe();
+        }
+        else if (positionControllerXState == PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED)
+        {
+            // when accelerating or moving at a constant speed
+            // control is done using TIM5 counter interrupt
+        }
+        else
+        {
+            // we weren't slowing down or moving so there must be some error
+            positionControllerEmergencyStop_Unsafe();
+        }
+
+        setInterruptMask(oldInterruptMask);
+    }
+}
+
 void positionControllerStop_Unsafe()
 {
     // stop counter (this will stop motor movement)
     LL_TIM_DisableCounter(TIM2);
     LL_TIM_CC_DisableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_DisableCounter(TIM5);
+    // stop acceleration dma
+    LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
     // wait 1 millisecond for falling edge to move the motor
     // (might need to reduce this wait time in the future)
     // at the moment it's not a big deal as I need to query sensor
@@ -478,6 +445,8 @@ void positionControllerEmergencyStop_Unsafe()
     setEmergencyStopLedEnabled(true);
     // modify memory at the end of the method in case it generates some faults
     g_positionControllerXState = PCS_EMERGENCY_STOPPED;
+    // stop acceleration dma
+    LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
     setPositionControllerMovingLedEnabled(false);
 }
 
@@ -500,6 +469,16 @@ void positionControllerMoveUntilLimitSwitchTriggers_Unsafe(positionControllerDir
 
     g_positionControllerXDirection = direction;
 
+    LL_TIM_SetAutoReload(TIM2, DMA_TIMER_MIN_FREQUENCY_ARR);
+    LL_TIM_OC_SetCompareCH1(TIM2, DMA_TIMER_MIN_FREQUENCY_CC);
+
+    LL_DMA_ConfigAddresses(DMA1,
+                           LL_DMA_CHANNEL_2,
+                           (uint32_t) &g_dmaTimerDataIncreasing[0],
+                           (uint32_t) &TIM2->DMAR, // we are using DMA burst to update several TIM2 register at once
+                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, DMA_TIMER_STEPS_COUNT * 3);
+
     // reset counter to 0 so we can count number of steps motor moves
     LL_TIM_SetCounter(TIM5, 0);
     // get ready to count TIM2 pulses
@@ -510,6 +489,7 @@ void positionControllerMoveUntilLimitSwitchTriggers_Unsafe(positionControllerDir
     // start moving motor
     LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
     LL_TIM_EnableCounter(TIM2);
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
     LL_TIM_GenerateEvent_UPDATE(TIM2);
 }
 
@@ -533,37 +513,176 @@ void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint
     g_positionControllerXDirection = direction;
     g_positionControllerXPlannedPulseCount = pulseCount;
 
+    LL_TIM_SetAutoReload(TIM2, DMA_TIMER_MIN_FREQUENCY_ARR);
+    LL_TIM_OC_SetCompareCH1(TIM2, DMA_TIMER_MIN_FREQUENCY_CC);
+
     // reset counter to 0 so we can count number of steps motor moves
     LL_TIM_SetCounter(TIM5, 0);
 
-    LL_TIM_ClearFlag_CC1(TIM5);
-    // enable interrupt to handle stop event
-    LL_TIM_EnableIT_CC1(TIM5);
+    if (pulseCount <= MAX_PULSES_AT_CONSTANT_SPEED)
+    {
+        g_positionControllerXState = PCS_BUSY_MOVING_AT_CONSTANT_SPEED;
 
-    // call interrupt (which stops motor) after pulseCount
-    LL_TIM_OC_SetCompareCH1(TIM5, pulseCount);
+        LL_TIM_ClearFlag_CC1(TIM5);
+        // enable interrupt to handle stop event
+        LL_TIM_EnableIT_CC1(TIM5);
+        // call interrupt (which stops motor) after pulseCount
+        // '+ 1' is to account for 1 missing step (update is called before not after step is actually rendered)
+        LL_TIM_OC_SetCompareCH1(TIM5, pulseCount + 1);
+        // get ready to count TIM2 pulses
+        LL_TIM_EnableCounter(TIM5);
 
-    // get ready to count TIM2 pulses
-    LL_TIM_EnableCounter(TIM5);
+        // enable motor controller
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
+        // start moving motor
+        LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+        LL_TIM_EnableCounter(TIM2);
+        LL_TIM_GenerateEvent_UPDATE(TIM2);
+    }
+    else if (pulseCount <= 2 * DMA_TIMER_STEPS_COUNT + 1)
+    {
+        // total number of acceleration pulses
+        const uint32_t accelerationPulseCount = (pulseCount + 1) / 2;
 
-    // enable motor controller
-    LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
-    // start moving motor
-    LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-    LL_TIM_EnableCounter(TIM2);
-    LL_TIM_GenerateEvent_UPDATE(TIM2);
+        g_slowDownPulseCount = pulseCount - accelerationPulseCount;
+        g_positionControllerXState = PCS_BUSY_ACCELERATING;
+
+        LL_DMA_ConfigAddresses(DMA1,
+                               LL_DMA_CHANNEL_2,
+                               (uint32_t) &g_dmaTimerDataIncreasing[0],
+                               (uint32_t) &TIM2->DMAR, // we are using DMA burst to update several TIM2 register at once
+                               LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, accelerationPulseCount * 3);
+
+        // get ready to count TIM2 pulses
+        LL_TIM_EnableCounter(TIM5);
+
+        // enable motor controller
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
+        // start moving motor
+        LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+        LL_TIM_EnableCounter(TIM2);
+        LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+        LL_TIM_GenerateEvent_UPDATE(TIM2);
+    }
+    else
+    {
+        // TIM5 is used to count pulses so we don't need to care about initial pulse which is generated by TIM2
+        const uint32_t pulseCountBeforeSlowDown = pulseCount - DMA_TIMER_STEPS_COUNT;
+
+        g_slowDownPulseCount = DMA_TIMER_STEPS_COUNT;
+        g_positionControllerXState = PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED;
+
+        LL_DMA_ConfigAddresses(DMA1,
+                               LL_DMA_CHANNEL_2,
+                               (uint32_t) &g_dmaTimerDataIncreasing[0],
+                               (uint32_t) &TIM2->DMAR, // we are using DMA burst to update several TIM2 register at once
+                               LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, DMA_TIMER_STEPS_COUNT * 3);
+
+        LL_TIM_ClearFlag_CC1(TIM5);
+        // enable interrupt to handle stop event
+        LL_TIM_EnableIT_CC1(TIM5);
+        // call interrupt (which slows down motor) after pulseCountBeforeSlowDown
+        // '+ 1' is to account for 1 missing step (update is called before not after step is actually rendered)
+        LL_TIM_OC_SetCompareCH1(TIM5, pulseCountBeforeSlowDown + 1);
+        // get ready to count TIM2 pulses
+        LL_TIM_EnableCounter(TIM5);
+
+        // enable motor controller
+        LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_7);
+        // start moving motor
+        LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
+        LL_TIM_EnableCounter(TIM2);
+        LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+        LL_TIM_GenerateEvent_UPDATE(TIM2);
+    }
 }
 
-void DMA1_Channel2_IRQHandler()
+void startSlowingDown_Unsafe()
 {
-    if(LL_DMA_IsActiveFlag_TC2(DMA1) == 1)
+    g_positionControllerXState = PCS_BUSY_SLOWING_DOWN;
+
+    const uint32_t startIndex = (DMA_TIMER_STEPS_COUNT - g_slowDownPulseCount) * 3;
+
+    LL_TIM_SetAutoReload(TIM2, g_dmaTimerDataDecreasing[startIndex]);
+    LL_TIM_OC_SetCompareCH1(TIM2, g_dmaTimerDataDecreasing[startIndex + 2]);
+
+    LL_DMA_ConfigAddresses(DMA1,
+                           LL_DMA_CHANNEL_2,
+                           (uint32_t) &g_dmaTimerDataDecreasing[startIndex + 3],
+                           (uint32_t) &TIM2->DMAR, // we are using DMA burst to update several TIM2 register at once
+                           LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, (g_slowDownPulseCount + 1) * 3);
+    LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
+}
+
+void finishedRepositioning_Unsafe()
+{
+    const uint32_t actualPulsesProduced = LL_TIM_GetCounter(TIM5) - 1;
+
+    positionControllerStop_Unsafe();
+
+    const positionControllerState_t positionControllerXState = g_positionControllerXState;
+
+    if (positionControllerXState == PCS_BUSY_SLOWING_DOWN ||
+        positionControllerXState == PCS_BUSY_MOVING_AT_CONSTANT_SPEED ||
+        positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
     {
-        // TODO
-        LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);
-        positionControllerEmergencyStop_Unsafe();
+        g_positionControllerXState = PCS_IDLE;
+
+        switch (g_positionControllerXDirection)
+        {
+            case PCD_FORWARD:
+            {
+                if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                }
+                else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                }
+                if (actualPulsesProduced <= g_positionControllerXMaxValue &&
+                    g_positionControllerX <= g_positionControllerXMaxValue - actualPulsesProduced)
+                {
+                    g_positionControllerX += actualPulsesProduced;
+                }
+                else
+                {
+                    positionControllerEmergencyStop_Unsafe();
+                }
+                break;
+            }
+            case PCD_BACKWARD:
+            {
+                if (actualPulsesProduced > g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += actualPulsesProduced - g_positionControllerXPlannedPulseCount;
+                }
+                else if (actualPulsesProduced < g_positionControllerXPlannedPulseCount)
+                {
+                    g_positionControllerXPulseErrorCount += g_positionControllerXPlannedPulseCount - actualPulsesProduced;
+                }
+                if (actualPulsesProduced <= g_positionControllerX)
+                {
+                    g_positionControllerX -= actualPulsesProduced;
+                }
+                else
+                {
+                    positionControllerEmergencyStop_Unsafe();
+                }
+                break;
+            }
+            default:
+            {
+                positionControllerEmergencyStop_Unsafe();
+                break;
+            }
+        }
     }
-    else if(LL_DMA_IsActiveFlag_TE2(DMA1) == 1)
+    else
     {
-        // TODO
+        positionControllerEmergencyStop_Unsafe();
     }
 }

@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define MAX_PULSES_AT_CONSTANT_SPEED 5
+
 typedef enum
 {
     PCD_NONE     = 0,
@@ -16,13 +18,15 @@ typedef enum
     PCS_IDLE              = 1,
     PCS_EMERGENCY_STOPPED = 2,
 
-    PCS_BUSY              = 0x80,
+    PCS_BUSY              = 0x80, // make sure this doesn't intersect with states below
 
-    PCS_BUSY_CALIBRATING_MIN         = 3 | PCS_BUSY,
-    PCS_BUSY_CALIBRATING_MAX         = 4 | PCS_BUSY,
-    PCS_BUSY_CALIBRATING_CORRECT_MAX = 5 | PCS_BUSY,
-    PCS_BUSY_MOVING_FORWARD          = 6 | PCS_BUSY,
-    PCS_BUSY_MOVING_BACKWARD         = 7 | PCS_BUSY,
+    PCS_BUSY_CALIBRATING_MIN                           = 3 | PCS_BUSY,
+    PCS_BUSY_CALIBRATING_MAX                           = 4 | PCS_BUSY,
+    PCS_BUSY_CALIBRATING_CORRECT_MAX                   = 5 | PCS_BUSY,
+    PCS_BUSY_ACCELERATING                              = 6 | PCS_BUSY,
+    PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED = 7 | PCS_BUSY,
+    PCS_BUSY_SLOWING_DOWN                              = 8 | PCS_BUSY,
+    PCS_BUSY_MOVING_AT_CONSTANT_SPEED                  = 9 | PCS_BUSY,
 } positionControllerState_t;
 
 typedef enum
