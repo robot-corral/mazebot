@@ -25,7 +25,7 @@ void initializeClientCommunicationUart()
     LL_CRC_SetPolynomialCoef(CRC, CRC32_POLYNOMIAL);
 }
 
-void processCommand(volatile clientUartRequest_t* pRequest)
+bool processCommand(volatile clientUartRequest_t* pRequest)
 {
     g_clientUartTxBuffer.unpacked.header = CLIENT_UART_RESPONSE_HEADER;
     g_clientUartTxBuffer.unpacked.position = getPosition();
@@ -35,7 +35,7 @@ void processCommand(volatile clientUartRequest_t* pRequest)
     {
         g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_COMMUNICATION_ERROR;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
-        return;
+        return false;
     }
 
     const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
@@ -44,14 +44,14 @@ void processCommand(volatile clientUartRequest_t* pRequest)
     {
         g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_CRC;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
-        return;
+        return false;
     }
 
     if (pRequest->unpacked.header != CLIENT_UART_REQUEST_HEADER)
     {
         g_clientUartTxBuffer.unpacked.resultFlags |= convertStateToCommandResultFlags(getState()) | ERR_COMMUNICATION_ERROR;
         g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
-        return;
+        return false;
     }
 
     switch (pRequest->unpacked.motorCommand)
@@ -95,6 +95,8 @@ void processCommand(volatile clientUartRequest_t* pRequest)
     }
 
     g_clientUartTxBuffer.unpacked.crc = calculateResponseCrc(&g_clientUartTxBuffer);
+
+    return true;
 }
 
 uint32_t calculateRequestCrc(volatile clientUartRequest_t* pRequest)
@@ -159,22 +161,29 @@ commandResultFlags_t convertMoveRequestResultToCommandResultFlags(moveRequestRes
     }
 }
 
-void tryToProcessEmergencyStopCommand(volatile clientUartRequest_t* pRequest)
+bool tryToProcessEmergencyStopCommand(volatile clientUartRequest_t* pRequest)
 {
     if (pRequest == nullptr)
     {
-        return;
+        return false;
+    }
+
+    const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
+
+    if (calculatedCrc != pRequest->unpacked.crc)
+    {
+        return false;
+    }
+
+    if (pRequest->unpacked.header != CLIENT_UART_REQUEST_HEADER)
+    {
+        return false;
     }
 
     if (pRequest->unpacked.motorCommand == MCMD_EMERGENCY_STOP)
     {
-        const uint32_t calculatedCrc = calculateRequestCrc(pRequest);
-
-        if (calculatedCrc != pRequest->unpacked.crc)
-        {
-            return;
-        }
-
         positionControllerEmergencyStop();
     }
+
+    return true;
 }

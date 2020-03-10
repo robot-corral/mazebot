@@ -33,6 +33,7 @@ void initializePositionController()
 
     g_positionControllerXState = PCS_RESET;
     g_positionControllerXDirection = PCD_NONE;
+    g_positionControllerCalibratingState = PCCS_NONE;
 
     initializeMasterTimerDma();
     initializeSlaveTimer();
@@ -145,11 +146,9 @@ moveRequestResult_t calibratePositionController(positionControllerState_t* pStat
     if (positionControllerXState == PCS_RESET || positionControllerXState == PCS_IDLE)
     {
         // move to min position 1st
-        g_positionControllerXDirection = PCD_BACKWARD;
-        g_positionControllerXState = PCS_BUSY_CALIBRATING_MIN;
-        positionControllerXState = PCS_BUSY_CALIBRATING_MIN;
-        positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_BACKWARD);
         result = MRR_OK;
+        g_positionControllerCalibratingState = PCCS_CALIBRATING_MIN;
+        positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_BACKWARD);
     }
     else if ((positionControllerXState & PCS_BUSY) == PCS_BUSY)
     {
@@ -159,6 +158,9 @@ moveRequestResult_t calibratePositionController(positionControllerState_t* pStat
     {
         result = MRR_INVALID_STATE;
     }
+
+    // update result state as it might have changed
+    positionControllerXState = g_positionControllerXState;
 
     setInterruptMask(oldInterruptMask);
 
@@ -268,9 +270,9 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
     disableInterrupts();
 
     bool performEmergencyStop = true;
-    const positionControllerState_t positionControllerXState = g_positionControllerXState;
+    const positionControllerCalibratingState_t positionControllerCalibratingState = g_positionControllerCalibratingState;
 
-    if (positionControllerXState == PCS_BUSY_CALIBRATING_MIN)
+    if (positionControllerCalibratingState == PCCS_CALIBRATING_MIN)
     {
         if (limitStopType == PCLST_MIN)
         {
@@ -278,7 +280,7 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             // restart counting from 0
             LL_TIM_SetCounter(TIM5, 0);
             // move to max position
-            g_positionControllerXState = PCS_BUSY_CALIBRATING_MAX;
+            g_positionControllerCalibratingState = PCCS_CALIBRATING_MAX;
             positionControllerMoveUntilLimitSwitchTriggers_Unsafe(PCD_FORWARD);
             performEmergencyStop = false;
         }
@@ -288,7 +290,7 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             performEmergencyStop = false;
         }
     }
-    else if (positionControllerXState == PCS_BUSY_CALIBRATING_MAX)
+    else if (positionControllerCalibratingState == PCCS_CALIBRATING_MAX)
     {
         if (limitStopType == PCLST_MIN)
         {
@@ -303,14 +305,14 @@ void positionControllerLimitStop(positionControllerLimitStopType_t limitStopType
             // remember max position
             g_positionControllerXMaxValue = LL_TIM_GetCounter(TIM5);
             g_positionControllerX = g_positionControllerXMaxValue;
-            g_positionControllerXState = PCS_BUSY_CALIBRATING_CORRECT_MAX;
+            g_positionControllerCalibratingState = PCCS_CALIBRATING_CORRECT_MAX;
             // move to the middle (this gives us opportunity to get away from
             // max limit switch and update max position if it triggers again
             positionControllerMove_Unsafe(PCD_BACKWARD, g_positionControllerXMaxValue / 2);
             performEmergencyStop = false;
         }
     }
-    else if (positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
+    else if (positionControllerCalibratingState == PCCS_CALIBRATING_CORRECT_MAX)
     {
         if (limitStopType == PCLST_MAX)
         {
@@ -464,10 +466,12 @@ void positionControllerMoveUntilLimitSwitchTriggers_Unsafe(positionControllerDir
     }
     else
     {
+        positionControllerEmergencyStop_Unsafe();
         return;
     }
 
     g_positionControllerXDirection = direction;
+    g_positionControllerXState = PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED;
 
     LL_TIM_SetAutoReload(TIM2, DMA_TIMER_MIN_FREQUENCY_ARR);
     LL_TIM_OC_SetCompareCH1(TIM2, DMA_TIMER_MIN_FREQUENCY_CC);
@@ -507,6 +511,7 @@ void positionControllerMove_Unsafe(positionControllerDirection_t direction, uint
     }
     else
     {
+        positionControllerEmergencyStop_Unsafe();
         return;
     }
 
@@ -625,11 +630,20 @@ void finishedRepositioning_Unsafe()
 
     const positionControllerState_t positionControllerXState = g_positionControllerXState;
 
-    if (positionControllerXState == PCS_BUSY_SLOWING_DOWN ||
-        positionControllerXState == PCS_BUSY_MOVING_AT_CONSTANT_SPEED ||
-        positionControllerXState == PCS_BUSY_CALIBRATING_CORRECT_MAX)
+    if (g_positionControllerCalibratingState == PCCS_CALIBRATING_CORRECT_MAX)
     {
-        g_positionControllerXState = PCS_IDLE;
+        // we are done calibrating
+        g_positionControllerCalibratingState = PCCS_NONE;
+    }
+
+    if (positionControllerXState == PCS_BUSY_SLOWING_DOWN ||
+        positionControllerXState == PCS_BUSY_MOVING_AT_CONSTANT_SPEED)
+    {
+        if (g_positionControllerCalibratingState == PCCS_NONE)
+        {
+            // only change controller state if we are not calibrating anymore
+            g_positionControllerXState = PCS_IDLE;
+        }
 
         switch (g_positionControllerXDirection)
         {

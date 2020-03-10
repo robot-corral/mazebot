@@ -20,14 +20,19 @@ typedef enum
 
     PCS_BUSY              = 0x80, // make sure this doesn't intersect with states below
 
-    PCS_BUSY_CALIBRATING_MIN                           = 3 | PCS_BUSY,
-    PCS_BUSY_CALIBRATING_MAX                           = 4 | PCS_BUSY,
-    PCS_BUSY_CALIBRATING_CORRECT_MAX                   = 5 | PCS_BUSY,
-    PCS_BUSY_ACCELERATING                              = 6 | PCS_BUSY,
-    PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED = 7 | PCS_BUSY,
-    PCS_BUSY_SLOWING_DOWN                              = 8 | PCS_BUSY,
-    PCS_BUSY_MOVING_AT_CONSTANT_SPEED                  = 9 | PCS_BUSY,
+    PCS_BUSY_ACCELERATING                              = 3 | PCS_BUSY,
+    PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED = 4 | PCS_BUSY,
+    PCS_BUSY_SLOWING_DOWN                              = 5 | PCS_BUSY,
+    PCS_BUSY_MOVING_AT_CONSTANT_SPEED                  = 6 | PCS_BUSY,
 } positionControllerState_t;
+
+typedef enum
+{
+    PCCS_NONE                    = 0,
+    PCCS_CALIBRATING_MIN         = 1,
+    PCCS_CALIBRATING_MAX         = 2,
+    PCCS_CALIBRATING_CORRECT_MAX = 3,
+} positionControllerCalibratingState_t;
 
 typedef enum
 {
