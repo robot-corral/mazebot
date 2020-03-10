@@ -191,7 +191,7 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
     const uint32_t oldInterruptMask = getInterruptMask();
     disableInterrupts();
 
-    moveRequestResult_t result;
+    moveRequestResult_t result = MRR_OK;
     positionControllerState_t positionControllerXState = g_positionControllerXState;
 
     if (positionControllerXState == PCS_IDLE)
@@ -230,7 +230,6 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
                 // (we did check direction argument at the beginning of the method)
                 positionControllerEmergencyStop_Unsafe();
                 result = MRR_UNEXPECTED_ERROR;
-                positionControllerXState = PCS_EMERGENCY_STOPPED;
                 break;
             }
         }
@@ -243,6 +242,9 @@ moveRequestResult_t setPosition(positionControllerDirection_t direction, uint32_
     {
         result = MRR_INVALID_STATE;
     }
+
+    // update result state as it might have changed
+    positionControllerXState = g_positionControllerXState;
 
     setInterruptMask(oldInterruptMask);
 
