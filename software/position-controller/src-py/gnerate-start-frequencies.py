@@ -14,7 +14,7 @@ def frequencyToArr(cpuFrequency, prescaler, x):
     return int(cpuFrequency / (x * (prescaler + 1)) - 1)
 
 totalTime = 0
-stepsCount = 303
+stepsCount = 151
 
 minArr = frequencyToArr(cpuFrequency, prescaler, minFrequency)
 maxArr = frequencyToArr(cpuFrequency, prescaler, maxFrequency)

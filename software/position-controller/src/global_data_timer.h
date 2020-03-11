@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define DMA_TIMER_STEPS_COUNT       303
+#define DMA_TIMER_STEPS_COUNT       151
 
 #define DMA_TIMER_MIN_FREQUENCY_ARR 399999
 #define DMA_TIMER_MIN_FREQUENCY_CC  199999
