@@ -101,6 +101,7 @@
     <ClInclude Include="..\src\interrupt_priorities.h" />
     <ClInclude Include="..\src\led.h" />
     <ClInclude Include="..\src\position_controller.h" />
+    <ClInclude Include="..\src\position_controller_atomic.h" />
     <ClInclude Include="..\src\system_clock.h" />
   </ItemGroup>
 </Project>

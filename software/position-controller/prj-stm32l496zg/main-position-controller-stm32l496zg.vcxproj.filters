@@ -40,5 +40,6 @@
     <ClInclude Include="..\src\position_controller.h" />
     <ClInclude Include="..\src\client_communication_uart_impl.h" />
     <ClInclude Include="..\src\global_data_timer.h" />
+    <ClInclude Include="..\src\position_controller_atomic.h" />
   </ItemGroup>
 </Project>
