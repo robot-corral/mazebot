@@ -17,7 +17,7 @@ namespace line_sensor.data_collector.logic
             this.wirelessLineSensor = wirelessLineSensor ?? throw new ArgumentNullException(nameof(wirelessLineSensor));
         }
 
-        public async Task CollectData(uint dataCollectionPositionDelta, int numberOfSamples, string resultFilePathPrefix, CancellationToken token)
+        public async Task CollectData(uint dataCollectionPositionDelta, int numberOfSamples, string resultfolderPath, CancellationToken token)
         {
             PositionControllerResponse response = await this.positionController.GetPosition().ConfigureAwait(false);
 
@@ -25,6 +25,13 @@ namespace line_sensor.data_collector.logic
 
             uint startPosition = response.Position;
             uint currentPosition = startPosition;
+
+            if (Directory.Exists(resultfolderPath))
+            {
+                Directory.Delete(resultfolderPath);
+            }
+
+            Directory.CreateDirectory(resultfolderPath);
 
             while (!token.IsCancellationRequested)
             {
@@ -38,7 +45,7 @@ namespace line_sensor.data_collector.logic
                 }
 
                 LineSensorReading lineSensorReading = await getLineSensorData(currentRealPosition, numberOfSamples, token).ConfigureAwait(false);
-                await saveLineSensorDataToFile(lineSensorReading, resultFilePathPrefix).ConfigureAwait(false);
+                await saveLineSensorDataToFile(lineSensorReading, resultfolderPath).ConfigureAwait(false);
                 currentPosition = await moveToNextPosition(dataCollectionPositionDelta).ConfigureAwait(false);
             }
         }
@@ -149,9 +156,10 @@ namespace line_sensor.data_collector.logic
             }
         }
 
-        private async Task saveLineSensorDataToFile(LineSensorReading lineSensorReading, string resultFilePathPrefix)
+        private async Task saveLineSensorDataToFile(LineSensorReading lineSensorReading, string resultfolderPath)
         {
-            string resultFilePath = $"{resultFilePathPrefix}_{lineSensorReading.Position}.csv";
+            string positionString = string.Format("{0:000.00}", lineSensorReading.Position);
+            string resultFilePath = $"{resultfolderPath}\\{positionString}.csv";
 
             try
             {

@@ -163,7 +163,12 @@ void startSlowingDown_Atomic(uint32_t slowDownPulseCount)
                                (uint32_t) &g_dmaTimerDataDecreasing[startIndex],
                                (uint32_t) &TIM2->DMAR, // we are using DMA burst to update several TIM2 register at once (ARR, RCR, CCR1)
                                LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-        // we need to add one extra DMA data item
+        // we need to add TWO extra DMA data items
+        //
+        // TODO
+        // TODO need to figure out is it 2 and not 1
+        // TODO
+        //
         // as DMA generates Transfer Complete interrupt after data is loaded into timer registers but before this data is used by the timer
         // it is safe to do so as g_dmaTimerDataIncreasing has extra data at the end to account for this
         LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, (g_slowDownPulseCount + 2) * 3);
