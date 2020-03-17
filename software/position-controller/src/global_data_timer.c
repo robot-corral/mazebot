@@ -459,7 +459,7 @@ const uint32_t g_dmaTimerDataIncreasing[(DMA_TIMER_STEPS_COUNT + 1) * 3] = {
     13332,
 };
 
-const uint32_t g_dmaTimerDataDecreasing[(DMA_TIMER_STEPS_COUNT + 2) * 3] = {
+const uint32_t g_dmaTimerDataDecreasing[(DMA_TIMER_STEPS_COUNT + 1) * 3] = {
     26927,
     0,
     13463,
@@ -910,9 +910,6 @@ const uint32_t g_dmaTimerDataDecreasing[(DMA_TIMER_STEPS_COUNT + 2) * 3] = {
     399696,
     0,
     199848,
-    399999,
-    0,
-    199999,
     399999,
     0,
     199999,

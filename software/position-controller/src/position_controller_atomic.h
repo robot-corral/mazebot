@@ -158,20 +158,19 @@ void startSlowingDown_Atomic(uint32_t slowDownPulseCount)
 
         const uint32_t startIndex = (DMA_TIMER_STEPS_COUNT - g_slowDownPulseCount) * 3;
 
+        // need to load initial timer register values as this method is called just after new step started
+        LL_TIM_SetAutoReload(TIM2, g_dmaTimerDataDecreasing[startIndex]);
+        LL_TIM_SetRepetitionCounter(TIM2, g_dmaTimerDataDecreasing[startIndex + 1]);
+        LL_TIM_OC_SetCompareCH1(TIM2, g_dmaTimerDataDecreasing[startIndex + 2]);
+
         LL_DMA_ConfigAddresses(DMA1,
                                LL_DMA_CHANNEL_2,
-                               (uint32_t) &g_dmaTimerDataDecreasing[startIndex],
+                               (uint32_t) &g_dmaTimerDataDecreasing[startIndex + 3],
                                (uint32_t) &TIM2->DMAR, // we are using DMA burst to update several TIM2 register at once (ARR, RCR, CCR1)
                                LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-        // we need to add TWO extra DMA data items
-        //
-        // TODO
-        // TODO need to figure out is it 2 and not 1
-        // TODO
-        //
-        // as DMA generates Transfer Complete interrupt after data is loaded into timer registers but before this data is used by the timer
-        // it is safe to do so as g_dmaTimerDataIncreasing has extra data at the end to account for this
-        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, (g_slowDownPulseCount + 2) * 3);
+        // we need to add one more step at the end as transfer complete is done once final step data is loaded into registers
+        // bug before it is actually executed
+        LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_2, (g_slowDownPulseCount + 1) * 3);
         LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_2);
     }
 

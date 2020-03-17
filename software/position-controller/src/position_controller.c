@@ -438,15 +438,16 @@ positionControllerState_t positionControllerMove(positionControllerDirection_t d
         LL_TIM_ClearFlag_CC1(TIM5);
         // enable interrupt to handle stop event
         LL_TIM_EnableIT_CC1(TIM5);
-        // call interrupt after pulseCount
+        // call interrupt after pulseCount + 1
+        // + 1 is needed as we should stop after pulseCount steps were successfully generated and count is happening on pulse start
         LL_TIM_OC_SetCompareCH1(TIM5, pulseCount + 1);
         return positionControllerMoveAtConstantSpeed_Atomic(PCS_BUSY_MOVING_AT_CONSTANT_SPEED);
     }
-    else if (pulseCount <= 2 * DMA_TIMER_STEPS_COUNT + 1)
+    else if (pulseCount <= 2 * DMA_TIMER_STEPS_COUNT)
     {
         const uint32_t accelerationPulseCount = (pulseCount + 1) / 2;
         g_slowDownPulseCount = pulseCount - accelerationPulseCount;
-        return positionControllerMoveWithAcceleration_Atomic(PCS_BUSY_ACCELERATING, accelerationPulseCount - 1);
+        return positionControllerMoveWithAcceleration_Atomic(PCS_BUSY_ACCELERATING, accelerationPulseCount);
     }
     else
     {
@@ -456,8 +457,9 @@ positionControllerState_t positionControllerMove(positionControllerDirection_t d
         LL_TIM_ClearFlag_CC1(TIM5);
         // enable interrupt to handle stop event
         LL_TIM_EnableIT_CC1(TIM5);
-        // call interrupt after pulseCount
-        LL_TIM_OC_SetCompareCH1(TIM5, pulseCountBeforeSlowDown);
+        // call interrupt after pulseCountBeforeSlowDown + 1
+        // + 1 is needed as we should stop after pulseCountBeforeSlowDown steps were successfully generated and count is happening on pulse start
+        LL_TIM_OC_SetCompareCH1(TIM5, pulseCountBeforeSlowDown + 1);
         return positionControllerMoveWithAcceleration_Atomic(PCS_BUSY_ACCELERATING_AND_MOVING_AT_CONSTANT_SPEED, DMA_TIMER_STEPS_COUNT);
     }
 }

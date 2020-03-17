@@ -11,4 +11,4 @@
 #define DMA_TIMER_MAX_FREQUENCY_CC  13332
 
 extern const uint32_t g_dmaTimerDataIncreasing[(DMA_TIMER_STEPS_COUNT + 1) * 3];
-extern const uint32_t g_dmaTimerDataDecreasing[(DMA_TIMER_STEPS_COUNT + 2) * 3];
+extern const uint32_t g_dmaTimerDataDecreasing[(DMA_TIMER_STEPS_COUNT + 1) * 3];
